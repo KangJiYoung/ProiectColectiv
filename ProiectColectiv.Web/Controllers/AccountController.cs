@@ -10,11 +10,17 @@ namespace ProiectColectiv.Web.Controllers
     public class AccountController : Controller
     {
         private readonly SignInManager<User> signInManager;
+        private readonly UserManager<User> userManager;
 
-        public AccountController(SignInManager<User> signInManager)
+        public AccountController(
+            SignInManager<User> signInManager,
+            UserManager<User> userManager)
         {
             this.signInManager = signInManager;
+            this.userManager = userManager;
         }
+
+        #region Login
 
         [AllowAnonymous]
         public IActionResult Login(string returnUrl)
@@ -41,6 +47,40 @@ namespace ProiectColectiv.Web.Controllers
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
 
             return View(model);
+        }
+
+        #endregion
+
+        #region Register
+
+        [AllowAnonymous]
+        public IActionResult Register() => View();
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = new User { UserName = model.Username, Email = model.Email };
+
+            var result = await userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+                return RedirectToAction(nameof(AccountController.Login), "Account");
+
+            AddErrors(result);
+
+            return View(model);
+        }
+
+        #endregion
+
+        protected void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+                ModelState.AddModelError(string.Empty, error.Description);
         }
 
         protected IActionResult RedirectToLocal(string returnUrl)

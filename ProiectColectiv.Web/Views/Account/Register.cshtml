@@ -1,6 +1,6 @@
-﻿@model LoginViewModel
+﻿@model RegisterViewModel
 @{
-    ViewBag.Title = "Login";
+    ViewBag.Title = "Register";
     Layout = "_EmptyLayout";
 }
 
@@ -14,7 +14,7 @@
             Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
         </p>
         <p>Login in. To see it in action.</p>
-        <form asp-controller="Account" asp-action="Login" class="m-t">
+        <form asp-controller="Account" asp-action="Register" class="m-t">
             <input type="hidden" value="@ViewBag.ReturnUrl" name="returnUrl" />
 
             <div class="form-group">
@@ -23,8 +23,18 @@
             </div>
 
             <div class="form-group">
+                <input asp-for="Email" class="form-control" placeholder="Email">
+                <span asp-validation-for="Email" class="text-danger help-block"></span>
+            </div>
+
+            <div class="form-group">
                 <input asp-for="Password" class="form-control" placeholder="Password">
                 <span asp-validation-for="Password" class="text-danger help-block"></span>
+            </div>
+
+            <div class="form-group">
+                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password">
+                <span asp-validation-for="ConfirmPassword" class="text-danger help-block"></span>
             </div>
             <div asp-validation-summary="ModelOnly" class="text-danger help-block"></div>
 
