@@ -2,8 +2,8 @@
 {
     public static class Administrator
     {
-        public const string Username = "Administrator";
-        public const string Email = "email@yahoo.com";
-        public const string Password = "Admin1;";
+        public const string USERNAME = "Administrator";
+        public const string EMAIL = "email@yahoo.com";
+        public const string PASSWORD = "Admin1;";
     }
 }

@@ -61,8 +61,9 @@ namespace ProiectColectiv.Web
             {
                 var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
                 var userManager = app.ApplicationServices.GetService<UserManager<User>>();
+                var roleManager = app.ApplicationServices.GetService<RoleManager<IdentityRole>>();
                 dbContext.Database.Migrate();
-                dbContext.EnsureSeedData(userManager);
+                dbContext.EnsureSeedData(userManager, roleManager);
             }
 
             if (env.IsDevelopment())
