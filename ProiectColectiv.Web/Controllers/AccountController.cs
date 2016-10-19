@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Web.ViewModel;
 
@@ -68,11 +69,28 @@ namespace ProiectColectiv.Web.Controllers
 
             var result = await userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
+            {
+                await userManager.AddToRoleAsync(user, Roles.CITITOR);
+
                 return RedirectToAction(nameof(AccountController.Login), "Account");
+            }
 
             AddErrors(result);
 
             return View(model);
+        }
+
+        #endregion
+
+        #region Log Off
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> LogOff()
+        {
+            await signInManager.SignOutAsync();
+
+            return RedirectToAction(nameof(AccountController.Login), "Account");
         }
 
         #endregion

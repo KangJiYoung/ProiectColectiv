@@ -7,7 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ProiectColectiv.Core.DomainModel.Entities;
+using ProiectColectiv.Core.Interfaces;
 using ProiectColectiv.Core.Interfaces.UnitOfWork;
+using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
 using ProiectColectiv.Services.Data.UnitOfWork;
 
@@ -48,6 +50,9 @@ namespace ProiectColectiv.Web
             services.AddMvc();
 
             // Add application services.
+
+            services.AddScoped<IUsersService, UsersService>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
