@@ -6,6 +6,8 @@ using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Core.Interfaces.UnitOfWork;
 using ProiectColectiv.Web.ViewModel.Mapping;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using ProiectColectiv.Web.ViewModel;
 
 namespace ProiectColectiv.Web.Controllers
 {
@@ -29,7 +31,33 @@ namespace ProiectColectiv.Web.Controllers
                 .UsersService
                 .GetUsers();
 
+            var roles = await unitOfWork
+                .RolesService
+                .GetRoles();
+
+            ViewBag.Roles = new SelectList(roles, "Name", "Name");
+
             return View(ViewModelMapping.ConvertToViewModel(users, userManager));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = Roles.ADMINISTRATOR)]
+        public async Task<IActionResult> ChangeRole(RoleChangeViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return PartialView("_RoleChange", model);
+
+            var user = await unitOfWork
+                .UsersService
+                .GetUser(model.UserId);
+
+            var userRoles = await userManager.GetRolesAsync(user);
+            await userManager.RemoveFromRolesAsync(user, userRoles);
+            await userManager.AddToRoleAsync(user, model.Role);
+
+            TempData[Notifications.RoleChanged] = "User role successfully changed.";
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

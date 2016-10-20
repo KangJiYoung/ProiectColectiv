@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "aspnet-ProiectColectiv.Web-86f5d602-3b46-4dcf-bb51-2d0d57905354",
 
   "dependencies": {
@@ -14,6 +14,7 @@
     "Microsoft.AspNetCore.Routing": "1.0.1",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+    "Microsoft.AspNetCore.Session": "1.0.0",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0",
     "Microsoft.EntityFrameworkCore.SqlServer": "1.0.1",
     "Microsoft.EntityFrameworkCore.SqlServer.Design": {

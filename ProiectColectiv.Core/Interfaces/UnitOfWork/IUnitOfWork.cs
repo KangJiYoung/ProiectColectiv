@@ -8,6 +8,8 @@ namespace ProiectColectiv.Core.Interfaces.UnitOfWork
 
         IUsersService UsersService { get; }
 
+        IRolesService RolesService { get; }
+
         #endregion
 
         Task<int> Commit();

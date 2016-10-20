@@ -7,5 +7,6 @@ namespace ProiectColectiv.Core.Interfaces
     public interface IUsersService
     {
         Task<List<User>> GetUsers();
+        Task<User> GetUser(string userId);
     }
 }

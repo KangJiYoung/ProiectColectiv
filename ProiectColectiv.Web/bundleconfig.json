@@ -1,15 +1,13 @@
-﻿// Configure bundling and minification for the project.
-// More info at https://go.microsoft.com/fwlink/?LinkId=808241
-[
+﻿[
   {
     "outputFileName": "wwwroot/css/site.min.css",
-    // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [
       "content/css/animate.css",
       "content/css/bootstrap.css",
       "content/css/font-awesome.css",
       "content/css/style.css",
-      "content/css/bootstrap-chosen.css"
+      "content/css/bootstrap-chosen.css",
+      "content/css/toastr.min.css"
     ],
     "minify": {
       "enabled": true,
@@ -21,7 +19,8 @@
     "inputFiles": [
       "content/js/jquery.metismenu.js",
       "content/js/jquery.slimscroll.min.js",
-      "content/js/chosen.jquery.js"
+      "content/js/chosen.jquery.js",
+      "content/js/toastr.min.js"
     ],
     "minify": {
       "enabled": true,

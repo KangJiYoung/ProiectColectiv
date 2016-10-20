@@ -47,11 +47,13 @@ namespace ProiectColectiv.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddSession();
             services.AddMvc();
 
             // Add application services.
 
             services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IRolesService, RolesService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
@@ -83,8 +85,8 @@ namespace ProiectColectiv.Web
             }
 
             app.UseStaticFiles();
-
             app.UseIdentity();
+            app.UseSession();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 

@@ -1,0 +1,21 @@
+﻿@model RoleChangeViewModel
+
+<div class="form-group">
+    <label class="font-noraml">Role</label>
+
+    <form asp-controller="Users" asp-action="ChangeRole" class="m-t" id="roleChangeForm"
+          data-ajax="true" data-ajax-method="POST" data-ajax-mode="REPLACE-WITH" data-ajax-update="#roleChangeForm" data-ajax-success="onRoleChangeSuccess">
+        <input type="hidden" asp-for="UserId" />
+
+        <div class="form-group">
+            <select asp-for="Role" asp-items="ViewBag.Roles" class="chosen-select">
+                <option value="">Select a new role...</option>
+            </select>
+        </div>
+    </form>
+</div>
+<script>
+    function onRoleChangeSuccess() {
+        location.reload();
+    }
+</script>

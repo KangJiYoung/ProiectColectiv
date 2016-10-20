@@ -11,16 +11,20 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
 
         public UnitOfWork(
             IUsersService usersService,
+            IRolesService rolesService,
             ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
 
             UsersService = usersService;
+            RolesService = rolesService;
         }
 
         #region Services
 
         public IUsersService UsersService { get; }
+
+        public IRolesService RolesService { get; }
 
         #endregion
 

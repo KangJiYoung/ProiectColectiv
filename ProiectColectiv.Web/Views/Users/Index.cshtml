@@ -21,23 +21,23 @@
                                 <div class="table-responsive">
                                     <table class="table table-striped table-hover">
                                         <thead>
-                                        <tr>
-                                            <th>Username</th>
-                                            <th>Email</th>
-                                            <th>Role</th>
-                                            <th>Actions</th>
-                                        </tr>
+                                            <tr>
+                                                <th>Username</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                                <th>Actions</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                        @foreach (var user in Model)
-                                        {
-                                            <tr>
-                                                <td>@user.Username</td>
-                                                <td>@user.Email</td>
-                                                <td>@user.Role</td>
-                                                <td><a data-toggle="modal" data-target="#myModal">Schimba Rolul</a></td>
-                                            </tr>
-                                        }
+                                            @foreach (var user in Model)
+                                            {
+                                                <tr>
+                                                    <td>@user.Username</td>
+                                                    <td>@user.Email</td>
+                                                    <td>@user.Role</td>
+                                                    <td><a onclick="changeRole('@user.UserId', '@user.Role')">Schimba Rolul</a></td>
+                                                </tr>
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
@@ -50,7 +50,7 @@
         </div>
     </div>
 </div>
-<div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal inmodal" id="changeRoleModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content animated bounceInRight">
             <div class="modal-header">
@@ -60,26 +60,34 @@
                 <small class="font-bold">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</small>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="font-noraml">Role</label>
-                    <div>
-                        <select class="chosen-select">
-                            <option>Select a new role...</option>
-                        </select>
-                    </div>
-                </div>
+                @await Html.PartialAsync("_RoleChange", new RoleChangeViewModel())
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-primary" onclick="$('#roleChangeForm').submit()">Save changes</button>
             </div>
         </div>
     </div>
 </div>
 @section Scripts{
     <script>
-        $(function() {
+
+        $(function () {
             $('.chosen-select').chosen({ width: "100%" });
+            @if (TempData.ContainsKey(Notifications.RoleChanged))
+            {
+                <text>toastr.success('@TempData[Notifications.RoleChanged]', 'Success');</text>
+            }
         });
+
+        function changeRole(userId, role) {
+            $('#UserId').val(userId);
+
+            $('#Role').val(role);
+            $('#Role').trigger("chosen:updated");
+
+            $('#changeRoleModal').modal('show');
+        }
+
     </script>
 }

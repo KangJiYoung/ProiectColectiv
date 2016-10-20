@@ -16,6 +16,13 @@ namespace ProiectColectiv.Services
             this.dbContext = dbContext;
         }
 
+        public Task<User> GetUser(string userId)
+        {
+            return dbContext
+                .Users
+                .FirstAsync(it => it.Id == userId);
+        }
+
         public Task<List<User>> GetUsers()
         {
             return dbContext

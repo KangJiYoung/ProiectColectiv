@@ -10,6 +10,7 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
         public static UserViewModel ConvertToViewModel(User user, UserManager<User> userManager)
             => new UserViewModel
             {
+                UserId = user.Id,
                 Email = user.Email,
                 Username = user.UserName,
                 Role = userManager.GetRolesAsync(user).Result.FirstOrDefault()
