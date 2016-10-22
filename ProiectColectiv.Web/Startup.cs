@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Core.Interfaces;
@@ -12,6 +14,7 @@ using ProiectColectiv.Core.Interfaces.UnitOfWork;
 using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
 using ProiectColectiv.Services.Data.UnitOfWork;
+using System.IO;
 
 namespace ProiectColectiv.Web
 {
@@ -85,6 +88,13 @@ namespace ProiectColectiv.Web
             }
 
             app.UseStaticFiles();
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Content\\img")),
+                RequestPath = new PathString("/img")
+            });
+
             app.UseIdentity();
             app.UseSession();
 

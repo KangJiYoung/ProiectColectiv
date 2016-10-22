@@ -1,0 +1,30 @@
+﻿.login-back{
+    position:absolute;
+    display:table;
+    width:100%;
+    height:100%;
+    background-image:url(../img/back2.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-image 2s ease-out;
+    -webkit-transition: background-image 2s ease-out;
+
+}
+
+.login-back > .middle-box{
+    display: table-cell;
+    vertical-align:middle;
+}
+
+.login-back > .middle-box > div{
+    margin-left: auto;
+    margin-right: auto; 
+    width: 350px;
+}
+
+.login-box{
+    background-color:white;
+    padding: 10px 10px 20px 10px;
+    border-radius: 15px 50px 30px;
+    box-shadow: #888888 2.5px 2.5px 1px;
+}

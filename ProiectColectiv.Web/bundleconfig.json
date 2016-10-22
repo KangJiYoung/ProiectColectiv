@@ -7,7 +7,8 @@
       "content/css/font-awesome.css",
       "content/css/style.css",
       "content/css/bootstrap-chosen.css",
-      "content/css/toastr.min.css"
+      "content/css/toastr.min.css",
+      "content/css/custom.css"
     ],
     "minify": {
       "enabled": true,
