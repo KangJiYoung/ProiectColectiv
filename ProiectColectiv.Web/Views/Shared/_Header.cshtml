@@ -3,7 +3,7 @@
         <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
             <i class="fa fa-reorder"></i>
         </button>
-        <a href="#" class="navbar-brand">Inspinia</a>
+        <a href="@Url.Action("Index", "Home")" class="navbar-brand"><img src="~/content/img/logo.png" width="20" class="nab"/> CWMD</a>
     </div>
     <div class="navbar-collapse collapse" id="navbar">
         <ul class="nav navbar-nav">
@@ -21,6 +21,9 @@
             </li>
         </ul>
         <ul class="nav navbar-top-links navbar-right">
+            <li>
+                <span>@User.Identity.Name</span>
+            </li>
             <li>
                 <a href="#" onclick="document.getElementById('logOffForm').submit()"><i class="fa fa-sign-out"></i> Log Out</a>
                 <form id="logOffForm" asp-controller="Account" asp-action="LogOff" style="display:none"></form>
