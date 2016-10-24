@@ -55,7 +55,7 @@ namespace ProiectColectiv.Web.Controllers
             await userManager.RemoveFromRolesAsync(user, userRoles);
             await userManager.AddToRoleAsync(user, model.Role);
 
-            TempData[Notifications.RoleChanged] = "User role successfully changed.";
+            TempData[Notifications.ROLE_CHANGED] = "Rol Utilizator schimbat cu success.";
 
             return RedirectToAction(nameof(Index));
         }

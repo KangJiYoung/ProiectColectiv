@@ -1,4 +1,5 @@
 ﻿/// <autosync enabled="true" />
+/// <reference path="../content/js/bootstrap-tagsinput.js" />
 /// <reference path="../content/js/chosen.jquery.js" />
 /// <reference path="../content/js/jquery.metismenu.js" />
 /// <reference path="../content/js/jquery.slimscroll.min.js" />

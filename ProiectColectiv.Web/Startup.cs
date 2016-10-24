@@ -15,6 +15,7 @@ using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
 using ProiectColectiv.Services.Data.UnitOfWork;
 using System.IO;
+using ProiectColectiv.Web.Application.Providers;
 
 namespace ProiectColectiv.Web
 {
@@ -55,8 +56,11 @@ namespace ProiectColectiv.Web
 
             // Add application services.
 
-            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<FileProvider>();
+
+            services.AddScoped<IDocumentsService, DocumentsService>();
             services.AddScoped<IRolesService, RolesService>();
+            services.AddScoped<IUsersService, UsersService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }

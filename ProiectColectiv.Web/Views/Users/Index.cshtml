@@ -74,9 +74,9 @@
 
         $(function () {
             $('.chosen-select').chosen({ width: "100%" });
-            @if (TempData.ContainsKey(Notifications.RoleChanged))
+            @if (TempData.ContainsKey(Notifications.ROLE_CHANGED))
             {
-                <text>toastr.success('@TempData[Notifications.RoleChanged]', 'Success');</text>
+                <text>toastr.success('@TempData[Notifications.ROLE_CHANGED]', 'Success');</text>
             }
         });
 

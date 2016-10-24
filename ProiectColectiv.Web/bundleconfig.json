@@ -8,7 +8,8 @@
       "content/css/style.css",
       "content/css/bootstrap-chosen.css",
       "content/css/toastr.min.css",
-      "content/css/custom.css"
+      "content/css/custom.css",
+      "content/css/bootstrap-tagsinput.css"
     ],
     "minify": {
       "enabled": true,
@@ -21,7 +22,8 @@
       "content/js/jquery.metismenu.js",
       "content/js/jquery.slimscroll.min.js",
       "content/js/chosen.jquery.js",
-      "content/js/toastr.min.js"
+      "content/js/toastr.min.js",
+      "content/js/bootstrap-tagsinput.js"
     ],
     "minify": {
       "enabled": true,

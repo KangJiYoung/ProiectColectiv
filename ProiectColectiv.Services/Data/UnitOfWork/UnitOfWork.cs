@@ -10,21 +10,25 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
         private readonly ApplicationDbContext dbContext;
 
         public UnitOfWork(
-            IUsersService usersService,
+            IDocumentsService documentsService,
             IRolesService rolesService,
+            IUsersService usersService,
             ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
 
+            DocumentsService = documentsService;
             UsersService = usersService;
             RolesService = rolesService;
         }
 
         #region Services
 
-        public IUsersService UsersService { get; }
+        public IDocumentsService DocumentsService { get; }
 
         public IRolesService RolesService { get; }
+
+        public IUsersService UsersService { get; }
 
         #endregion
 

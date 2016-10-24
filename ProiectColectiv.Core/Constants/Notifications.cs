@@ -2,6 +2,7 @@
 {
     public class Notifications
     {
-        public const string RoleChanged = "RoleChanged";
+        public const string DOCUMENT_UPLOADED = "DocumentUploaded";
+        public const string ROLE_CHANGED = "RoleChanged";
     }
 }

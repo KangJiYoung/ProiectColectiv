@@ -1,0 +1,33 @@
+﻿@model DocumentUploadViewModel
+@{
+    ViewBag.Title = "Adauga Upload";
+}
+
+<div class="wrapper wrapper-content  animated fadeInRight">
+    <div class="row">
+        <div class="ibox">
+            <div class="ibox-content">
+                <h2>Adauga Document</h2>
+                <p>Alegeti template sau upload.</p>
+                <div class="clients-list">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i> Template</a></li>
+                        <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-briefcase"></i> Upload</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="full-height-scroll">
+                                @await Html.PartialAsync("_DocumentUploadTemplate", Model)
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="full-height-scroll">
+                                @await Html.PartialAsync("_DocumentUploadFile", Model)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

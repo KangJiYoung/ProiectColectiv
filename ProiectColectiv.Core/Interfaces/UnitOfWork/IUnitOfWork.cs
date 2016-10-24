@@ -6,9 +6,11 @@ namespace ProiectColectiv.Core.Interfaces.UnitOfWork
     {
         #region Services
 
-        IUsersService UsersService { get; }
+        IDocumentsService DocumentsService { get; }
 
         IRolesService RolesService { get; }
+
+        IUsersService UsersService { get; }
 
         #endregion
 
