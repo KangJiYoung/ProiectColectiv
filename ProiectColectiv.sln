@@ -9,6 +9,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProiectColectiv.Core", "Pro
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProiectColectiv.Services", "ProiectColectiv.Services\ProiectColectiv.Services.xproj", "{A6162736-EF58-4FD3-AF40-C959CABD345C}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProiectColectiv.Tests", "ProiectColectiv.Tests\ProiectColectiv.Tests.xproj", "{A7994FDC-46AE-444A-8B30-9E9C5C7D905C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A6162736-EF58-4FD3-AF40-C959CABD345C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6162736-EF58-4FD3-AF40-C959CABD345C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6162736-EF58-4FD3-AF40-C959CABD345C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7994FDC-46AE-444A-8B30-9E9C5C7D905C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7994FDC-46AE-444A-8B30-9E9C5C7D905C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7994FDC-46AE-444A-8B30-9E9C5C7D905C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7994FDC-46AE-444A-8B30-9E9C5C7D905C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
