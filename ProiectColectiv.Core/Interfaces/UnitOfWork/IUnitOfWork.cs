@@ -10,6 +10,8 @@ namespace ProiectColectiv.Core.Interfaces.UnitOfWork
 
         IRolesService RolesService { get; }
 
+        ITagsService TagsService { get; }
+
         IUsersService UsersService { get; }
 
         #endregion

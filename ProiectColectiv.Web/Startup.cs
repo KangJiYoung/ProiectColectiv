@@ -58,6 +58,7 @@ namespace ProiectColectiv.Web
 
             services.AddScoped<IDocumentsService, DocumentsService>();
             services.AddScoped<IRolesService, RolesService>();
+            services.AddScoped<ITagsService, TagsService>();
             services.AddScoped<IUsersService, UsersService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();

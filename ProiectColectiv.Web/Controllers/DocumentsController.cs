@@ -30,6 +30,10 @@ namespace ProiectColectiv.Web.Controllers
                 .DocumentsService
                 .GetDocumentsByUserId(user.Id);
 
+            ViewBag.Tags = await unitOfWork
+                .TagsService
+                .GetTagsByUserId(user.Id);
+
             return View(ViewModelMapping.ConvertToViewModel(documents));
         }
 

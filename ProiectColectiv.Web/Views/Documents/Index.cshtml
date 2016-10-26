@@ -22,9 +22,12 @@
                                 <li><a href=""><i class="fa fa-folder"></i> Files</a></li>
                             </ul>*@
                         <h5 class="tag-title">Tags</h5>
-                        @*<ul class="tag-list" style="padding: 0">
-                                <li><a href="">Family</a></li>
-                            </ul>*@
+                        @foreach (var tag in ViewBag.Tags)
+                        {
+                            <ul class="tag-list" style="padding: 0">
+                                <li><a href="">@tag</a></li>
+                            </ul>
+                        }
                         <div class="clearfix"></div>
                     </div>
                 </div>
@@ -47,7 +50,7 @@
                                     <div class="file-name">
                                         @document.Name
                                         <br />
-                                        <small>Added: Fab 18, 2014 @document.DateAdded.ToString("MMMM dd, yyyy")</small>
+                                        <small>Added: @document.DateAdded.ToString("MMMM dd, yyyy")</small>
                                     </div>
                                 </a>
                             </div>

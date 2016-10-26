@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProiectColectiv.Core.DomainModel.Entities;
-using ProiectColectiv.Core.Interfaces;
 using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
 using Xunit;

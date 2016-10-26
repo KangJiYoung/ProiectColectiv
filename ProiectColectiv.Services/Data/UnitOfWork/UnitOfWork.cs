@@ -12,14 +12,16 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
         public UnitOfWork(
             IDocumentsService documentsService,
             IRolesService rolesService,
+            ITagsService tagsService,
             IUsersService usersService,
             ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
 
             DocumentsService = documentsService;
-            UsersService = usersService;
             RolesService = rolesService;
+            TagsService = tagsService;
+            UsersService = usersService;
         }
 
         #region Services
@@ -27,6 +29,8 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
         public IDocumentsService DocumentsService { get; }
 
         public IRolesService RolesService { get; }
+
+        public ITagsService TagsService { get; }
 
         public IUsersService UsersService { get; }
 
