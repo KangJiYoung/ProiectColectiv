@@ -44,11 +44,12 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var document = await context.Documents.Include(it => it.DocumentTags).FirstAsync();
+                var document = await context.Documents.Include(it => it.DocumentTags).Include(it => it.DocumentStates).FirstAsync();
 
                 Assert.Equal("file", document.Name);
                 Assert.Equal(user.Id, document.UserId);
                 Assert.Equal(2, document.DocumentTags.Count);
+                Assert.Equal(1, document.DocumentStates.Count);
             }
         }
     }

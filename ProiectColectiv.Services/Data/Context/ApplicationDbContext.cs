@@ -8,6 +8,8 @@ namespace ProiectColectiv.Services.Data.Context
     {
         public DbSet<Document> Documents { get; set; }
 
+        public DbSet<DocumentState> DocumentStates { get; set; }
+
         public DbSet<DocumentTag> DocumentTags { get; set; }
 
         public DbSet<Tag> Tags { get; set; }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProiectColectiv.Core.DomainModel.Entities;
+using ProiectColectiv.Core.DomainModel.Enums;
 using ProiectColectiv.Core.Interfaces;
 using ProiectColectiv.Services.Data.Context;
 
@@ -19,12 +20,14 @@ namespace ProiectColectiv.Services
 
         public async Task AddDocument(string userId, string fileName, IList<string> tags)
         {
+            var now = DateTime.Now;
             var document = new Document
             {
                 UserId = userId,
                 Name = fileName,
-                DateAdded = DateTime.Now
+                DateAdded = now
             };
+            document.DocumentStates.Add(new DocumentState { DocumentStatus = DocumentStatus.Draft, Version = 0.01, StatusDate = now });
 
             foreach (var tag in tags)
             {
@@ -32,8 +35,7 @@ namespace ProiectColectiv.Services
                     .Tags
                     .FirstOrDefaultAsync(it => it.Name == tag);
 
-                dbTag = dbTag ?? new Tag { Name = tag };
-                document.DocumentTags.Add(new DocumentTag { Tag = dbTag });
+                document.DocumentTags.Add(new DocumentTag { Tag = dbTag ?? new Tag { Name = tag } });
             }
 
             dbContext.Documents.Add(document);

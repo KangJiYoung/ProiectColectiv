@@ -23,5 +23,7 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         public User User { get; set; }
 
         public IList<DocumentTag> DocumentTags { get; set; } = new List<DocumentTag>();
+
+        public IList<DocumentState> DocumentStates { get; set; } = new List<DocumentState>();
     }
 }
