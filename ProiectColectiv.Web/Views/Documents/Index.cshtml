@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<DocumentViewModel>
+@{
     ViewBag.Title = "Documents";
 }
 
@@ -32,38 +33,27 @@
         <div class="col-lg-9 animated fadeInRight">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="file-box">
-                        <div class="file">
-                            <a href="#">
-                                <span class="corner"></span>
-
-                                <div class="icon">
-                                    <i class="img-responsive fa fa-film"></i>
-                                </div>
-                                <div class="file-name">
-                                    Monica's birthday.mpg4
-                                    <br />
-                                    <small>Added: Fab 18, 2014</small>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="file-box">
-                        <a href="#">
+                    
+                    @foreach (var document in Model)
+                    {
+                        <div class="file-box">
                             <div class="file">
-                                <span class="corner"></span>
+                                <a href="#">
+                                    <span class="corner"></span>
 
-                                <div class="icon">
-                                    <i class="fa fa-bar-chart-o"></i>
-                                </div>
-                                <div class="file-name">
-                                    Annual report 2014.xls
-                                    <br />
-                                    <small>Added: Fab 22, 2014</small>
-                                </div>
+                                    <div class="icon">
+                                        <i class="img-responsive fa fa-film"></i>
+                                    </div>
+                                    <div class="file-name">
+                                        @document.Name
+                                        <br />
+                                        <small>Added: Fab 18, 2014 @document.DateAdded.ToString("MMMM dd, yyyy")</small>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
+                        </div>
+                    }
+
                 </div>
             </div>
         </div>

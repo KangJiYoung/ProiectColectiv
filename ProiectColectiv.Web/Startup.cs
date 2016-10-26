@@ -56,8 +56,6 @@ namespace ProiectColectiv.Web
 
             // Add application services.
 
-            services.AddScoped<FileProvider>();
-
             services.AddScoped<IDocumentsService, DocumentsService>();
             services.AddScoped<IRolesService, RolesService>();
             services.AddScoped<IUsersService, UsersService>();

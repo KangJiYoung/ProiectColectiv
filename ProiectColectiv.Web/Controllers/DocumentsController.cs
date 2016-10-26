@@ -1,38 +1,36 @@
-using System.IO;
+using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
 using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Core.Interfaces.UnitOfWork;
-using ProiectColectiv.Web.Application.Providers;
 using ProiectColectiv.Web.ViewModel;
+using ProiectColectiv.Web.ViewModel.Mapping;
 
 namespace ProiectColectiv.Web.Controllers
 {
     public class DocumentsController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IHostingEnvironment hostingEnvironment;
-        private readonly FileProvider fileProvider;
         private readonly UserManager<User> userManager;
 
         public DocumentsController(IUnitOfWork unitOfWork,
-            IHostingEnvironment hostingEnvironment,
-            FileProvider fileProvider,
             UserManager<User> userManager)
         {
             this.unitOfWork = unitOfWork;
-            this.hostingEnvironment = hostingEnvironment;
-            this.fileProvider = fileProvider;
             this.userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            var documents = await unitOfWork
+                .DocumentsService
+                .GetDocumentsByUserId(user.Id);
+
+            return View(ViewModelMapping.ConvertToViewModel(documents));
         }
 
         public IActionResult DocumentUpload() => View(new DocumentUploadViewModel());
@@ -52,11 +50,7 @@ namespace ProiectColectiv.Web.Controllers
 
         private async Task<IActionResult> DocumentUploadFile(DocumentUploadViewModel model, User user)
         {
-            //var filePath = Path.Combine(hostingEnvironment.WebRootPath, FilePath.DOCUMENTS, user.Id, model.File.FileName);
-
-            //await fileProvider.UploadFile(model.File, filePath);
-
-            await unitOfWork.DocumentsService.AddDocument(user.Id, model.File.FileName, model.Tags);
+            await unitOfWork.DocumentsService.AddDocument(user.Id, model.File, model.Tags);
 
             TempData[Notifications.DOCUMENT_UPLOADED] = "Document adaugat cu success.";
 

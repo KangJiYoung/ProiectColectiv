@@ -16,6 +16,8 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         [StringLength(100)]
         public string Name { get; set; }
 
+        public byte[] Data { get; set; }
+
         public DateTime DateAdded { get; set; }
 
         public DateTime? LastModified { get; set; }

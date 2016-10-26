@@ -18,5 +18,15 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
 
         public static IList<UserViewModel> ConvertToViewModel(IList<User> users, UserManager<User> userManager)
             => users.Select(it => ConvertToViewModel(it, userManager)).ToList();
+
+        public static DocumentViewModel ConvertToViewModel(Document document)
+            => new DocumentViewModel
+            {
+                Name = document.Name,
+                DateAdded = document.DateAdded
+            };
+
+        public static IList<DocumentViewModel> ConvertToViewModel(IList<Document> documents)
+            => documents.Select(ConvertToViewModel).ToList();
     }
 }
