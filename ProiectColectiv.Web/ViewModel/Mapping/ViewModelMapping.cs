@@ -22,11 +22,23 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
         public static DocumentViewModel ConvertToViewModel(Document document)
             => new DocumentViewModel
             {
+                IdDocument = document.IdDocument,
                 Name = document.Name,
                 DateAdded = document.DateAdded
             };
 
         public static IList<DocumentViewModel> ConvertToViewModel(IList<Document> documents)
             => documents.Select(ConvertToViewModel).ToList();
+
+        public static DocumentDetailViewModel ConvertToDetailViewModel(Document document)
+            => new DocumentDetailViewModel
+            {
+                Name = document.Name,
+                DateAdded = document.DateAdded,
+                LastModified = document.LastModified,
+                Tags = document.DocumentTags.Select(it => it.Tag.Name),
+                DocumentStatus = document.DocumentStates.Last().DocumentStatus,
+                CurrentVersion = document.DocumentStates.Last().Version
+            };
     }
 }

@@ -27,6 +27,8 @@ namespace ProiectColectiv.Web.Controllers
             this.userManager = userManager;
         }
 
+        #region Index
+
         [Authorize]
         public async Task<IActionResult> Index()
         {
@@ -42,6 +44,10 @@ namespace ProiectColectiv.Web.Controllers
 
             return View(ViewModelMapping.ConvertToViewModel(documents));
         }
+
+        #endregion
+
+        #region Document Upload
 
         [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
         public IActionResult DocumentUpload() => View(new DocumentUploadViewModel());
@@ -76,5 +82,21 @@ namespace ProiectColectiv.Web.Controllers
         {
             throw new System.NotImplementedException();
         }
+
+        #endregion
+
+        #region Document Details
+
+        [Authorize]
+        public async Task<IActionResult> DocumentDetails(int id)
+        {
+            var document = await unitOfWork.DocumentsService.GetDocumentById(id);
+            if (document == null)
+                return NotFound();
+
+            return View(ViewModelMapping.ConvertToDetailViewModel(document));
+        }
+
+        #endregion
     }
 }

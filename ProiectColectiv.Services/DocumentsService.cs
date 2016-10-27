@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
@@ -51,6 +49,15 @@ namespace ProiectColectiv.Services
                 .Documents
                 .Where(it => it.UserId == userId)
                 .ToListAsync();
+        }
+
+        public Task<Document> GetDocumentById(int idDocument)
+        {
+            return dbContext
+                .Documents
+                .Include(it => it.DocumentStates)
+                .Include(it => it.DocumentTags).ThenInclude(it => it.Tag)
+                .FirstOrDefaultAsync(it => it.IdDocument == idDocument);
         }
     }
 }

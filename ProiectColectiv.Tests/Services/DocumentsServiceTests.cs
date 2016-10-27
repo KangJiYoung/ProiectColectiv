@@ -58,6 +58,26 @@ namespace ProiectColectiv.Tests.Services
             }
         }
 
+        [Fact]
+        public async Task Can_Return_Document_By_Id()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+
+            var document = new Document();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Documents.Add(document);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var result = await new UnitOfWork(context).DocumentsService.GetDocumentById(document.IdDocument);
+
+                Assert.NotNull(result);
+            }
+        }
+
         private static async Task<User> CreateUserWithDocument(DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
             var user = new User();

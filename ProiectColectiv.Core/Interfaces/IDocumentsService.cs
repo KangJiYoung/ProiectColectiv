@@ -8,5 +8,6 @@ namespace ProiectColectiv.Core.Interfaces
     {
         Task AddDocument(string userId, string name, byte[] data, IList<string> tags);
         Task<List<Document>> GetDocumentsByUserId(string userId);
+        Task<Document> GetDocumentById(int idDocument);
     }
 }
