@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
+using ProiectColectiv.Services.Data.UnitOfWork;
 using Xunit;
 
 namespace ProiectColectiv.Tests.Services
@@ -35,8 +36,7 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var rolesService = new RolesService(context);
-                var result = await rolesService.GetRoles();
+                var result = await new UnitOfWork(context).RolesService.GetRoles();
 
                 Assert.Equal(3, result.Count);
             }

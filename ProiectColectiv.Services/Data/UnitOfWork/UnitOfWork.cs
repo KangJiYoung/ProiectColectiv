@@ -9,19 +9,14 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
     {
         private readonly ApplicationDbContext dbContext;
 
-        public UnitOfWork(
-            IDocumentsService documentsService,
-            IRolesService rolesService,
-            ITagsService tagsService,
-            IUsersService usersService,
-            ApplicationDbContext dbContext)
+        public UnitOfWork(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
 
-            DocumentsService = documentsService;
-            RolesService = rolesService;
-            TagsService = tagsService;
-            UsersService = usersService;
+            DocumentsService = new DocumentsService(dbContext);
+            RolesService = new RolesService(dbContext);
+            TagsService = new TagsService(dbContext);
+            UsersService = new UsersService(dbContext);
         }
 
         #region Services

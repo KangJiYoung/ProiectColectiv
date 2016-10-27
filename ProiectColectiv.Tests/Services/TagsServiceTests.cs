@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
+using ProiectColectiv.Services.Data.UnitOfWork;
 using Xunit;
 
 namespace ProiectColectiv.Tests.Services
@@ -59,8 +60,7 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var tagsService = new TagsService(context);
-                var result = await tagsService.GetTagsByUserId(user.Id);
+                var result = await new UnitOfWork(context).TagsService.GetTagsByUserId(user.Id);
 
                 Assert.Equal(2, result.Count);
             }

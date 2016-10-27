@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
-using ProiectColectiv.Tests.Mocks;
+using ProiectColectiv.Services.Data.UnitOfWork;
 using Xunit;
 
 namespace ProiectColectiv.Tests.Services
@@ -37,9 +38,9 @@ namespace ProiectColectiv.Tests.Services
 
                 Assert.Equal("File.doc", document.Name);
                 Assert.Equal(user.Id, document.UserId);
-                Assert.Equal(new byte[] {1, 2, 3}, document.Data);
                 Assert.Equal(2, document.DocumentTags.Count);
                 Assert.Equal(1, document.DocumentStates.Count);
+                Assert.Equal(new byte[] { 1, 2, 3 }, document.DocumentStates.First().Data);
             }
         }
 
@@ -51,9 +52,7 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var documentsService = new DocumentsService(context);
-
-                var result = await documentsService.GetDocumentsByUserId(user.Id);
+                var result = await new UnitOfWork(context).DocumentsService.GetDocumentsByUserId(user.Id);
 
                 Assert.Equal(1, result.Count);
             }
@@ -69,11 +68,12 @@ namespace ProiectColectiv.Tests.Services
                 await context.SaveChangesAsync();
             }
 
-            var file = new FormFileMock { FileName = "File.doc" };
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var documentsService = new DocumentsService(context);
-                await documentsService.AddDocument(user.Id, file, new List<string> { "tag1", "tag2" });
+                var unitOfWork = new UnitOfWork(context);
+
+                await unitOfWork.DocumentsService.AddDocument(user.Id, "File.doc", new byte[] { 1, 2, 3 }, new List<string> { "tag1", "tag2" });
+                await unitOfWork.Commit();
             }
             return user;
         }

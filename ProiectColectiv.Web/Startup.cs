@@ -56,6 +56,8 @@ namespace ProiectColectiv.Web
 
             // Add application services.
 
+            services.AddTransient<FileProvider>();
+
             services.AddScoped<IDocumentsService, DocumentsService>();
             services.AddScoped<IRolesService, RolesService>();
             services.AddScoped<ITagsService, TagsService>();

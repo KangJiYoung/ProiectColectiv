@@ -2,8 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProiectColectiv.Core.DomainModel.Entities;
-using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
+using ProiectColectiv.Services.Data.UnitOfWork;
 using Xunit;
 
 namespace ProiectColectiv.Tests.Services
@@ -37,8 +37,7 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var usersService = new UsersService(context);
-                var result = await usersService.GetUser(user.Id);
+                var result = await new UnitOfWork(context).UsersService.GetUser(user.Id);
 
                 Assert.NotNull(result);
             }
@@ -56,8 +55,7 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var usersService = new UsersService(context);
-                var result = await usersService.GetUsers();
+                var result = await new UnitOfWork(context).UsersService.GetUsers();
 
                 Assert.Equal(3, result.Count);
             }
