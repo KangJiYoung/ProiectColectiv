@@ -9,6 +9,10 @@ namespace ProiectColectiv.Web.ViewModel
     {
         public bool IsTemplate { get; set; }
 
+        [StringLength(100)]
+        [Display(Name = "Descriere")]
+        public string Descriere { get; set; }
+
         [DataType(DataType.Upload)]
         [Display(Name = "Fisier Document")]
         [Required(ErrorMessage = "Incarca un Document valid")]

@@ -12,6 +12,9 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         [Required]
         public string UserId { get; set; }
 
+        [StringLength(100)]
+        public string Descriere { get; set; }
+
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
