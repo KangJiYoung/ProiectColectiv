@@ -9,6 +9,7 @@ namespace ProiectColectiv.Web.Application.Providers
         public async Task<byte[]> GetFileBytes(IFormFile file)
         {
             var dataStream = new MemoryStream();
+
             await file.CopyToAsync(dataStream);
 
             return dataStream.ToArray();

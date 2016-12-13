@@ -6,6 +6,8 @@ namespace ProiectColectiv.Web.ViewModel
 {
     public class DocumentDetailViewModel
     {
+        public int IdDocument { get; set; }
+
         public string Name { get; set; }
 
         public double CurrentVersion { get; set; }

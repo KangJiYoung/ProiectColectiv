@@ -65,7 +65,9 @@ namespace ProiectColectiv.Services.Data.Context
                 if (!result.Succeeded)
                     throw new Exception("Cannot seed Administrator");
             }
-            return adminUser;
+            return context
+                .Users
+                .FirstOrDefault(it => it.UserName == Administrator.USERNAME);
         }
     }
 }

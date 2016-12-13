@@ -98,5 +98,26 @@ namespace ProiectColectiv.Web.Controllers
         }
 
         #endregion
+
+        #region Document Delete
+
+        [HttpPost]
+        [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
+        public async Task<JsonResult> DocumentDelete(int id)
+        {
+            var user = userManager.GetUserAsync(HttpContext.User);
+            var document = unitOfWork.DocumentsService.GetDocumentById(id);
+
+            await Task.WhenAll(user, document);
+
+            if (document.Result.UserId != user.Result.Id && !await userManager.IsInRoleAsync(user.Result, Roles.ADMINISTRATOR))
+                return Json(new { success = false, message = "Nu aveti destule drepturi!" });
+
+            await unitOfWork.DocumentsService.DeleteDocumentById(id);
+
+            return Json(new { success = true, message = "Documentul a fost sters cu success!" });
+        }
+
+        #endregion
     }
 }

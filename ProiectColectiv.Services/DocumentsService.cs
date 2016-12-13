@@ -47,6 +47,8 @@ namespace ProiectColectiv.Services
         {
             return dbContext
                 .Documents
+                .Include(it => it.DocumentStates)
+                .Include(it => it.DocumentTags).ThenInclude(it => it.Tag)
                 .Where(it => it.UserId == userId)
                 .ToListAsync();
         }
@@ -58,6 +60,16 @@ namespace ProiectColectiv.Services
                 .Include(it => it.DocumentStates)
                 .Include(it => it.DocumentTags).ThenInclude(it => it.Tag)
                 .FirstOrDefaultAsync(it => it.IdDocument == idDocument);
+        }
+
+        public async Task DeleteDocumentById(int idDocument)
+        {
+            var document = await dbContext
+                .Documents
+                .FirstOrDefaultAsync(it => it.IdDocument == idDocument);
+
+            dbContext.Remove(document);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

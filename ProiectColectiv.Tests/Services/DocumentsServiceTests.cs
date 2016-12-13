@@ -78,6 +78,31 @@ namespace ProiectColectiv.Tests.Services
             }
         }
 
+        [Fact]
+        public async Task Can_Delete_document_ByID()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+
+            var document = new Document();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Documents.Add(document);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                await new UnitOfWork(context).DocumentsService.DeleteDocumentById(document.IdDocument);
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var isAnyDocument = await context.Documents.AnyAsync();
+
+                Assert.False(isAnyDocument);
+            }
+        }
+
         private static async Task<User> CreateUserWithDocument(DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
             var user = new User();

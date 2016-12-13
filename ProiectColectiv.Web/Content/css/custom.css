@@ -88,3 +88,15 @@
 .doc-actions{
     padding-bottom: 10px;
 }
+
+.del-icon{
+    position:absolute;
+    top:2px;
+    right:5px;
+    font-size: 15px;
+    text-decoration:none;
+}
+
+.del-icon > a{
+    color: #8c8c8c;
+}

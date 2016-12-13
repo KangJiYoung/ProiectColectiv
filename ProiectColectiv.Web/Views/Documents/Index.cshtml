@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DocumentViewModel>
+﻿@model IEnumerable<DocumentDetailViewModel>
 @{
     ViewBag.Title = "Documents";
 }
@@ -17,10 +17,6 @@
                     <div class="file-manager">
                         <a class="btn btn-primary btn-block" asp-controller="Documents" asp-action="DocumentUpload">Adauga Document</a>
                         <div class="hr-line-dashed"></div>
-                        <h5>Folders</h5>
-                        @*<ul class="folder-list" style="padding: 0">
-                                <li><a href=""><i class="fa fa-folder"></i> Files</a></li>
-                            </ul>*@
                         <h5 class="tag-title">Tags</h5>
                         @foreach (var tag in ViewBag.Tags)
                         {
@@ -37,10 +33,37 @@
             <div class="row">
                 <div class="col-lg-12">
                     
-                    @foreach (var document in Model)
+                    @*@foreach (var document in Model)
                     {
                         <div class="file-box">
                             <div class="file">
+                                <div class="del-icon">
+                                    <a asp-controller="Documents" asp-action="DocumentDelete" asp-route-id="@document.IdDocument"><i class="img-responsive fa fa-times"></i></a>
+                                </div>
+                                <a asp-controller="Documents" asp-action="DocumentDetails" asp-route-id="@document.IdDocument">
+                                    <span class="corner"></span>
+
+                                    <div class="icon">
+                                        <i class="img-responsive fa fa-film"></i>
+                                    </div>
+
+                                    <div class="file-name">
+                                        @document.Name
+                                        <br />
+                                        <small>Added: @document.DateAdded.ToString("MMMM dd, yyyy")</small>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    }*@
+
+                    @foreach (var document in Model)
+                    {
+                        <div class="file-box" id="document-@document.IdDocument">
+                            <div class="file">
+                                <div class="del-icon">
+                                    <a onclick="deleteDocument(@document.IdDocument)"><i class="img-responsive fa fa-times"></i></a>
+                                </div>
                                 <a asp-controller="Documents" asp-action="DocumentDetails" asp-route-id="@document.IdDocument">
                                     <span class="corner"></span>
 
@@ -51,10 +74,12 @@
                                         @document.Name
                                         <br />
                                         <small>Added: @document.DateAdded.ToString("MMMM dd, yyyy")</small>
+                                        <br />
+                                        <small>Status: <span class="label label-primary">@document.DocumentStatus</span></small>
                                     </div>
                                 </a>
+                                </div>
                             </div>
-                        </div>
                     }
 
                 </div>
@@ -65,12 +90,27 @@
 @section Scripts{
     <script>
 
-        $(function () {
+        $(function() {
             @if (TempData.ContainsKey(Notifications.DOCUMENT_UPLOADED))
             {
-                <text>toastr.success('@TempData[Notifications.DOCUMENT_UPLOADED]', 'Success');</text>
+                <text>window.toastr.success('@TempData[Notifications.DOCUMENT_UPLOADED]', 'Success');</text>
             }
         });
+
+        function deleteDocument(id) {
+            $.post("/Documents/DocumentDelete",
+                    { id: id },
+                    function(result) {
+                        if (result.success) {
+                            window.toastr.success(result.message, 'Success');
+                            $("#document-" + id).remove();
+                        } else
+                            window.toastr.warning(result.message, 'Warning');
+                    })
+                .fail(function(xhr, textStatus, errorThrown) {
+                    window.toastr.error(xhr.responseText, 'Error!');
+                });
+        }
 
     </script>
 }
