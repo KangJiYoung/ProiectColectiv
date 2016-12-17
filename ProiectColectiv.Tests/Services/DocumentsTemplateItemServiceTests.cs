@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProiectColectiv.Core.DomainModel.Entities;
+using ProiectColectiv.Core.DomainModel.Enums;
+using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
-using ProiectColectiv.Services.Data.UnitOfWork;
 using Xunit;
 
 namespace ProiectColectiv.Tests.Services
 {
-    public class TagsServiceTests
+    public class DocumentsTemplateItemServiceTests
     {
         private static DbContextOptions<ApplicationDbContext> CreateNewContextOptions()
         {
@@ -25,25 +27,19 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
-        public async Task Can_Return_All_Document_Tags_By_User_Id()
+        public async Task Can_Get_Item_With_Values_From_Template()
         {
-            var user = new User
+            var template = new DocumentTemplate
             {
-                Documents = new List<Document>
+                DocumentTemplateItems = new List<DocumentTemplateItem>
                 {
-                    new Document
+                    new DocumentTemplateItem(),
+                    new DocumentTemplateItem(),
+                    new DocumentTemplateItem
                     {
-                        DocumentTags = new List<DocumentTag>
+                        DocumentTemplateItemValues = new List<DocumentTemplateItemValue> 
                         {
-                            new DocumentTag {Tag = new Tag {Name = "tag1"}},
-                            new DocumentTag {Tag = new Tag {Name = "tag2"}}
-                        }
-                    },
-                    new Document
-                    {
-                        DocumentTags = new List<DocumentTag>
-                        {
-                            new DocumentTag {Tag = new Tag {Name = "tag1"}}
+                            new DocumentTemplateItemValue(), new DocumentTemplateItemValue()
                         }
                     }
                 }
@@ -52,15 +48,17 @@ namespace ProiectColectiv.Tests.Services
             var dbContextOptions = CreateNewContextOptions();
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                context.Users.Add(user);
+                context.DocumentTemplates.Add(template);
                 await context.SaveChangesAsync();
             }
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var result = await new UnitOfWork(context).TagsService.GetTagsByUserId(user.Id);
+                var service = new DocumentsTemplateItemService(context);
+                var result = await service.GetItemsFromTemplate(template.IdDocumentTemplate);
 
-                Assert.Equal(2, result.Count);
+                Assert.Equal(3, result.Count);
+                Assert.Equal(2, result.Last().DocumentTemplateItemValues.Count);
             }
         }
     }

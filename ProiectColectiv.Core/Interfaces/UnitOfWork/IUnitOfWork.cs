@@ -8,6 +8,10 @@ namespace ProiectColectiv.Core.Interfaces.UnitOfWork
 
         IDocumentsService DocumentsService { get; }
 
+        IDocumentsTemplateItemService DocumentsTemplateItemService { get; }
+
+        IDocumentsTemplateService DocumentsTemplateService { get; }
+
         IRolesService RolesService { get; }
 
         ITagsService TagsService { get; }

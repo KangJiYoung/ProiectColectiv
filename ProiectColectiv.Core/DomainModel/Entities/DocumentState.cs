@@ -17,8 +17,6 @@ namespace ProiectColectiv.Core.DomainModel.Entities
 
         public double Version { get; set; }
 
-        public byte[] Data { get; set; }
-
         public Document Document { get; set; }
     }
 }

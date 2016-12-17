@@ -27,6 +27,48 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
+        public async Task Can_Add_Document_From_Template()
+        {
+            var template = new DocumentTemplate
+            {
+                DocumentTemplateItems = new List<DocumentTemplateItem>
+                    {
+                        new DocumentTemplateItem(), new DocumentTemplateItem()
+                    }
+            };
+
+            var dbContextOptions = CreateNewContextOptions();
+            var user = await CreateUser(dbContextOptions);
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.DocumentTemplates.Add(template);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                var items = new Dictionary<int, string> { [0] = "Item 1", [1] = "Item 2" };
+                await service.AddDocumentFromTemplate(user.Id, template.IdDocumentTemplate, "Document Name", "Abstract", new List<string> { "tag1", "tag2" }, items);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var document = await context.Documents.Include(it => it.DocumentTags).FirstAsync();
+
+                Assert.Equal(template.IdDocumentTemplate, document.IdDocumentTemplate);
+                Assert.Equal(user.Id, document.UserId);
+                Assert.Equal(2, document.DocumentTags.Count);
+                Assert.Equal("Abstract", document.Abstract);
+                Assert.Equal("Document Name", document.Name);
+                Assert.Equal(2, await context.DocumentTemplateStateItems.CountAsync());
+            }
+        }
+
+        [Fact]
         public async Task Can_Add_Document()
         {
             var dbContextOptions = CreateNewContextOptions();
@@ -40,7 +82,7 @@ namespace ProiectColectiv.Tests.Services
                 Assert.Equal(user.Id, document.UserId);
                 Assert.Equal(2, document.DocumentTags.Count);
                 Assert.Equal(1, document.DocumentStates.Count);
-                Assert.Equal(new byte[] { 1, 2, 3 }, document.DocumentStates.First().Data);
+                Assert.Equal(new byte[] { 1, 2, 3 }, ((DocumentUploadState)document.DocumentStates.First()).Data);
             }
         }
 
@@ -79,7 +121,7 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
-        public async Task Can_Delete_document_ByID()
+        public async Task Can_Delete_Document_By_Id()
         {
             var dbContextOptions = CreateNewContextOptions();
 
@@ -105,13 +147,7 @@ namespace ProiectColectiv.Tests.Services
 
         private static async Task<User> CreateUserWithDocument(DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
-            var user = new User();
-
-            using (var context = new ApplicationDbContext(dbContextOptions))
-            {
-                context.Users.Add(user);
-                await context.SaveChangesAsync();
-            }
+            var user = await CreateUser(dbContextOptions);
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
@@ -120,6 +156,20 @@ namespace ProiectColectiv.Tests.Services
                 await unitOfWork.DocumentsService.AddDocument(user.Id, "File.doc", new byte[] { 1, 2, 3 }, new List<string> { "tag1", "tag2" });
                 await unitOfWork.Commit();
             }
+
+            return user;
+        }
+
+        private static async Task<User> CreateUser(DbContextOptions<ApplicationDbContext> dbContextOptions)
+        {
+            var user = new User();
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Users.Add(user);
+                await context.SaveChangesAsync();
+            }
+
             return user;
         }
     }

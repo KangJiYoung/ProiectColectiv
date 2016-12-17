@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
 using ProiectColectiv.Services.Data.UnitOfWork;
 using Xunit;

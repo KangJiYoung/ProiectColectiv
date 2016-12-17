@@ -10,7 +10,19 @@ namespace ProiectColectiv.Services.Data.Context
 
         public DbSet<DocumentState> DocumentStates { get; set; }
 
+        public DbSet<DocumentUploadState> DocumentUploadStates { get; set; }
+
+        public DbSet<DocumentTemplateState> DocumentTemplateStates { get; set; }
+
+        public DbSet<DocumentTemplateStateItem> DocumentTemplateStateItems { get; set; }
+
         public DbSet<DocumentTag> DocumentTags { get; set; }
+
+        public DbSet<DocumentTemplate> DocumentTemplates { get; set; }
+
+        public DbSet<DocumentTemplateItem> DocumentTemplateItems { get; set; }
+
+        public DbSet<DocumentTemplateItemValue> DocumentTemplateItemValues { get; set; }
 
         public DbSet<Tag> Tags { get; set; }
 

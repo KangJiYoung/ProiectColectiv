@@ -72,15 +72,6 @@ namespace ProiectColectiv.Web
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
-                var userManager = app.ApplicationServices.GetService<UserManager<User>>();
-                var roleManager = app.ApplicationServices.GetService<RoleManager<IdentityRole>>();
-                dbContext.Database.Migrate();
-                dbContext.EnsureSeedData(userManager, roleManager);
-            }
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -111,6 +102,15 @@ namespace ProiectColectiv.Web
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                var userManager = app.ApplicationServices.GetService<UserManager<User>>();
+                var roleManager = app.ApplicationServices.GetService<RoleManager<IdentityRole>>();
+                dbContext.Database.Migrate();
+                dbContext.EnsureSeedData(userManager, roleManager);
+            }
         }
     }
 }

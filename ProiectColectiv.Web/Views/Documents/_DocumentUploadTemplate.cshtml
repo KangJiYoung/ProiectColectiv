@@ -1,7 +1,47 @@
 ﻿@model DocumentUploadViewModel
 
-<form asp-controller="Documents" asp-action="DocumentUpload">
+<form asp-controller="Documents" asp-action="DocumentUpload" class="m-t-lg col-xs-12 col-md-6 col-lg-4" enctype="multipart/form-data">
     <input type="hidden" asp-for="IsTemplate" value="True" />
+
+    <div class="form-group">
+        <label asp-for="Tags" class="control-label"></label>
+        <div>
+            <select name="Tags" multiple data-role="tagsinput"></select>
+            <span asp-validation-for="Tags" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Abstract" class="control-label"></label>
+        <div>
+            <textarea asp-for="Abstract" class="control-label"></textarea>
+            <span asp-validation-for="Abstract" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DocumentName" class="control-label"></label>
+        <div>
+            <input asp-for="DocumentName" class="control-label" />
+            <span asp-validation-for="DocumentName" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">Template</label>
+        <div>
+            <select asp-for="IdTemplate" asp-items="ViewBag.DocumentTemplates" onchange="onTemplateChanged()" class="form-control">
+                <option>Alege un Template</option>
+            </select>
+        </div>
+    </div>
+    
+    <div id="documentTemplateItemsContainer">
+        @if (Model.IdTemplate.GetValueOrDefault() != default(int))
+        {
+            @await Html.PartialAsync("_DocumentUploadTemplateItems", Model.Items)
+        }
+    </div>
 
     <input type="submit" class="btn btn-primary" value="Adauga">
 </form>

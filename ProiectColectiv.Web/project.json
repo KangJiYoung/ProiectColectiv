@@ -2,6 +2,8 @@
   "userSecretsId": "aspnet-ProiectColectiv.Web-86f5d602-3b46-4dcf-bb51-2d0d57905354",
 
   "dependencies": {
+    "iTextSharp": "5.5.10",
+    "itextsharp.pdfa": "5.5.10",
     "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "1.0.0",

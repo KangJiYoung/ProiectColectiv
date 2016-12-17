@@ -33,5 +33,25 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
                 DocumentStatus = document.DocumentStates.Last().DocumentStatus,
                 CurrentVersion = document.DocumentStates.Last().Version
             };
+
+        public static DocumentTemplateItemViewModel ConvertToViewModel(DocumentTemplateItem item)
+            => new DocumentTemplateItemViewModel
+            {
+                IdDocumentTemplateItem = item.IdDocumentTemplateItem,
+                Label = item.Label,
+                DocumentTemplateItemValues = ConvertToViewModel(item.DocumentTemplateItemValues)
+            };
+
+        public static IList<DocumentTemplateItemViewModel> ConvertToViewModel(IList<DocumentTemplateItem> items)
+            => items.Select(ConvertToViewModel).ToList();
+
+        public static DocumentTemplateItemValueViewModel ConvertToViewModel(DocumentTemplateItemValue item)
+            => new DocumentTemplateItemValueViewModel
+            {
+                Value = item.Value
+            };
+
+        public static IList<DocumentTemplateItemValueViewModel> ConvertToViewModel(IList<DocumentTemplateItemValue> items)
+            => items.Select(ConvertToViewModel).ToList();
     }
 }

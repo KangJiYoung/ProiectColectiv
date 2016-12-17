@@ -1,8 +1,12 @@
-using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Core.Interfaces.UnitOfWork;
@@ -50,27 +54,39 @@ namespace ProiectColectiv.Web.Controllers
         #region Document Upload
 
         [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
-        public IActionResult DocumentUpload() => View(new DocumentUploadViewModel());
+        public async Task<IActionResult> DocumentUpload()
+        {
+            ViewBag.DocumentTemplates = new SelectList(await unitOfWork.DocumentsTemplateService.GetAllTemplates(), nameof(DocumentTemplate.IdDocumentTemplate), nameof(DocumentTemplate.Name));
+
+            return View(new DocumentUploadViewModel());
+        }
 
         [HttpPost]
         [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
         public async Task<IActionResult> DocumentUpload(DocumentUploadViewModel model)
         {
             if (!ModelState.IsValid)
+            {
+                ViewBag.DocumentTemplates = new SelectList(await unitOfWork.DocumentsTemplateService.GetAllTemplates(), nameof(DocumentTemplate.IdDocumentTemplate), nameof(DocumentTemplate.Name));
+
                 return View(model);
+            }
 
             var user = await userManager.GetUserAsync(HttpContext.User);
 
-            return model.IsTemplate
-                ? await DocumentUploadTemplate(model, user)
-                : await DocumentUploadFile(model, user);
-        }
+            if (model.IsTemplate)
+            {
+                var itemsDict = model.Items.ToDictionary(it => it.IdDocumentTemplateItem, it => it.Value);
 
-        private async Task<IActionResult> DocumentUploadFile(DocumentUploadViewModel model, User user)
-        {
-            var fileData = await fileManager.GetFileBytes(model.File);
+                await unitOfWork.DocumentsService.AddDocumentFromTemplate(user.Id, model.IdTemplate.Value, model.DocumentName, model.Abstract, model.Tags, itemsDict);
+            }
+            else
+            {
+                var fileData = await fileManager.GetFileBytes(model.File);
 
-            await unitOfWork.DocumentsService.AddDocument(user.Id, model.File.FileName, fileData, model.Tags);
+                await unitOfWork.DocumentsService.AddDocument(user.Id, model.File.FileName, fileData, model.Tags);
+            }
+
             await unitOfWork.Commit();
 
             TempData[Notifications.DOCUMENT_UPLOADED] = "Document adaugat cu success.";
@@ -78,9 +94,13 @@ namespace ProiectColectiv.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<IActionResult> DocumentUploadTemplate(DocumentUploadViewModel model, User user)
+        [HttpGet]
+        [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
+        public async Task<IActionResult> GetDocumentTemplateItems(int id)
         {
-            throw new System.NotImplementedException();
+            var items = await unitOfWork.DocumentsTemplateItemService.GetItemsFromTemplate(id);
+
+            return PartialView("_DocumentUploadTemplateItems", ViewModelMapping.ConvertToViewModel(items));
         }
 
         #endregion

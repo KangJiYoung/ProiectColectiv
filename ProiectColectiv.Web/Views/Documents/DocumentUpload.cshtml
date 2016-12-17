@@ -31,3 +31,20 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+
+        function onTemplateChanged() {
+            var value = $('#IdTemplate').val();
+
+            if ($.isNumeric(value)) {
+                $.get("/Documents/GetDocumentTemplateItems", { id: value }, function (result) {
+                    debugger;
+                    $('#documentTemplateItemsContainer').html(result);
+                });
+            }
+        }
+
+    </script>
+}

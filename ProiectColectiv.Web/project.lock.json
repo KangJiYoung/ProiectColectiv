@@ -3,6 +3,27 @@
   "version": 2,
   "targets": {
     ".NETFramework,Version=v4.6.1": {
+      "iTextSharp/5.5.10": {
+        "type": "package",
+        "compile": {
+          "lib/itextsharp.dll": {}
+        },
+        "runtime": {
+          "lib/itextsharp.dll": {}
+        }
+      },
+      "itextsharp.pdfa/5.5.10": {
+        "type": "package",
+        "dependencies": {
+          "iTextSharp": "5.5.10"
+        },
+        "compile": {
+          "lib/itextsharp.pdfa.dll": {}
+        },
+        "runtime": {
+          "lib/itextsharp.pdfa.dll": {}
+        }
+      },
       "Libuv/1.9.0": {
         "type": "package",
         "dependencies": {
@@ -2788,7 +2809,9 @@
           "Microsoft.EntityFrameworkCore": "1.0.1",
           "Microsoft.EntityFrameworkCore.SqlServer": "1.0.1",
           "NETStandard.Library": "1.6.0",
-          "ProiectColectiv.Core": "1.0.0"
+          "ProiectColectiv.Core": "1.0.0",
+          "iTextSharp": "5.5.10",
+          "itextsharp.pdfa": "5.5.10"
         },
         "compile": {
           "net461/ProiectColectiv.Services.dll": {}
@@ -2800,6 +2823,30 @@
     }
   },
   "libraries": {
+    "iTextSharp/5.5.10": {
+      "sha512": "dEswUp/ol8Vrv6e4XiJMmO8W+3vpGMP/tQdzqzYQ1HwXqNYAOPkixfI5U9E53DL/ju+EykiRGYgv3286mLra/A==",
+      "type": "package",
+      "path": "iTextSharp/5.5.10",
+      "files": [
+        "AGPL.txt",
+        "iTextSharp.5.5.10.nupkg.sha512",
+        "iTextSharp.nuspec",
+        "lib/iTextSharp.xml",
+        "lib/itextsharp.dll",
+        "notice.txt"
+      ]
+    },
+    "itextsharp.pdfa/5.5.10": {
+      "sha512": "YkUsS8J+eCJYT9ExdacT+SFIpLouPq5ZseNFbTCvnoJZE33bTv6CqS2b03O8dsIJCwZ7LKzg18ro9tuVixU5pQ==",
+      "type": "package",
+      "path": "itextsharp.pdfa/5.5.10",
+      "files": [
+        "AGPL.txt",
+        "itextsharp.pdfa.5.5.10.nupkg.sha512",
+        "itextsharp.pdfa.nuspec",
+        "lib/itextsharp.pdfa.dll"
+      ]
+    },
     "Libuv/1.9.0": {
       "sha512": "9Q7AaqtQhS8JDSIvRBt6ODSLWDBI4c8YxNxyCQemWebBFUtBbc6M5Vi5Gz1ZyIUlTW3rZK9bIr5gnVyv0z7a2Q==",
       "type": "package",
@@ -7945,7 +7992,9 @@
       "Microsoft.VisualStudio.Web.BrowserLink.Loader >= 14.0.0",
       "Microsoft.VisualStudio.Web.CodeGeneration.Tools >= 1.0.0-preview2-final",
       "Microsoft.VisualStudio.Web.CodeGenerators.Mvc >= 1.0.0-preview2-final",
-      "ProiectColectiv.Services >= 1.0.0-*"
+      "ProiectColectiv.Services >= 1.0.0-*",
+      "iTextSharp >= 5.5.10",
+      "itextsharp.pdfa >= 5.5.10"
     ],
     ".NETFramework,Version=v4.6.1": []
   },

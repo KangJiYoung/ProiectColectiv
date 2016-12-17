@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using ProiectColectiv.Core.Constants;
@@ -14,6 +16,28 @@ namespace ProiectColectiv.Services.Data.Context
             var adminUser = SeedAdminUser(context, userManager);
             SeedRoles(context, roleManager);
             SeedAdministratorRoleToAdminUser(context, userManager, adminUser);
+            SeedTemplate(context);
+        }
+
+        private static void SeedTemplate(ApplicationDbContext context)
+        {
+            var service = new DocumentsTemplateItemService(context);
+
+            if (context.DocumentTemplates.Any())
+                return;
+
+            var fileData = File.ReadAllBytes(Environment.CurrentDirectory + @"\Application\Resources\cerere_pentru_cazare_2014-2015.pdf");
+            var reader = new PdfReader(fileData);
+
+            var template = new DocumentTemplate
+            {
+                Data = fileData,
+                Name = DocumentTemplates.NUME,
+                DocumentTemplateItems = service.ParseItems(reader.AcroFields).ToList()
+            };
+
+            context.DocumentTemplates.Add(template);
+            context.SaveChanges();
         }
 
         private static void SeedRoles(ApplicationDbContext context, RoleManager<IdentityRole> roleManager)
@@ -28,7 +52,7 @@ namespace ProiectColectiv.Services.Data.Context
                 if (roles.Contains(role))
                     continue;
 
-                var result = roleManager.CreateAsync(new IdentityRole {Name = role}).Result;
+                var result = roleManager.CreateAsync(new IdentityRole { Name = role }).Result;
                 if (!result.Succeeded)
                     throw new Exception($"Cannot create role: {role}");
             }
@@ -43,7 +67,7 @@ namespace ProiectColectiv.Services.Data.Context
                     .Roles
                     .First(it => it.Name == Roles.ADMINISTRATOR);
 
-                context.UserRoles.Add(new IdentityUserRole<string> {RoleId = adminRole.Id, UserId = adminUser.Id});
+                context.UserRoles.Add(new IdentityUserRole<string> { RoleId = adminRole.Id, UserId = adminUser.Id });
                 context.SaveChanges();
             }
         }

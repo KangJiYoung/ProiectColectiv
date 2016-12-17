@@ -1,0 +1,28 @@
+﻿@model IList<DocumentTemplateItemViewModel>
+
+@for (var i = 0; i < Model.Count; i++)
+{
+    var item = Model[i];
+
+    <input value="@item.Label" type="hidden" name="Items[@i].Label" />
+    <input value="@item.IdDocumentTemplateItem" type="hidden" name="Items[@i].IdDocumentTemplateItem"/>
+
+    <div class="form-group">
+        <label class="control-label">@item.Label</label>
+        <div>
+            @if (item.DocumentTemplateItemValues.Count != 0)
+            {
+                <select name="Items[@i].Value" class="form-control">
+                    @foreach (var itemValue in item.DocumentTemplateItemValues)
+                    {
+                        <option value="@itemValue.Value">@itemValue.Value</option>
+                    }
+                </select>
+            }
+            else 
+            {
+                <input value="@item.Value" type="text" name="Items[@i].Value" class="form-control" />
+            }
+        </div>
+    </div>
+}

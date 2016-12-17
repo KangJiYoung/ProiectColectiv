@@ -29,7 +29,36 @@ namespace ProiectColectiv.Services
                 DateAdded = now,
                 UserId = userId
             };
-            document.DocumentStates.Add(new DocumentState { DocumentStatus = DocumentStatus.Draft, Version = DocumentVersions.FIRST_DRAFT, StatusDate = now, Data = data });
+            document.DocumentStates.Add(new DocumentUploadState { DocumentStatus = DocumentStatus.Draft, Version = DocumentVersions.FIRST_DRAFT, StatusDate = now, Data = data });
+
+            foreach (var tag in tags)
+            {
+                var dbTag = await dbContext
+                    .Tags
+                    .FirstOrDefaultAsync(it => it.Name == tag);
+
+                document.DocumentTags.Add(new DocumentTag { Tag = dbTag ?? new Tag { Name = tag } });
+            }
+
+            dbContext.Documents.Add(document);
+        }
+
+        public async Task AddDocumentFromTemplate(string userId, int idTemplate, string name, string @abstract, IList<string> tags, IDictionary<int, string> items)
+        {
+            var now = DateTime.Now;
+            var document = new Document
+            {
+                Name = name,
+                IdDocumentTemplate = idTemplate,
+                Abstract = @abstract,
+                DateAdded = now,
+                UserId = userId
+            };
+
+            var state = new DocumentTemplateState { DocumentStatus = DocumentStatus.Draft, Version = DocumentVersions.FIRST_DRAFT, StatusDate = now };
+            foreach (var item in items)
+                state.DocumentTemplateStateItems.Add(new DocumentTemplateStateItem { IdDocumentTemplateItem = item.Key, Value = item.Value });
+            document.DocumentStates.Add(state);
 
             foreach (var tag in tags)
             {

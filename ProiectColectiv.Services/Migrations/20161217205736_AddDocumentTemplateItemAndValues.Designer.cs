@@ -8,9 +8,10 @@ using ProiectColectiv.Services.Data.Context;
 namespace ProiectColectiv.Services.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161217205736_AddDocumentTemplateItemAndValues")]
+    partial class AddDocumentTemplateItemAndValues
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -128,12 +129,10 @@ namespace ProiectColectiv.Services.Migrations
                     b.Property<int>("IdDocument")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Abstract")
-                        .HasAnnotation("MaxLength", 100);
-
                     b.Property<DateTime>("DateAdded");
 
-                    b.Property<int?>("IdDocumentTemplate");
+                    b.Property<string>("Descriere")
+                        .HasAnnotation("MaxLength", 100);
 
                     b.Property<DateTime?>("LastModified");
 
@@ -146,8 +145,6 @@ namespace ProiectColectiv.Services.Migrations
 
                     b.HasKey("IdDocument");
 
-                    b.HasIndex("IdDocumentTemplate");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Documents");
@@ -158,8 +155,7 @@ namespace ProiectColectiv.Services.Migrations
                     b.Property<int>("IdDocumentState")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired();
+                    b.Property<byte[]>("Data");
 
                     b.Property<int>("DocumentStatus");
 
@@ -174,8 +170,6 @@ namespace ProiectColectiv.Services.Migrations
                     b.HasIndex("IdDocument");
 
                     b.ToTable("DocumentStates");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("DocumentState");
                 });
 
             modelBuilder.Entity("ProiectColectiv.Core.DomainModel.Entities.DocumentTag", b =>
@@ -203,7 +197,10 @@ namespace ProiectColectiv.Services.Migrations
 
                     b.Property<byte[]>("Data");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Descriere")
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<string>("Nume")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 100);
 
@@ -245,26 +242,6 @@ namespace ProiectColectiv.Services.Migrations
                     b.HasIndex("IdDocumentTemplateItem");
 
                     b.ToTable("DocumentTemplateItemValues");
-                });
-
-            modelBuilder.Entity("ProiectColectiv.Core.DomainModel.Entities.DocumentTemplateStateItem", b =>
-                {
-                    b.Property<int>("IdDocumentTemplateStateItem")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int?>("DocumentTemplateStateIdDocumentState");
-
-                    b.Property<int>("IdDocumentTemplateItem");
-
-                    b.Property<string>("Value");
-
-                    b.HasKey("IdDocumentTemplateStateItem");
-
-                    b.HasIndex("DocumentTemplateStateIdDocumentState");
-
-                    b.HasIndex("IdDocumentTemplateItem");
-
-                    b.ToTable("DocumentTemplateStateItems");
                 });
 
             modelBuilder.Entity("ProiectColectiv.Core.DomainModel.Entities.Tag", b =>
@@ -330,27 +307,6 @@ namespace ProiectColectiv.Services.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("ProiectColectiv.Core.DomainModel.Entities.DocumentTemplateState", b =>
-                {
-                    b.HasBaseType("ProiectColectiv.Core.DomainModel.Entities.DocumentState");
-
-
-                    b.ToTable("DocumentTemplateState");
-
-                    b.HasDiscriminator().HasValue("DocumentTemplateState");
-                });
-
-            modelBuilder.Entity("ProiectColectiv.Core.DomainModel.Entities.DocumentUploadState", b =>
-                {
-                    b.HasBaseType("ProiectColectiv.Core.DomainModel.Entities.DocumentState");
-
-                    b.Property<byte[]>("Data");
-
-                    b.ToTable("DocumentUploadState");
-
-                    b.HasDiscriminator().HasValue("DocumentUploadState");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole")
@@ -390,10 +346,6 @@ namespace ProiectColectiv.Services.Migrations
 
             modelBuilder.Entity("ProiectColectiv.Core.DomainModel.Entities.Document", b =>
                 {
-                    b.HasOne("ProiectColectiv.Core.DomainModel.Entities.DocumentTemplate", "DocumentTemplate")
-                        .WithMany()
-                        .HasForeignKey("IdDocumentTemplate");
-
                     b.HasOne("ProiectColectiv.Core.DomainModel.Entities.User", "User")
                         .WithMany("Documents")
                         .HasForeignKey("UserId")
@@ -433,18 +385,6 @@ namespace ProiectColectiv.Services.Migrations
                 {
                     b.HasOne("ProiectColectiv.Core.DomainModel.Entities.DocumentTemplateItem", "DocumentTemplateItem")
                         .WithMany("DocumentTemplateItemValues")
-                        .HasForeignKey("IdDocumentTemplateItem")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("ProiectColectiv.Core.DomainModel.Entities.DocumentTemplateStateItem", b =>
-                {
-                    b.HasOne("ProiectColectiv.Core.DomainModel.Entities.DocumentTemplateState")
-                        .WithMany("DocumentTemplateStateItems")
-                        .HasForeignKey("DocumentTemplateStateIdDocumentState");
-
-                    b.HasOne("ProiectColectiv.Core.DomainModel.Entities.DocumentTemplateItem", "DocumentTemplateItem")
-                        .WithMany()
                         .HasForeignKey("IdDocumentTemplateItem")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

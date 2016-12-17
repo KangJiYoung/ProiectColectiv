@@ -8,9 +8,10 @@ using ProiectColectiv.Services.Data.Context;
 namespace ProiectColectiv.Services.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20161217232745_RefactorDocumentStates")]
+    partial class RefactorDocumentStates
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -128,10 +129,10 @@ namespace ProiectColectiv.Services.Migrations
                     b.Property<int>("IdDocument")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Abstract")
-                        .HasAnnotation("MaxLength", 100);
-
                     b.Property<DateTime>("DateAdded");
+
+                    b.Property<string>("Descriere")
+                        .HasAnnotation("MaxLength", 100);
 
                     b.Property<int?>("IdDocumentTemplate");
 
@@ -203,7 +204,10 @@ namespace ProiectColectiv.Services.Migrations
 
                     b.Property<byte[]>("Data");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Descriere")
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<string>("Nume")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 100);
 
