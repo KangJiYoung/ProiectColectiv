@@ -74,17 +74,18 @@ namespace ProiectColectiv.Services
 
         public async Task AddDocumentNewVersion(string userId, int idDocument, byte[] data)
         {
-            var lastDocumentState = await dbContext
-                .DocumentUploadStates
-                .LastAsync(it => it.IdDocument == idDocument);
+            var document = await GetDocumentById(idDocument);
+            var lastState = document.DocumentStates.Last();
+            var now = DateTime.Now;
 
-            dbContext.DocumentStates.Add(new DocumentUploadState
+            document.LastModified = now;
+            document.DocumentStates.Add(new DocumentUploadState
             {
                 Data = data,
+                StatusDate = now,
                 IdDocument = idDocument,
-                StatusDate = DateTime.Now,
-                DocumentStatus = lastDocumentState.DocumentStatus,
-                Version = lastDocumentState.Version + DocumentVersions.DRAFT_VERSION_INCREMENT
+                DocumentStatus = lastState.DocumentStatus,
+                Version = lastState.Version + DocumentVersions.DRAFT_VERSION_INCREMENT
             });
         }
 
