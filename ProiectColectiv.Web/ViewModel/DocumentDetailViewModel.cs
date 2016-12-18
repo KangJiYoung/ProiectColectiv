@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ProiectColectiv.Core.DomainModel.Enums;
 
 namespace ProiectColectiv.Web.ViewModel
@@ -22,5 +23,7 @@ namespace ProiectColectiv.Web.ViewModel
         public string CreatedBy { get; set; }
 
         public string Abstract { get; set; }
+
+        public IEnumerable<string> Tags { get; set; }
     }
 }

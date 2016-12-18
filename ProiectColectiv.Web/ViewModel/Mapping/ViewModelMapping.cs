@@ -33,7 +33,8 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
                 DocumentStatus = document.DocumentStates.Last().DocumentStatus,
                 CurrentVersion = document.DocumentStates.Last().Version,
                 Abstract = document.Abstract,
-                CreatedBy = document.User?.UserName
+                CreatedBy = document.User?.UserName,
+                Tags = document.DocumentTags.Select(it => it.Tag.Name)
             };
 
         public static DocumentTemplateItemViewModel ConvertToViewModel(DocumentTemplateItem item)

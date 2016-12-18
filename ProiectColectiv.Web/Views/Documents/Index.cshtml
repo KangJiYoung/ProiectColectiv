@@ -52,12 +52,13 @@
                                         <small>Added: @document.DateAdded.ToString("MMMM dd, yyyy")</small>
                                         <br />
                                         <small>Status: <span class="label label-primary">@document.DocumentStatus @document.CurrentVersion</span></small>
+                                        <br />
+                                        <small>Tags: @string.Join(", ", document.Tags)</small>
                                     </div>
                                 </a>
                                 </div>
                             </div>
                     }
-
                 </div>
             </div>
         </div>
@@ -73,13 +74,12 @@
                 <text>window.toastr.success('@TempData[Notifications.DOCUMENT_UPLOADED]', 'Success');</text>
             }
 
-            $(".tag-list > li > a").click(function () {
-                console.log($(this).text());
-                $(this).toggleClass("tag-selected");
-            })
+            $(".tag-list > li > a")
+                .click(function () {
+                    console.log($(this).text());
+                    $(this).toggleClass("tag-selected");
+                });
         });
-
-        
 
         function deleteDocument(id) {
             $.post("/Documents/DocumentDelete",
