@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -157,6 +153,20 @@ namespace ProiectColectiv.Web.Controllers
             await unitOfWork.DocumentsService.DeleteDocumentById(id);
 
             return Json(new { success = true, message = "Documentul a fost sters cu success!" });
+        }
+
+        #endregion
+
+        #region Document Status Change
+
+        public async Task<IActionResult> DocumentStatusChange(DocumentStatusChangeViewModel model)
+        {
+            await unitOfWork.DocumentsService.ChangeStatus(model.IdDocument.Value, model.DocumentStatus);
+            await unitOfWork.Commit();
+
+            TempData[Notifications.DOCUMENT_VERSION_CHANGED] = "Versiunea documentului a fost schimbata cu success.";
+
+            return RedirectToAction(nameof(DocumentDetails), new { id = model.IdDocument });
         }
 
         #endregion

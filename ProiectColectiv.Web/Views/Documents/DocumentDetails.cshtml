@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@using ProiectColectiv.Core.DomainModel.Enums
 @model DocumentDetailViewModel
 
 @{
@@ -14,59 +15,76 @@
                         <div class="m-b-md">
                             <h2>Detalii Document: @Model.Name</h2>
                         </div>
-                        <dl class="dl-horizontal">
-                            <dt>Status:</dt>
-                            <dd><span class="label label-primary">@Model.DocumentStatus</span></dd>
-                        </dl>
+                        <div class="col-lg-5">
+                            <dl class="dl-horizontal">
+                                <dt>Status:</dt>
+                                <dd>
+                                    <span class="label label-primary">@Model.DocumentStatus</span>
+
+                                    @switch (Model.DocumentStatus)
+                                    {
+                                        case DocumentStatus.Draft:
+                                            <a class="btn btn-primary btn-xs pull-right" onclick="onDocumentStatusChange(@((int)DocumentStatus.Final))">Seteaza ca FINAL</a>
+                                            break;
+                                        case DocumentStatus.Final:
+                                            <a class="btn btn-primary btn-xs pull-right" onclick="onDocumentStatusChange(@((int)DocumentStatus.Draft))">Seteaza ca DRAFT</a>
+                                            break;
+                                    }
+                                    
+                                    @await Html.PartialAsync("_DocumentStatusChange", new DocumentStatusChangeViewModel { IdDocument = Model.IdDocument })
+                                </dd>
+                            </dl>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-5">
                         <dl class="dl-horizontal">
                             <dt>Versiunea:</dt>
-                            <dd>@Model.CurrentVersion 
-                                @if (Model.IsFromTemplate)
-                                {
-                                }
-                                else
-                                {
-                                    <a href="#" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#myModal">Adauga</a>
-                                }
-                            </dd>
-                            <dt>Data adaugarii:</dt>
-                            <dd>@Model.DateAdded.ToString(CultureInfo.InvariantCulture)</dd>
-                            <dt>Ultima modificare:</dt>
-                            <dd>@(Model.LastModified?.ToString(CultureInfo.InvariantCulture) ?? "N/A")</dd>
-                        </dl>
-                    </div>
-                    <div class="col-lg-7">
-                        <dl class="dl-horizontal">
-                            <dt>Creat de:</dt>
-                            <dd>@Model.CreatedBy</dd>
-                            <dt>Abstract:</dt>
-                            <dd>@Model.Abstract</dd>
-                        </dl>
-                    </div>
+                            <dd>
+                                @Model.CurrentVersion
+                            @if (Model.IsFromTemplate)
+                            {
+                            }
+                            else
+                            {
+                                <a href="#" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#myModal">Adauga</a>
+                            }
+                        </dd>
+                        <dt>Data adaugarii:</dt>
+                        <dd>@Model.DateAdded.ToString(CultureInfo.InvariantCulture)</dd>
+                        <dt>Ultima modificare:</dt>
+                        <dd>@(Model.LastModified?.ToString(CultureInfo.InvariantCulture) ?? "N/A")</dd>
+                    </dl>
+                </div>
+                <div class="col-lg-7">
+                    <dl class="dl-horizontal">
+                        <dt>Creat de:</dt>
+                        <dd>@Model.CreatedBy</dd>
+                        <dt>Abstract:</dt>
+                        <dd>@Model.Abstract</dd>
+                    </dl>
                 </div>
             </div>
-            <div class="row m-t-sm">
-                <div class="col-lg-12">
-                    <div class="panel blank-panel">
-                        <div class="panel-heading">
-                            <div class="panel-options">
-
-                            </div>
-                        </div>
-
-                        <div class="panel-body">
+        </div>
+        <div class="row m-t-sm">
+            <div class="col-lg-12">
+                <div class="panel blank-panel">
+                    <div class="panel-heading">
+                        <div class="panel-options">
 
                         </div>
+                    </div>
+
+                    <div class="panel-body">
 
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -87,12 +105,22 @@
 @section Scripts{
     <script>
 
-        $(function() {
+        $(function () {
             @if (TempData.ContainsKey(Notifications.DOCUMENT_UPLOADED_NEW_VERSION))
             {
                 <text>window.toastr.success('@TempData[Notifications.DOCUMENT_UPLOADED_NEW_VERSION]', 'Success');</text>
             }
+
+            @if (TempData.ContainsKey(Notifications.DOCUMENT_VERSION_CHANGED))
+            {
+                <text>window.toastr.success('@TempData[Notifications.DOCUMENT_VERSION_CHANGED]', 'Success');</text>
+            }
         });
+
+        function onDocumentStatusChange(documentStatus) {
+            $('#DocumentStatus').val(documentStatus);
+            $('#formDocumentStatusChange').submit();
+        }
 
     </script>
 }

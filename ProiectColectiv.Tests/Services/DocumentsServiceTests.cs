@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using ProiectColectiv.Core.DomainModel.Entities;
+using ProiectColectiv.Core.DomainModel.Enums;
 using ProiectColectiv.Services;
 using ProiectColectiv.Services.Data.Context;
 using ProiectColectiv.Services.Data.UnitOfWork;
@@ -24,6 +25,87 @@ namespace ProiectColectiv.Tests.Services
                    .UseInternalServiceProvider(serviceProvider);
 
             return builder.Options;
+        }
+
+        [Theory]
+        [InlineData(0.01, DocumentStatus.Draft, 0.02)]
+        [InlineData(0.02, DocumentStatus.Draft, 0.03)]
+        [InlineData(0.01, DocumentStatus.Final, 1.00)]
+        [InlineData(1.00, DocumentStatus.Draft, 1.01)]
+        [InlineData(1.01, DocumentStatus.Draft, 1.02)]
+        [InlineData(1.02, DocumentStatus.Final, 2.00)]
+        public void Can_Get_New_Version(double initial, DocumentStatus status, double expected)
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                var result = service.GetNextVersion(initial, status);
+                Assert.Equal(expected, result);
+            }
+        }
+
+        [Fact]
+        public async Task Can_Change_Document_Status_From_Template()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            var user = await CreateUser(dbContextOptions);
+
+            await CreateTemplate(dbContextOptions, user.Id);
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                await service.ChangeStatus(1, DocumentStatus.Final);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var document = await context.Documents.Include(it => it.DocumentStates).FirstAsync();
+
+                Assert.Equal(2, document.DocumentStates.Count);
+
+                var prevState = await context.DocumentStates.OfType<DocumentTemplateState>().Include(it => it.DocumentTemplateStateItems).FirstAsync();
+                var lastState = await context.DocumentStates.OfType<DocumentTemplateState>().Include(it => it.DocumentTemplateStateItems).LastAsync();
+
+                Assert.Equal(DocumentStatus.Final, lastState.DocumentStatus);
+                Assert.Equal(prevState.DocumentTemplateStateItems.Count, lastState.DocumentTemplateStateItems.Count);
+                Assert.Equal(1, lastState.Version);
+                Assert.NotEqual(prevState.StatusDate, lastState.StatusDate);
+            }
+        }
+
+        [Fact]
+        public async Task Can_Change_Document_Status()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            await CreateUserWithDocument(dbContextOptions);
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                await service.ChangeStatus(1, DocumentStatus.Final);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var document = await context.Documents.Include(it => it.DocumentStates).FirstAsync();
+
+                Assert.Equal(2, document.DocumentStates.Count);
+
+                var prevState = (DocumentUploadState)document.DocumentStates.First();
+                var lastState = (DocumentUploadState)document.DocumentStates.Last();
+
+                Assert.Equal(DocumentStatus.Final, lastState.DocumentStatus);
+                Assert.Equal(prevState.Data, lastState.Data);
+                Assert.Equal(1, lastState.Version);
+                Assert.NotEqual(prevState.StatusDate, lastState.StatusDate);
+            }
         }
 
         [Fact]
@@ -56,31 +138,9 @@ namespace ProiectColectiv.Tests.Services
         [Fact]
         public async Task Can_Add_Document_From_Template()
         {
-            var template = new DocumentTemplate
-            {
-                DocumentTemplateItems = new List<DocumentTemplateItem>
-                    {
-                        new DocumentTemplateItem(), new DocumentTemplateItem()
-                    }
-            };
-
             var dbContextOptions = CreateNewContextOptions();
             var user = await CreateUser(dbContextOptions);
-
-            using (var context = new ApplicationDbContext(dbContextOptions))
-            {
-                context.DocumentTemplates.Add(template);
-                await context.SaveChangesAsync();
-            }
-
-            using (var context = new ApplicationDbContext(dbContextOptions))
-            {
-                var service = new DocumentsService(context);
-
-                var items = new Dictionary<int, string> { [0] = "Item 1", [1] = "Item 2" };
-                await service.AddDocumentFromTemplate(user.Id, template.IdDocumentTemplate, "Document Name", "Abstract", new List<string> { "tag1", "tag2" }, items);
-                await context.SaveChangesAsync();
-            }
+            var template = await CreateTemplate(dbContextOptions, user.Id);
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
@@ -172,6 +232,36 @@ namespace ProiectColectiv.Tests.Services
             }
         }
 
+        #region Private
+
+        private async Task<DocumentTemplate> CreateTemplate(DbContextOptions<ApplicationDbContext> dbContextOptions, string userId)
+        {
+            var template = new DocumentTemplate
+            {
+                DocumentTemplateItems = new List<DocumentTemplateItem>
+                {
+                    new DocumentTemplateItem(), new DocumentTemplateItem()
+                }
+            };
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.DocumentTemplates.Add(template);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                var items = new Dictionary<int, string> { [0] = "Item 1", [1] = "Item 2" };
+                await service.AddDocumentFromTemplate(userId, template.IdDocumentTemplate, "Document Name", "Abstract", new List<string> { "tag1", "tag2" }, items);
+                await context.SaveChangesAsync();
+            }
+
+            return template;
+        }
+
         private static async Task<User> CreateUserWithDocument(DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
             var user = await CreateUser(dbContextOptions);
@@ -199,5 +289,7 @@ namespace ProiectColectiv.Tests.Services
 
             return user;
         }
+
+        #endregion
     }
 }

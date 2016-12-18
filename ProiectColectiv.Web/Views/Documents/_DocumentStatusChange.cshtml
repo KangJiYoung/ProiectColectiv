@@ -1,0 +1,6 @@
+﻿@model DocumentStatusChangeViewModel
+
+<form asp-controller="Documents" asp-action="DocumentStatusChange" id="formDocumentStatusChange">
+    <input type="hidden" asp-for="IdDocument" />
+    <input type="hidden" asp-for="DocumentStatus" />
+</form>

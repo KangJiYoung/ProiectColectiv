@@ -85,8 +85,38 @@ namespace ProiectColectiv.Services
                 StatusDate = now,
                 IdDocument = idDocument,
                 DocumentStatus = lastState.DocumentStatus,
-                Version = lastState.Version + DocumentVersions.DRAFT_VERSION_INCREMENT
+                Version = GetNextVersion(lastState.Version, lastState.DocumentStatus)
             });
+        }
+
+        public async Task ChangeStatus(int idDocument, DocumentStatus documentStatus)
+        {
+            var document = await dbContext
+                .Documents
+                .FirstAsync(it => it.IdDocument == idDocument);
+            var now = DateTime.Now;
+
+            var lastState = document.IdDocumentTemplate.HasValue
+                ? await dbContext.DocumentStates.Where(it => it.IdDocument == idDocument).OfType<DocumentTemplateState>().Include(it => it.DocumentTemplateStateItems).LastAsync()
+                : (DocumentState)await dbContext.DocumentStates.Where(it => it.IdDocument == idDocument).OfType<DocumentUploadState>().LastAsync();
+
+            dbContext.Entry(lastState).State = EntityState.Detached;
+            lastState.IdDocumentState = 0;
+            lastState.StatusDate = now;
+            lastState.DocumentStatus = documentStatus;
+            lastState.Version = GetNextVersion(lastState.Version, documentStatus);
+
+            if (document.IdDocumentTemplate.HasValue)
+            {
+                foreach (var item in ((DocumentTemplateState)lastState).DocumentTemplateStateItems)
+                {
+                    dbContext.Entry(item).State = EntityState.Detached;
+                    item.IdDocumentTemplateStateItem = 0;
+                }
+            }
+
+            document.LastModified = now;
+            document.DocumentStates.Add(lastState);
         }
 
         public Task<List<Document>> GetDocumentsByUserId(string userId)
@@ -117,6 +147,19 @@ namespace ProiectColectiv.Services
 
             dbContext.Remove(document);
             await dbContext.SaveChangesAsync();
+        }
+
+        public double GetNextVersion(double current, DocumentStatus status)
+        {
+            switch (status)
+            {
+                case DocumentStatus.Draft:
+                    return current + DocumentVersions.DRAFT_VERSION_INCREMENT;
+                case DocumentStatus.Final:
+                    return Math.Round(current + DocumentVersions.FINAL_VERSION_INCREMENT, 0);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(status), status, null);
+            }
         }
     }
 }

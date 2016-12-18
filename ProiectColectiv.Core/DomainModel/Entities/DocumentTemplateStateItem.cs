@@ -11,6 +11,8 @@ namespace ProiectColectiv.Core.DomainModel.Entities
 
         public string Value { get; set; }
 
+        public DocumentTemplateState DocumentTemplateState { get; set; }
+
         public DocumentTemplateItem DocumentTemplateItem { get; set; }
     }
 }
