@@ -21,7 +21,7 @@
                         @foreach (var tag in ViewBag.Tags)
                         {
                             <ul class="tag-list" style="padding: 0">
-                                <li><a href="">@tag</a></li>
+                                <li><a>@tag</a></li>
                             </ul>
                         }
                         <div class="clearfix"></div>
@@ -73,8 +73,13 @@
                 <text>window.toastr.success('@TempData[Notifications.DOCUMENT_UPLOADED]', 'Success');</text>
             }
 
-
+            $(".tag-list > li > a").click(function () {
+                console.log($(this).text());
+                $(this).toggleClass("tag-selected");
+            })
         });
+
+        
 
         function deleteDocument(id) {
             $.post("/Documents/DocumentDelete",
