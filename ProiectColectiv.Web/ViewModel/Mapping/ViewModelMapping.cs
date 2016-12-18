@@ -26,12 +26,14 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
             => new DocumentDetailViewModel
             {
                 IdDocument = document.IdDocument,
+                IsFromTemplate = document.IdDocumentTemplate != null,
                 Name = document.Name,
                 DateAdded = document.DateAdded,
                 LastModified = document.LastModified,
-                Tags = document.DocumentTags.Select(it => it.Tag.Name),
                 DocumentStatus = document.DocumentStates.Last().DocumentStatus,
-                CurrentVersion = document.DocumentStates.Last().Version
+                CurrentVersion = document.DocumentStates.Last().Version,
+                Abstract = document.Abstract,
+                CreatedBy = document.User?.UserName
             };
 
         public static DocumentTemplateItemViewModel ConvertToViewModel(DocumentTemplateItem item)

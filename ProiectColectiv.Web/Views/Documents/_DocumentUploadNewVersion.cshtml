@@ -1,0 +1,15 @@
+﻿@model DocumentUploadNewVersionViewModel
+
+<form asp-controller="Documents" asp-action="DocumentUploadNewVersion" enctype="multipart/form-data">
+    <input type="hidden" asp-for="IdDocument" />
+
+    <div class="form-group">
+        <label asp-for="File" class="control-label"></label>
+        <div>
+            <input asp-for="File" />
+            <span asp-validation-for="File" class="text-danger"></span>
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-primary pull-right" value="Adauga">
+</form>

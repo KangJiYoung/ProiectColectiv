@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -101,6 +102,26 @@ namespace ProiectColectiv.Web.Controllers
             var items = await unitOfWork.DocumentsTemplateItemService.GetItemsFromTemplate(id);
 
             return PartialView("_DocumentUploadTemplateItems", ViewModelMapping.ConvertToViewModel(items));
+        }
+
+        #endregion
+
+        #region Document Upload New Version
+
+        public async Task<IActionResult> DocumentUploadNewVersion(DocumentUploadNewVersionViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return PartialView("_DocumentUploadNewVersion", model);
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            var fileData = await fileManager.GetFileBytes(model.File);
+
+            await unitOfWork.DocumentsService.AddDocumentNewVersion(user.Id, model.IdDocument.Value, fileData);
+            await unitOfWork.Commit();
+
+            TempData[Notifications.DOCUMENT_UPLOADED_NEW_VERSION] = "Versiune noua adaugata cu success.";
+
+            return RedirectToAction(nameof(DocumentDetails), new { id = model.IdDocument });
         }
 
         #endregion

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using ProiectColectiv.Core.DomainModel.Enums;
 
 namespace ProiectColectiv.Web.ViewModel
@@ -7,6 +6,8 @@ namespace ProiectColectiv.Web.ViewModel
     public class DocumentDetailViewModel
     {
         public int IdDocument { get; set; }
+
+        public bool IsFromTemplate { get; set; }
 
         public string Name { get; set; }
 
@@ -18,6 +19,8 @@ namespace ProiectColectiv.Web.ViewModel
 
         public DateTime? LastModified { get; set; }
 
-        public IEnumerable<string> Tags { get; set; }
+        public string CreatedBy { get; set; }
+
+        public string Abstract { get; set; }
     }
 }
