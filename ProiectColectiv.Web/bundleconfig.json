@@ -5,11 +5,11 @@
       "content/css/animate.css",
       "content/css/bootstrap.css",
       "content/css/font-awesome.css",
-      "content/css/style.css",
       "content/css/bootstrap-chosen.css",
       "content/css/toastr.min.css",
       "content/css/custom.css",
-      "content/css/bootstrap-tagsinput.css"
+      "content/css/bootstrap-tagsinput.css",
+      "content/css/style.css"
     ],
     "minify": {
       "enabled": true,
@@ -23,7 +23,9 @@
       "content/js/jquery.slimscroll.min.js",
       "content/js/chosen.jquery.js",
       "content/js/toastr.min.js",
-      "content/js/bootstrap-tagsinput.js"
+      "content/js/bootstrap-tagsinput.js",
+      "content/js/confirm-dialog.js",
+      "content/js/main.js"
     ],
     "minify": {
       "enabled": true,
