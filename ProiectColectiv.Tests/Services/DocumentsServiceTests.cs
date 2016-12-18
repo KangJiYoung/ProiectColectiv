@@ -27,6 +27,33 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
+        public async Task Can_Add_Document_New_Version()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            var user = await CreateUserWithDocument(dbContextOptions);
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                await service.AddDocumentNewVersion(user.Id, 1, new byte[] { 2, 3, 4 });
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var document = await context.Documents.Include(it => it.DocumentStates).FirstAsync();
+
+                Assert.Equal(2, document.DocumentStates.Count);
+
+                var lastState = (DocumentUploadState)document.DocumentStates.Last();
+
+                Assert.Equal(new byte[] { 2, 3, 4 }, lastState.Data);
+                Assert.Equal(0.02, lastState.Version);
+            }
+        }
+
+        [Fact]
         public async Task Can_Add_Document_From_Template()
         {
             var template = new DocumentTemplate

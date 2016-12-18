@@ -11,5 +11,6 @@ namespace ProiectColectiv.Core.Interfaces
         Task DeleteDocumentById(int idDocument);
         Task AddDocument(string userId, string name, byte[] data, IList<string> tags);
         Task AddDocumentFromTemplate(string userId, int idTemplate, string name, string @abstract, IList<string> tags, IDictionary<int, string> items);
+        Task AddDocumentNewVersion(string userId, int idDocument, byte[] data);
     }
 }

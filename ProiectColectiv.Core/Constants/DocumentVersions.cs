@@ -3,5 +3,6 @@
     public static class DocumentVersions
     {
         public const double FIRST_DRAFT = 0.01;
+        public const double DRAFT_VERSION_INCREMENT = 0.01;
     }
 }

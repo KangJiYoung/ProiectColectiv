@@ -1,7 +1,8 @@
-﻿@model DocumentDetailViewModel
+﻿@using System.Globalization
+@model DocumentDetailViewModel
 
 @{
-    ViewBag.Title = "Document Details";
+    ViewBag.Title = "Detalii Document";
 }
 
 <div class="row">
@@ -11,7 +12,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="m-b-md">
-                            <h2>Document Details: @Model.Name</h2>
+                            <h2>Detalii Document: @Model.Name</h2>
                         </div>
                         <dl class="dl-horizontal">
                             <dt>Status:</dt>
@@ -20,23 +21,32 @@
                     </div>
                 </div>
                 <div class="row">
-                    <dl class="dl-horizontal">
-
-                        <dt>Version:</dt>
-                        <dd>@Model.CurrentVersion</dd>
-                        <dt>Date Added:</dt>
-                        <dd>@Model.DateAdded.ToShortDateString()</dd>
-                        <dt>Last Modified:</dt>
-                        <dd>@(Model.LastModified?.ToShortDateString() ?? "N/A")</dd>
-
-                        <dt>Tags:</dt>
-                        <ul class="tag-list">
-                            @foreach (var tag in Model.Tags)
-                            {
-                                <li><a href=""><i class="fa fa-tag"></i> @tag</a></li>
-                            }
-                        </ul>
-                    </dl>
+                    <div class="col-lg-5">
+                        <dl class="dl-horizontal">
+                            <dt>Versiunea:</dt>
+                            <dd>@Model.CurrentVersion 
+                                @if (Model.IsFromTemplate)
+                                {
+                                }
+                                else
+                                {
+                                    <a href="#" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#myModal">Adauga</a>
+                                }
+                            </dd>
+                            <dt>Data adaugarii:</dt>
+                            <dd>@Model.DateAdded.ToString(CultureInfo.InvariantCulture)</dd>
+                            <dt>Ultima modificare:</dt>
+                            <dd>@(Model.LastModified?.ToString(CultureInfo.InvariantCulture) ?? "N/A")</dd>
+                        </dl>
+                    </div>
+                    <div class="col-lg-7">
+                        <dl class="dl-horizontal">
+                            <dt>Creat de:</dt>
+                            <dd>@Model.CreatedBy</dd>
+                            <dt>Abstract:</dt>
+                            <dd>@Model.Abstract</dd>
+                        </dl>
+                    </div>
                 </div>
             </div>
             <div class="row m-t-sm">
@@ -58,3 +68,31 @@
         </div>
     </div>
 </div>
+<div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-laptop modal-icon"></i>
+                <h4 class="modal-title">Incarca Document</h4>
+                <small class="font-bold">Adauga o noua versiune a documentului.</small>
+            </div>
+            <div class="modal-body">
+                @await Html.PartialAsync("_DocumentUploadNewVersion", new DocumentUploadNewVersionViewModel { IdDocument = Model.IdDocument })
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+
+        $(function() {
+            @if (TempData.ContainsKey(Notifications.DOCUMENT_UPLOADED_NEW_VERSION))
+            {
+                <text>window.toastr.success('@TempData[Notifications.DOCUMENT_UPLOADED_NEW_VERSION]', 'Success');</text>
+            }
+        });
+
+    </script>
+}
