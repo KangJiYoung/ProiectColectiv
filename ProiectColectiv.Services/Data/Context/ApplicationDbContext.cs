@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using ProiectColectiv.Core.DomainModel.Entities;
 
 namespace ProiectColectiv.Services.Data.Context
@@ -29,6 +30,17 @@ namespace ProiectColectiv.Services.Data.Context
         public ApplicationDbContext(DbContextOptions options)
             : base(options)
         {
+        }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<DocumentTemplateState>()
+                .HasBaseType<DocumentState>()
+                .HasMany(it => it.DocumentTemplateStateItems)
+                .WithOne(it => it.DocumentTemplateState)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
