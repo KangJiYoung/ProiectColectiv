@@ -14,6 +14,7 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
             this.dbContext = dbContext;
 
             DocumentsService = new DocumentsService(dbContext);
+            DocumentsStatesService = new DocumentsStatesService(dbContext);
             DocumentsTemplateItemService = new DocumentsTemplateItemService(dbContext);
             DocumentsTemplateService = new DocumentsTemplateService(dbContext);
             RolesService = new RolesService(dbContext);
@@ -24,6 +25,8 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
         #region Services
 
         public IDocumentsService DocumentsService { get; }
+
+        public IDocumentsStatesService DocumentsStatesService { get; }
 
         public IDocumentsTemplateItemService DocumentsTemplateItemService { get; }
 

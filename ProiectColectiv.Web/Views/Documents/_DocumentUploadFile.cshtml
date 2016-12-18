@@ -1,6 +1,6 @@
 ﻿@model DocumentUploadViewModel
 
-<form asp-controller="Documents" asp-action="DocumentStatusChange">
+<form asp-controller="Documents" asp-action="DocumentUpload" enctype="multipart/form-data">
     <input type="hidden" asp-for="IsTemplate" value="False" />
 
     <div class="form-group">

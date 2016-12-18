@@ -1,5 +1,7 @@
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -167,6 +169,30 @@ namespace ProiectColectiv.Web.Controllers
             TempData[Notifications.DOCUMENT_VERSION_CHANGED] = "Versiunea documentului a fost schimbata cu success.";
 
             return RedirectToAction(nameof(DocumentDetails), new { id = model.IdDocument });
+        }
+
+        #endregion
+
+        #region Document Download
+
+        public async Task<IActionResult> DocumentDownload(int id)
+        {
+            var document = await unitOfWork.DocumentsService.GetDocumentById(id);
+            if (!document.IdDocumentTemplate.HasValue)
+                return File(((DocumentUploadState) document.DocumentStates.Last()).Data, MediaTypes.MEDIA_TYPE_PDF, document.Name);
+
+            var template = await unitOfWork.DocumentsTemplateService.GetTemplateById(document.IdDocumentTemplate.Value);
+            var items = await unitOfWork.DocumentsStatesService.GetDocumentTemplateStateitems(document.IdDocument);
+            
+            var stream = new MemoryStream();
+            var reader = new PdfReader(template.Data);
+            var stamper = new PdfStamper(reader, stream);
+            foreach (var item in items)
+                stamper.AcroFields.SetField(item.DocumentTemplateItem.Label, item.Value);
+            stamper.FormFlattening = true;
+            stamper.Close();
+
+            return File(stream.ToArray(), MediaTypes.MEDIA_TYPE_PDF, template.Name + FileExtensions.PDF_EXTENSION);
         }
 
         #endregion
