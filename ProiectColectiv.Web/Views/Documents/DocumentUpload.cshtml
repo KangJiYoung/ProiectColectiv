@@ -40,7 +40,6 @@
 
             if ($.isNumeric(value)) {
                 $.get("/Documents/GetDocumentTemplateItems", { id: value }, function (result) {
-                    debugger;
                     $('#documentTemplateItemsContainer').html(result);
                 });
             }
