@@ -1,0 +1,17 @@
+﻿@model DocumentDownloadViewModel
+
+<form asp-controller="Documents" asp-action="DocumentDownload" enctype="multipart/form-data">
+    <input type="hidden" asp-for="IsFromTemplate" />
+
+    <div class="form-group">
+        <label asp-for="IdDocumentState" class="control-label"></label>
+        <div>
+            <select asp-for="IdDocumentState" asp-items="ViewBag.Versions" class="form-control">
+                <option>Alege o Versiune</option>
+            </select>
+            <span asp-validation-for="IdDocumentState" class="text-danger"></span>
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-primary" value="Descarca">
+</form>

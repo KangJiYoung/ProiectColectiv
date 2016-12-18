@@ -133,6 +133,8 @@ namespace ProiectColectiv.Web.Controllers
             if (document == null)
                 return NotFound();
 
+            ViewBag.Versions = new SelectList(document.DocumentStates, nameof(DocumentState.IdDocumentState), nameof(DocumentState.Version));
+
             return View(ViewModelMapping.ConvertToDetailViewModel(document));
         }
 
@@ -175,19 +177,22 @@ namespace ProiectColectiv.Web.Controllers
 
         #region Document Download
 
-        public async Task<IActionResult> DocumentDownload(int id)
+        public async Task<IActionResult> DocumentDownload(DocumentDownloadViewModel model)
         {
-            var document = await unitOfWork.DocumentsService.GetDocumentById(id);
-            if (!document.IdDocumentTemplate.HasValue)
-                return File(((DocumentUploadState) document.DocumentStates.Last()).Data, MediaTypes.MEDIA_TYPE_PDF, document.Name);
+            if (!ModelState.IsValid)
+                return PartialView("_DocumentDownload", model);
 
-            var template = await unitOfWork.DocumentsTemplateService.GetTemplateById(document.IdDocumentTemplate.Value);
-            var items = await unitOfWork.DocumentsStatesService.GetDocumentTemplateStateitems(document.IdDocument);
-            
+            var state = await unitOfWork.DocumentsStatesService.GetDocumentStateById(model.IdDocumentState.Value, model.IsFromTemplate);
+            if (!model.IsFromTemplate)
+                return File(((DocumentUploadState)state).Data, MediaTypes.MEDIA_TYPE_PDF, state.Document.Name);
+
+            var documentTemplateState = (DocumentTemplateState)state;
+            var template = documentTemplateState.Document.DocumentTemplate;
+
             var stream = new MemoryStream();
             var reader = new PdfReader(template.Data);
             var stamper = new PdfStamper(reader, stream);
-            foreach (var item in items)
+            foreach (var item in documentTemplateState.DocumentTemplateStateItems)
                 stamper.AcroFields.SetField(item.DocumentTemplateItem.Label, item.Value);
             stamper.FormFlattening = true;
             stamper.Close();

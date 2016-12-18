@@ -18,24 +18,27 @@ namespace ProiectColectiv.Services
             this.dbContext = dbContext;
         }
 
-        public async Task<List<DocumentTemplateStateItem>> GetDocumentTemplateStateitems(int idDocument)
+        public async Task<DocumentState> GetDocumentStateById(int idDocumentState, bool isFromTemplate)
         {
-            var items = await dbContext
+            var query = dbContext
                 .DocumentStates
-                .Where(it => it.IdDocument == idDocument)
-                .OfType<DocumentTemplateState>()
-                .Include(it => it.DocumentTemplateStateItems)
-                .Select(it => it.DocumentTemplateStateItems)
-                .LastAsync();
+                .Where(it => it.IdDocumentState == idDocumentState);
 
-            foreach (var item in items)
-            {
-                item.DocumentTemplateItem = await dbContext
-                    .DocumentTemplateItems
-                    .FirstAsync(it => it.IdDocumentTemplateItem == item.IdDocumentTemplateItem);
-            }
+            DocumentState documentState;
+            if (isFromTemplate)
+                documentState = await query
+                    .OfType<DocumentTemplateState>()
+                    .Include(it => it.Document).ThenInclude(it => it.DocumentTemplate)
+                    .Include(it => it.DocumentTemplateStateItems)
+                    .ThenInclude(it => it.DocumentTemplateItem)
+                    .FirstAsync();
+            else
+                documentState = await query
+                    .OfType<DocumentUploadState>()
+                    .Include(it => it.Document)
+                    .FirstAsync();
 
-            return items.ToList();
+            return documentState;
         }
     }
 }
