@@ -38,7 +38,7 @@
                         <div class="file-box" id="document-@document.IdDocument">
                             <div class="file">
                                 <div class="del-icon">
-                                    <a onclick="deleteDocument(@document.IdDocument)"><i class="img-responsive fa fa-times"></i></a>
+                                    <a onclick="deleteDocument(@document.IdDocument)" data-confirm="Esti sigur ca vrei sa stergi documentul @(document.Name)?" data-confirm-title="Stergere document" data-confirm-descripiton="Documentul va fi sters din sistem"><i class="img-responsive fa fa-times"></i></a>
                                 </div>
                                 <a asp-controller="Documents" asp-action="DocumentDetails" asp-route-id="@document.IdDocument">
                                     <span class="corner"></span>
@@ -67,7 +67,7 @@
     <script>
 
         $(function () {
-            
+            ConfirmDialog.init();
             @if (TempData.ContainsKey(Notifications.DOCUMENT_UPLOADED))
             {
                 <text>window.toastr.success('@TempData[Notifications.DOCUMENT_UPLOADED]', 'Success');</text>
