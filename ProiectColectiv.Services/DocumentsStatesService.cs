@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProiectColectiv.Core.DomainModel.Entities;
@@ -20,25 +18,22 @@ namespace ProiectColectiv.Services
 
         public async Task<DocumentState> GetDocumentStateById(int idDocumentState, bool isFromTemplate)
         {
-            var query = dbContext
+            var state = await dbContext
                 .DocumentStates
-                .Where(it => it.IdDocumentState == idDocumentState);
+                .Include(it => it.DocumentData)
+                .Include(it => it.Document).ThenInclude(it => it.DocumentTemplate)
+                .Where(it => it.IdDocumentState == idDocumentState)
+                .FirstAsync();
 
-            DocumentState documentState;
             if (isFromTemplate)
-                documentState = await query
-                    .OfType<DocumentTemplateState>()
-                    .Include(it => it.Document).ThenInclude(it => it.DocumentTemplate)
-                    .Include(it => it.DocumentTemplateStateItems)
-                    .ThenInclude(it => it.DocumentTemplateItem)
-                    .FirstAsync();
-            else
-                documentState = await query
-                    .OfType<DocumentUploadState>()
-                    .Include(it => it.Document)
-                    .FirstAsync();
+            {
+                ((DocumentDataTemplate) state.DocumentData).DocumentDataTemplateItems = await dbContext
+                    .DocumentDataTemplateItems
+                    .Where(it => it.IdDocumentData == state.IdDocumentData)
+                    .ToListAsync();
+            }
 
-            return documentState;
+            return state;
         }
     }
 }

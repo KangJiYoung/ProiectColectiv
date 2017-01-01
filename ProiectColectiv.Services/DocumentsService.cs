@@ -29,7 +29,15 @@ namespace ProiectColectiv.Services
                 DateAdded = now,
                 UserId = userId
             };
-            document.DocumentStates.Add(new DocumentUploadState { DocumentStatus = DocumentStatus.Draft, Version = DocumentVersions.FIRST_DRAFT, StatusDate = now, Data = data });
+            var state = new DocumentState
+            {
+                DocumentStatus = DocumentStatus.Draft,
+                Version = DocumentVersions.FIRST_DRAFT,
+                StatusDate = now,
+                DocumentData = new DocumentDataUpload { Data = data }
+            };
+
+            document.DocumentStates.Add(state);
 
             foreach (var tag in tags)
             {
@@ -52,12 +60,19 @@ namespace ProiectColectiv.Services
                 IdDocumentTemplate = idTemplate,
                 Abstract = @abstract,
                 DateAdded = now,
-                UserId = userId
+                UserId = userId,
+            };
+            var state = new DocumentState
+            {
+                DocumentStatus = DocumentStatus.Draft,
+                Version = DocumentVersions.FIRST_DRAFT,
+                StatusDate = now,
+                DocumentData = new DocumentDataTemplate()
             };
 
-            var state = new DocumentTemplateState { DocumentStatus = DocumentStatus.Draft, Version = DocumentVersions.FIRST_DRAFT, StatusDate = now };
+            var documentData = (DocumentDataTemplate)state.DocumentData;
             foreach (var item in items)
-                state.DocumentTemplateStateItems.Add(new DocumentTemplateStateItem { IdDocumentTemplateItem = item.Key, Value = item.Value });
+                documentData.DocumentDataTemplateItems.Add(new DocumentDataTemplateItem { IdDocumentTemplateItem = item.Key, Value = item.Value, DocumentData = documentData });
             document.DocumentStates.Add(state);
 
             foreach (var tag in tags)
@@ -79,13 +94,13 @@ namespace ProiectColectiv.Services
             var now = DateTime.Now;
 
             document.LastModified = now;
-            document.DocumentStates.Add(new DocumentUploadState
+            document.DocumentStates.Add(new DocumentState
             {
-                Data = data,
                 StatusDate = now,
                 IdDocument = idDocument,
                 DocumentStatus = lastState.DocumentStatus,
-                Version = GetNextVersion(lastState.Version, lastState.DocumentStatus)
+                Version = GetNextVersion(lastState.Version, lastState.DocumentStatus),
+                DocumentData = new DocumentDataUpload { Data = data }
             });
         }
 
@@ -94,26 +109,14 @@ namespace ProiectColectiv.Services
             var document = await dbContext
                 .Documents
                 .FirstAsync(it => it.IdDocument == idDocument);
+            var lastState = await dbContext.DocumentStates.Where(it => it.IdDocument == idDocument).LastAsync();
             var now = DateTime.Now;
-
-            var lastState = document.IdDocumentTemplate.HasValue
-                ? await dbContext.DocumentStates.Where(it => it.IdDocument == idDocument).OfType<DocumentTemplateState>().Include(it => it.DocumentTemplateStateItems).LastAsync()
-                : (DocumentState)await dbContext.DocumentStates.Where(it => it.IdDocument == idDocument).OfType<DocumentUploadState>().LastAsync();
 
             dbContext.Entry(lastState).State = EntityState.Detached;
             lastState.IdDocumentState = 0;
             lastState.StatusDate = now;
             lastState.DocumentStatus = documentStatus;
             lastState.Version = GetNextVersion(lastState.Version, documentStatus);
-
-            if (document.IdDocumentTemplate.HasValue)
-            {
-                foreach (var item in ((DocumentTemplateState)lastState).DocumentTemplateStateItems)
-                {
-                    dbContext.Entry(item).State = EntityState.Detached;
-                    item.IdDocumentTemplateStateItem = 0;
-                }
-            }
 
             document.LastModified = now;
             document.DocumentStates.Add(lastState);

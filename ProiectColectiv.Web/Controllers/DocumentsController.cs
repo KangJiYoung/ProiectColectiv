@@ -184,15 +184,15 @@ namespace ProiectColectiv.Web.Controllers
 
             var state = await unitOfWork.DocumentsStatesService.GetDocumentStateById(model.IdDocumentState.Value, model.IsFromTemplate);
             if (!model.IsFromTemplate)
-                return File(((DocumentUploadState)state).Data, MediaTypes.MEDIA_TYPE_PDF, state.Document.Name);
+                return File(((DocumentDataUpload)state.DocumentData).Data, MediaTypes.MEDIA_TYPE_PDF, state.Document.Name);
 
-            var documentTemplateState = (DocumentTemplateState)state;
-            var template = documentTemplateState.Document.DocumentTemplate;
+            var documentData = (DocumentDataTemplate)state.DocumentData;
+            var template = state.Document.DocumentTemplate;
 
             var stream = new MemoryStream();
             var reader = new PdfReader(template.Data);
             var stamper = new PdfStamper(reader, stream);
-            foreach (var item in documentTemplateState.DocumentTemplateStateItems)
+            foreach (var item in documentData.DocumentDataTemplateItems)
                 stamper.AcroFields.SetField(item.DocumentTemplateItem.Label, item.Value);
             stamper.FormFlattening = true;
             stamper.Close();

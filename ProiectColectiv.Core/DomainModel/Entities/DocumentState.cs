@@ -11,6 +11,8 @@ namespace ProiectColectiv.Core.DomainModel.Entities
 
         public int IdDocument { get; set; }
 
+        public int IdDocumentData { get; set; }
+
         public DateTime StatusDate { get; set; }
 
         public DocumentStatus DocumentStatus { get; set; }
@@ -18,5 +20,7 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         public double Version { get; set; }
 
         public Document Document { get; set; }
+
+        public DocumentData DocumentData { get; set; }
     }
 }

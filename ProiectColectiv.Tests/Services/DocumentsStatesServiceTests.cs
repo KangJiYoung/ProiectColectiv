@@ -31,8 +31,8 @@ namespace ProiectColectiv.Tests.Services
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
                 context.DocumentStates.AddRange(
-                    new DocumentUploadState { Data = new byte[] { 1, 2, 3 } },
-                    new DocumentTemplateState { DocumentTemplateStateItems = new List<DocumentTemplateStateItem> { new DocumentTemplateStateItem(), new DocumentTemplateStateItem() } });
+                    new DocumentState { DocumentData = new DocumentDataUpload { Data = new byte[] { 1, 2, 3 } } },
+                    new DocumentState { DocumentData = new DocumentDataTemplate { DocumentDataTemplateItems = new List<DocumentDataTemplateItem> { new DocumentDataTemplateItem { IdDocumentData = 2 }, new DocumentDataTemplateItem { IdDocumentData = 2 } } } });
 
                 await context.SaveChangesAsync();
             }
@@ -42,10 +42,11 @@ namespace ProiectColectiv.Tests.Services
                 var service = new DocumentsStatesService(context);
 
                 var documentUploadState = await service.GetDocumentStateById(1, false);
-                Assert.NotNull(documentUploadState); Assert.Equal(new byte[] { 1, 2, 3 }, ((DocumentUploadState)documentUploadState).Data);
+                Assert.NotNull(documentUploadState); Assert.Equal(new byte[] { 1, 2, 3 }, ((DocumentDataUpload)documentUploadState.DocumentData).Data);
 
-                var documentTemplateState = await service.GetDocumentStateById(2, true); Assert.NotNull(documentTemplateState);
-                Assert.Equal(2, ((DocumentTemplateState)documentTemplateState).DocumentTemplateStateItems.Count);
+                var documentTemplateState = await service.GetDocumentStateById(2, true);
+                Assert.NotNull(documentTemplateState);
+                Assert.Equal(2, ((DocumentDataTemplate)documentTemplateState.DocumentData).DocumentDataTemplateItems.Count);
             }
         }
     }

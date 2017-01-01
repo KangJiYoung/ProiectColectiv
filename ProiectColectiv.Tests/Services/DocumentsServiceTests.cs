@@ -68,13 +68,14 @@ namespace ProiectColectiv.Tests.Services
 
                 Assert.Equal(2, document.DocumentStates.Count);
 
-                var prevState = await context.DocumentStates.OfType<DocumentTemplateState>().Include(it => it.DocumentTemplateStateItems).FirstAsync();
-                var lastState = await context.DocumentStates.OfType<DocumentTemplateState>().Include(it => it.DocumentTemplateStateItems).LastAsync();
+                var states = await context.DocumentStates.ToListAsync();
+                var oldState = states.First();
+                var newState = states.Last();
 
-                Assert.Equal(DocumentStatus.Final, lastState.DocumentStatus);
-                Assert.Equal(prevState.DocumentTemplateStateItems.Count, lastState.DocumentTemplateStateItems.Count);
-                Assert.Equal(1, lastState.Version);
-                Assert.NotEqual(prevState.StatusDate, lastState.StatusDate);
+                Assert.Equal(1, newState.Version);
+                Assert.NotEqual(oldState.StatusDate, newState.StatusDate);
+                Assert.Equal(DocumentStatus.Final, newState.DocumentStatus);
+                Assert.Equal(oldState.IdDocumentData, newState.IdDocumentData);
             }
         }
 
@@ -98,13 +99,14 @@ namespace ProiectColectiv.Tests.Services
 
                 Assert.Equal(2, document.DocumentStates.Count);
 
-                var prevState = (DocumentUploadState)document.DocumentStates.First();
-                var lastState = (DocumentUploadState)document.DocumentStates.Last();
+                var states = await context.DocumentStates.ToListAsync();
+                var oldState = states.First();
+                var newState = states.Last();
 
-                Assert.Equal(DocumentStatus.Final, lastState.DocumentStatus);
-                Assert.Equal(prevState.Data, lastState.Data);
-                Assert.Equal(1, lastState.Version);
-                Assert.NotEqual(prevState.StatusDate, lastState.StatusDate);
+                Assert.Equal(1, newState.Version);
+                Assert.NotEqual(oldState.StatusDate, newState.StatusDate);
+                Assert.Equal(DocumentStatus.Final, newState.DocumentStatus);
+                Assert.Equal(oldState.IdDocumentData, newState.IdDocumentData);
             }
         }
 
@@ -124,14 +126,15 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var document = await context.Documents.Include(it => it.DocumentStates).FirstAsync();
+                var states = await context.DocumentStates.ToListAsync();
 
-                Assert.Equal(2, document.DocumentStates.Count);
+                Assert.Equal(2, states.Count);
 
-                var lastState = (DocumentUploadState)document.DocumentStates.Last();
+                var oldState = states.First();
+                var newState = states.Last();
 
-                Assert.Equal(new byte[] { 2, 3, 4 }, lastState.Data);
-                Assert.Equal(0.02, lastState.Version);
+                Assert.Equal(0.02, newState.Version);
+                Assert.NotEqual(oldState.IdDocumentData, newState.IdDocumentData);
             }
         }
 
@@ -151,7 +154,7 @@ namespace ProiectColectiv.Tests.Services
                 Assert.Equal(2, document.DocumentTags.Count);
                 Assert.Equal("Abstract", document.Abstract);
                 Assert.Equal("Document Name", document.Name);
-                Assert.Equal(2, await context.DocumentTemplateStateItems.CountAsync());
+                Assert.Equal(2, await context.DocumentDataTemplateItems.CountAsync());
             }
         }
 
@@ -163,13 +166,13 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var document = await context.Documents.Include(it => it.DocumentTags).Include(it => it.DocumentStates).FirstAsync();
+                var document = await context.Documents.Include(it => it.DocumentTags).Include(it => it.DocumentStates).ThenInclude(it => it.DocumentData).FirstAsync();
 
                 Assert.Equal("File.doc", document.Name);
                 Assert.Equal(user.Id, document.UserId);
                 Assert.Equal(2, document.DocumentTags.Count);
                 Assert.Equal(1, document.DocumentStates.Count);
-                Assert.Equal(new byte[] { 1, 2, 3 }, ((DocumentUploadState)document.DocumentStates.First()).Data);
+                Assert.Equal(new byte[] { 1, 2, 3 }, ((DocumentDataUpload)document.DocumentStates.First().DocumentData).Data);
             }
         }
 
