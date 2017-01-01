@@ -83,7 +83,7 @@ namespace ProiectColectiv.Web.Controllers
             {
                 var fileData = await fileManager.GetFileBytes(model.File);
 
-                await unitOfWork.DocumentsService.AddDocument(user.Id, model.File.FileName, fileData, model.Tags);
+                await unitOfWork.DocumentsService.AddDocument(user.Id, model.File.FileName, model.Abstract, fileData, model.Tags);
             }
 
             await unitOfWork.Commit();

@@ -10,7 +10,7 @@ namespace ProiectColectiv.Core.Interfaces
         Task<List<Document>> GetDocumentsByUserId(string userId);
         Task<Document> GetDocumentById(int idDocument);
         Task DeleteDocumentById(int idDocument);
-        Task AddDocument(string userId, string name, byte[] data, IList<string> tags);
+        Task AddDocument(string userId, string name, string @abstract, byte[] data, IList<string> tags);
         Task AddDocumentFromTemplate(string userId, int idTemplate, string name, string @abstract, IList<string> tags, IDictionary<int, string> items);
         Task AddDocumentNewVersion(string userId, int idDocument, byte[] data);
         Task ChangeStatus(int idDocument, DocumentStatus documentStatus);

@@ -168,6 +168,7 @@ namespace ProiectColectiv.Tests.Services
             {
                 var document = await context.Documents.Include(it => it.DocumentTags).Include(it => it.DocumentStates).ThenInclude(it => it.DocumentData).FirstAsync();
 
+                Assert.Equal("Abstract", document.Abstract);
                 Assert.Equal("File.doc", document.Name);
                 Assert.Equal(user.Id, document.UserId);
                 Assert.Equal(2, document.DocumentTags.Count);
@@ -273,7 +274,7 @@ namespace ProiectColectiv.Tests.Services
             {
                 var unitOfWork = new UnitOfWork(context);
 
-                await unitOfWork.DocumentsService.AddDocument(user.Id, "File.doc", new byte[] { 1, 2, 3 }, new List<string> { "tag1", "tag2" });
+                await unitOfWork.DocumentsService.AddDocument(user.Id, "File.doc", "Abstract", new byte[] { 1, 2, 3 }, new List<string> { "tag1", "tag2" });
                 await unitOfWork.Commit();
             }
 

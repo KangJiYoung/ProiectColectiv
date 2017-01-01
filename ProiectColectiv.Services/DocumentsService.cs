@@ -20,13 +20,14 @@ namespace ProiectColectiv.Services
             this.dbContext = dbContext;
         }
 
-        public async Task AddDocument(string userId, string name, byte[] data, IList<string> tags)
+        public async Task AddDocument(string userId, string name, string @abstract, byte[] data, IList<string> tags)
         {
             var now = DateTime.Now;
             var document = new Document
             {
                 Name = name,
                 DateAdded = now,
+                Abstract = @abstract,
                 UserId = userId
             };
             var state = new DocumentState
