@@ -13,6 +13,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <a href="#" data-toggle="modal" data-target="#modalDownloadDocument" class="btn btn-white btn-xs pull-right">Descarca</a>
+
+                        @if (Model.IsFromTemplate)
+                        {
+                            <a href="#" data-toggle="modal" data-target="#modalEditDocument" class="btn btn-white btn-xs pull-right">Editeaza</a>
+                        }
+
                         <div class="m-b-md">
                             <h2>Detalii Document: @Model.Name</h2>
                         </div>
@@ -32,7 +38,7 @@
                                             break;
                                     }
 
-                                    @await Html.PartialAsync("_DocumentStatusChange", new DocumentStatusChangeViewModel {IdDocument = Model.IdDocument})
+                                    @await Html.PartialAsync("_DocumentStatusChange", new DocumentStatusChangeViewModel { IdDocument = Model.IdDocument })
                                 </dd>
                             </dl>
                         </div>
@@ -44,48 +50,48 @@
                             <dt>Versiunea curenta:</dt>
                             <dd>
                                 @Model.CurrentVersion
-                            @if (Model.IsFromTemplate)
-                            {
-                            }
-                            else
-                            {
-                                <a href="#" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#modalAddDocumentVersion">Adauga</a>
-                            }
-                        </dd>
-                        <dt>Data adaugarii:</dt>
-                        <dd>@Model.DateAdded.ToString(CultureInfo.InvariantCulture)</dd>
-                        <dt>Ultima modificare:</dt>
-                        <dd>@(Model.LastModified?.ToString(CultureInfo.InvariantCulture) ?? "N/A")</dd>
-                    </dl>
-                </div>
-                <div class="col-lg-7">
-                    <dl class="dl-horizontal">
-                        <dt>Creat de:</dt>
-                        <dd>@Model.CreatedBy</dd>
-                        <dt>Abstract:</dt>
-                        <dd>@Model.Abstract</dd>
-                    </dl>
+                                @if (Model.IsFromTemplate)
+                                {
+                                }
+                                else
+                                {
+                                    <a href="#" class="btn btn-primary btn-xs pull-right" data-toggle="modal" data-target="#modalAddDocumentVersion">Adauga</a>
+                                }
+                            </dd>
+                            <dt>Data adaugarii:</dt>
+                            <dd>@Model.DateAdded.ToString(CultureInfo.InvariantCulture)</dd>
+                            <dt>Ultima modificare:</dt>
+                            <dd>@(Model.LastModified?.ToString(CultureInfo.InvariantCulture) ?? "N/A")</dd>
+                        </dl>
+                    </div>
+                    <div class="col-lg-7">
+                        <dl class="dl-horizontal">
+                            <dt>Creat de:</dt>
+                            <dd>@Model.CreatedBy</dd>
+                            <dt>Abstract:</dt>
+                            <dd>@Model.Abstract</dd>
+                        </dl>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row m-t-sm">
-            <div class="col-lg-12">
-                <div class="panel blank-panel">
-                    <div class="panel-heading">
-                        <div class="panel-options">
+            <div class="row m-t-sm">
+                <div class="col-lg-12">
+                    <div class="panel blank-panel">
+                        <div class="panel-heading">
+                            <div class="panel-options">
+
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
 
                         </div>
-                    </div>
-
-                    <div class="panel-body">
 
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 <div class="modal inmodal" id="modalAddDocumentVersion" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -119,6 +125,31 @@
         </div>
     </div>
 </div>
+
+@if (Model.IsFromTemplate)
+{
+    <div class="modal inmodal" id="modalEditDocument" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <i class="fa fa-laptop modal-icon"></i>
+                    <h4 class="modal-title">Editeaza Document</h4>
+                    <small class="font-bold">Editati metadata specific documentului.</small>
+                </div>
+                <div class="modal-body">
+                    <form asp-controller="Documents" asp-action="DocumentEdit">
+                        <input type="hidden" name="IdDocument" value="@Model.IdDocument" />
+                        <div id="editTemplateFormInputs"></div>
+
+                        <input type="submit" class="btn btn-primary" value="Editeaza">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 @section Scripts{
     <script>
 
@@ -131,6 +162,22 @@
             @if (TempData.ContainsKey(Notifications.DOCUMENT_VERSION_CHANGED))
             {
                 <text>window.toastr.success('@TempData[Notifications.DOCUMENT_VERSION_CHANGED]', 'Success');</text>
+            }
+
+            @if (TempData.ContainsKey(Notifications.DOCUMENT_EDIT))
+            {
+                <text>window.toastr.success('@TempData[Notifications.DOCUMENT_EDIT]', 'Success');</text>
+            }
+
+            @if (Model.IsFromTemplate)
+            {
+                <text>
+
+                $.get("/Documents/GetDocumentDataTemplateItems", { id: @Model.IdDocument }, function (result) {
+                    $('#editTemplateFormInputs').html(result);
+                });
+
+                </text>
             }
         });
 

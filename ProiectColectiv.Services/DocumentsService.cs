@@ -165,5 +165,27 @@ namespace ProiectColectiv.Services
                     throw new ArgumentOutOfRangeException(nameof(status), status, null);
             }
         }
+
+        public async Task EditDocument(int idDocument, IDictionary<int, string> items)
+        {
+            var document = await dbContext
+                .Documents
+                .FirstAsync(it => it.IdDocument == idDocument);
+            var lastState = await dbContext.DocumentStates.Where(it => it.IdDocument == idDocument).LastAsync();
+            var now = DateTime.Now;
+
+            dbContext.Entry(lastState).State = EntityState.Detached;
+            lastState.IdDocumentState = 0;
+            lastState.StatusDate = now;
+            lastState.Version = GetNextVersion(lastState.Version, lastState.DocumentStatus);
+
+            var documentData = new DocumentDataTemplate();
+            foreach (var item in items)
+                documentData.DocumentDataTemplateItems.Add(new DocumentDataTemplateItem { IdDocumentTemplateItem = item.Key, Value = item.Value, DocumentData = documentData });
+            lastState.DocumentData = documentData;
+
+            document.LastModified = now;
+            document.DocumentStates.Add(lastState);
+        }
     }
 }

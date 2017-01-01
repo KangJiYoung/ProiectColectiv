@@ -25,5 +25,6 @@ namespace ProiectColectiv.Web.ViewModel
         public string Abstract { get; set; }
 
         public IEnumerable<string> Tags { get; set; }
+
     }
 }

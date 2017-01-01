@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using ProiectColectiv.Core.DomainModel.Entities;
@@ -55,6 +56,18 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
             };
 
         public static IList<DocumentTemplateItemValueViewModel> ConvertToViewModel(IList<DocumentTemplateItemValue> items)
+            => items.Select(ConvertToViewModel).ToList();
+
+        public static DocumentTemplateItemViewModel ConvertToViewModel(DocumentDataTemplateItem item)
+            => new DocumentTemplateItemViewModel
+            {
+                IdDocumentTemplateItem = item.IdDocumentTemplateItem,
+                Label = item.DocumentTemplateItem.Label,
+                Value = item.Value,
+                DocumentTemplateItemValues = ConvertToViewModel(item.DocumentTemplateItem.DocumentTemplateItemValues)
+            };
+
+        public static IList<DocumentTemplateItemViewModel> ConvertToViewModel(IList<DocumentDataTemplateItem> items)
             => items.Select(ConvertToViewModel).ToList();
     }
 }

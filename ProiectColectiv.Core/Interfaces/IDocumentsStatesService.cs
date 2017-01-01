@@ -7,5 +7,6 @@ namespace ProiectColectiv.Core.Interfaces
     public interface IDocumentsStatesService
     {
         Task<DocumentState> GetDocumentStateById(int idDocumentState, bool isFromTemplate);
+        Task<List<DocumentDataTemplateItem>> GetDocumentDataTemplateItems(int idDocument);
     }
 }

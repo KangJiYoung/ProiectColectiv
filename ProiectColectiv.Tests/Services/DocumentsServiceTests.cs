@@ -27,6 +27,36 @@ namespace ProiectColectiv.Tests.Services
             return builder.Options;
         }
 
+        [Fact]
+        public async Task Can_Edit_Document_From_Template_MetaData()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            var user = await CreateUser(dbContextOptions);
+
+            await CreateTemplate(dbContextOptions, user.Id);
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+                var items = new Dictionary<int, string> { [0] = "Item 3", [1] = "Item 4" };
+
+                await service.EditDocument(1, items);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var states = await context.DocumentStates.ToListAsync();
+
+                Assert.Equal(2, states.Count);
+
+                var oldState = states.First();
+                var newState = states.Last();
+
+                Assert.NotEqual(oldState.IdDocumentData, newState.IdDocumentData);
+            }
+        }
+
         [Theory]
         [InlineData(0.01, DocumentStatus.Draft, 0.02)]
         [InlineData(0.02, DocumentStatus.Draft, 0.03)]

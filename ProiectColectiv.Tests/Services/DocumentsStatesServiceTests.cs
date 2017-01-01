@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,45 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
+        public async Task Can_Return_Latest_Document_From_Template_Items()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Documents.Add(new Document
+                {
+                    DocumentStates = new List<DocumentState>
+                    {
+                        new DocumentState
+                        {
+                            DocumentData = new DocumentDataTemplate
+                            {
+                                DocumentDataTemplateItems = new List<DocumentDataTemplateItem>
+                                {
+                                    new DocumentDataTemplateItem {IdDocumentData = 1, Value = "1", DocumentTemplateItem = new DocumentTemplateItem()},
+                                    new DocumentDataTemplateItem {IdDocumentData = 1, Value = "2", DocumentTemplateItem = new DocumentTemplateItem()}
+                                }
+                            }
+                        }
+                    }
+                });
+
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsStatesService(context);
+                var items = await service.GetDocumentDataTemplateItems(1);
+
+                Assert.Equal(2, items.Count);
+                Assert.Equal("1", items.First().Value);
+                Assert.Equal("2", items.Last().Value);
+                Assert.True(items.All(it => it.DocumentTemplateItem != null));
+            }
+        }
+
+        [Fact]
         public async Task Can_Return_Document_State_By_Id()
         {
             var dbContextOptions = CreateNewContextOptions();
@@ -32,7 +72,13 @@ namespace ProiectColectiv.Tests.Services
             {
                 context.DocumentStates.AddRange(
                     new DocumentState { DocumentData = new DocumentDataUpload { Data = new byte[] { 1, 2, 3 } } },
-                    new DocumentState { DocumentData = new DocumentDataTemplate { DocumentDataTemplateItems = new List<DocumentDataTemplateItem> { new DocumentDataTemplateItem { IdDocumentData = 2 }, new DocumentDataTemplateItem { IdDocumentData = 2 } } } });
+                    new DocumentState
+                    {
+                        DocumentData = new DocumentDataTemplate
+                        {
+                            DocumentDataTemplateItems = new List<DocumentDataTemplateItem> { new DocumentDataTemplateItem { IdDocumentData = 2 }, new DocumentDataTemplateItem { IdDocumentData = 2 } }
+                        }
+                    });
 
                 await context.SaveChangesAsync();
             }

@@ -201,5 +201,31 @@ namespace ProiectColectiv.Web.Controllers
         }
 
         #endregion
+
+        #region Document Edit
+
+        [HttpPost]
+        [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
+        public async Task<IActionResult> DocumentEdit(DocumentEditViewModel model)
+        {
+            var items = model.Items.ToDictionary(it => it.IdDocumentTemplateItem, it => it.Value);
+
+            await unitOfWork.DocumentsService.EditDocument(model.IdDocument, items);
+            await unitOfWork.Commit();
+
+            TempData[Notifications.DOCUMENT_EDIT] = "Documentul a fost editat cu success.";
+
+            return RedirectToAction(nameof(DocumentDetails), new { id = model.IdDocument });
+        }
+
+        [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
+        public async Task<IActionResult> GetDocumentDataTemplateItems(int id)
+        {
+            var items = await unitOfWork.DocumentsStatesService.GetDocumentDataTemplateItems(id);
+
+            return PartialView("_DocumentUploadTemplateItems", ViewModelMapping.ConvertToViewModel(items));
+        }
+
+        #endregion
     }
 }
