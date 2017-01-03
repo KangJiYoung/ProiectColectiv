@@ -21,22 +21,13 @@ namespace ProiectColectiv.Services.Data.Context
 
         private static void SeedTemplate(ApplicationDbContext context)
         {
-            var service = new DocumentsTemplateItemService(context);
+            var service = new DocumentsTemplateService(context);
 
             if (context.DocumentTemplates.Any())
                 return;
 
             var fileData = File.ReadAllBytes(Environment.CurrentDirectory + @"\Application\Resources\cerere_pentru_cazare_2014-2015.pdf");
-            var reader = new PdfReader(fileData);
-
-            var template = new DocumentTemplate
-            {
-                Data = fileData,
-                Name = DocumentTemplates.NUME,
-                DocumentTemplateItems = service.ParseItems(reader.AcroFields).ToList()
-            };
-
-            context.DocumentTemplates.Add(template);
+            service.AddTemplate(DocumentTemplates.NUME, fileData);
             context.SaveChanges();
         }
 

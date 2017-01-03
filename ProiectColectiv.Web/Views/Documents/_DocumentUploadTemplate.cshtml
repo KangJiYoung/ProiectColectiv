@@ -14,7 +14,7 @@
     <div class="form-group">
         <label asp-for="Abstract" class="control-label"></label>
         <div>
-            <textarea asp-for="Abstract" class="control-label"></textarea>
+            <textarea asp-for="Abstract" class="form-control"></textarea>
             <span asp-validation-for="Abstract" class="text-danger"></span>
         </div>
     </div>
@@ -22,7 +22,7 @@
     <div class="form-group">
         <label asp-for="DocumentName" class="control-label"></label>
         <div>
-            <input asp-for="DocumentName" class="control-label" />
+            <input asp-for="DocumentName" class="form-control" />
             <span asp-validation-for="DocumentName" class="text-danger"></span>
         </div>
     </div>
@@ -30,12 +30,17 @@
     <div class="form-group">
         <label class="control-label">Template</label>
         <div>
-            <select asp-for="IdTemplate" asp-items="ViewBag.DocumentTemplates" onchange="onTemplateChanged()" class="form-control">
-                <option>Alege un Template</option>
-            </select>
+            <div class="col-xs-10">
+                <select asp-for="IdTemplate" asp-items="ViewBag.DocumentTemplates" onchange="onTemplateChanged()" class="form-control">
+                    <option>Alege un Template</option>
+                </select>
+            </div>
+            <div class="col-xs-2 m-t-xs">
+                <i class="fa fa-2x fa-plus" aria-hidden="true" data-toggle="modal" data-target="#modalAddTemplate"></i>
+            </div>
         </div>
     </div>
-    
+
     <div id="documentTemplateItemsContainer">
         @if (Model.IdTemplate.GetValueOrDefault() != default(int))
         {
@@ -43,5 +48,23 @@
         }
     </div>
 
-    <input type="submit" class="btn btn-primary" value="Adauga">
+    <input type="submit" class="btn btn-primary m-t-sm" value="Adauga">
 </form>
+
+<div class="modal inmodal" id="modalAddTemplate" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-laptop modal-icon"></i>
+                <h4 class="modal-title">Adauga Template</h4>
+                <small class="font-bold">Selectati fisierul dorit si specificati un nume template-ului.</small>
+            </div>
+            <div class="modal-body">
+                <div id="containerDocumentTemplateUpload">
+                    @await Html.PartialAsync("_DocumentTemplateUpload", new TemplateUploadViewModel())
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

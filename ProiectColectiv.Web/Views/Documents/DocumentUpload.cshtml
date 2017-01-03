@@ -45,5 +45,41 @@
             }
         }
 
+        function onTemplateAdded() {
+            var formdata = new FormData($('#formAddTemplate').get(0));
+
+            $.ajax({
+                url: "/DocumentTemplates/TemplateUpload",
+                type: 'POST',
+                data: formdata,
+                processData: false,
+                contentType: false
+            })
+            .done(function (result) {
+                if (result.success) {
+                    window.toastr.success(result.message, 'Success');
+                    refreshTemplates();
+                } else
+                    $("#containerDocumentTemplateUpload").html(result);
+            })
+            .fail(function (xhr, textStatus, errorThrown) {
+                window.toastr.error(xhr.responseText, 'Error!');
+            });
+        }
+
+        function refreshTemplates() {
+            $.get("/DocumentTemplates/GetAllTemplates", function (result) {
+                var select = $('#IdTemplate');
+                select.empty();
+                $.each(result, function () {
+                    select.append($("<option />").val(this.value).text(this.text));
+                });
+                $('#modalAddTemplate').modal('hide');
+            })
+            .fail(function (xhr, textStatus, errorThrown) {
+                window.toastr.error(xhr.responseText, 'Error!');
+            });
+        }
+
     </script>
 }
