@@ -14,11 +14,17 @@ namespace ProiectColectiv.Services.Data.Context
 
         public DbSet<DocumentDataUpload> DocumentDataUploads { get; set; }
 
-        public DbSet<DocumentState> DocumentStates { get; set; }
-
         public DbSet<DocumentDataTemplateItem> DocumentDataTemplateItems { get; set; }
 
+        public DbSet<DocumentState> DocumentStates { get; set; }
+
         public DbSet<DocumentTag> DocumentTags { get; set; }
+
+        public DbSet<DocumentTaskTemplate> DocumentTaskTemplates { get; set; }
+
+        public DbSet<DocumentTaskType> DocumentTaskTypes { get; set; }
+
+        public DbSet<DocumentTaskTypePath> DocumentTaskTypePaths { get; set; }
 
         public DbSet<DocumentTemplate> DocumentTemplates { get; set; }
 

@@ -1,0 +1,44 @@
+﻿@model DocumentTaskAddViewModel
+
+<div class="wrapper wrapper-content  animated fadeInRight">
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-heading">Adauga Task</div>
+            <div class="panel-body">
+                <form asp-controller="DocumentTasks" asp-action="DocumentTasksAdd" class="m-t-lg col-xs-12 col-md-6 col-lg-4">
+                    <div class="form-group">
+                        <label asp-for="IdDocumentTaskTemplate" class="control-label"></label>
+                        <div>
+                            <div class="col-xs-10">
+                                <select asp-for="IdDocumentTaskTemplate" asp-items="ViewBag.DocumentTaskTemplates" class="form-control">
+                                    <option>Alege un Template Task</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2 m-t-xs">
+                                <i class="fa fa-2x fa-plus" aria-hidden="true" data-toggle="modal" data-target="#modalAddDocumentTaskTemplate"></i>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal" id="modalAddDocumentTaskTemplate" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-laptop modal-icon"></i>
+                <h4 class="modal-title">Adauga Task Template</h4>
+                <small class="font-bold">Introduceti configuratia pentru un task template.</small>
+            </div>
+            <div class="modal-body">
+                <div id="containerDocumentTaskTemplateAdd">
+                    @await Html.PartialAsync("_DocumentTaskTemplateAdd", new DocumentTaskTemplateAddViewModel())
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

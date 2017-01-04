@@ -42,6 +42,6 @@ namespace ProiectColectiv.Web.Controllers
 
         [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
         public async Task<IActionResult> GetAllTemplates() 
-            => Json(new SelectList(await unitOfWork.DocumentsTemplateService.GetAllTemplates(), "IdDocumentTemplate", "Name"));
+            => Json(new SelectList(await unitOfWork.DocumentsTemplateService.GetAllTemplates(), nameof(DocumentTemplate.IdDocumentTemplate), nameof(DocumentTemplate.Name)));
     }
 }

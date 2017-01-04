@@ -1,0 +1,23 @@
+﻿@model DocumentTaskTemplateAddViewModel
+
+<form asp-controller="DocumentTaskTemplates" asp-action="DocumentTaskTemplateAdd">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <div>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="IdDocumentTemplate" class="control-label"></label>
+        <div>
+            <select asp-for="IdDocumentTemplate" asp-items="ViewBag.DocumentTemplates" class="form-control">
+                <option>Alege un Template</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Types" class="control-label"></label>
+        <a href="javascript:addFeeTier()"><i class="fa fa-2x fa-plus-circle m-l-10" aria-hidden="true"></i></a>
+    </div>
+</form>

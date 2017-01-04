@@ -16,6 +16,7 @@
                 <div class="ibox-content">
                     <div class="file-manager">
                         <a class="btn btn-primary btn-block" asp-controller="Documents" asp-action="DocumentUpload">Adauga Document</a>
+                        <a class="btn btn-primary btn-block" asp-controller="DocumentTasks" asp-action="DocumentTasksAdd">Adauga Task</a>
                         <div class="hr-line-dashed"></div>
                         <h5 class="tag-title">Tags</h5>
                         @foreach (var tag in ViewBag.Tags)
