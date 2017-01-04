@@ -14,7 +14,9 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
                 UserId = user.Id,
                 Email = user.Email,
                 Username = user.UserName,
-                Role = userManager.GetRolesAsync(user).Result.FirstOrDefault()
+                Role = userManager.GetRolesAsync(user).Result.FirstOrDefault(),
+                Group = user.UserGroup.Name,
+                GroupId = user.IdUserGroup
             };
 
         public static IList<UserViewModel> ConvertToViewModel(IList<User> users, UserManager<User> userManager)

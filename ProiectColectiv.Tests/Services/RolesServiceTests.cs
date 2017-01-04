@@ -35,7 +35,7 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                var result = await new UnitOfWork(context).RolesService.GetRoles();
+                var result = await new UnitOfWork(context).RolesService.GetAll();
 
                 Assert.Equal(3, result.Count);
             }

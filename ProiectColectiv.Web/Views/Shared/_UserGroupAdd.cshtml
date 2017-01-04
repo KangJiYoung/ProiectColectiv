@@ -1,0 +1,12 @@
+﻿@model UserGroupAddViewModel
+
+<form asp-controller="UserGroups" asp-action="UserGroupAdd" id="formUserGroupAdd">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <div>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <input type="button" class="btn btn-primary" value="Adauga" onclick="onUserGroupAdded()">
+</form>

@@ -16,7 +16,7 @@ namespace ProiectColectiv.Services
             this.dbContext = dbContext;
         }
 
-        public Task<List<IdentityRole>> GetRoles()
+        public Task<List<IdentityRole>> GetAll()
         {
             return dbContext
                 .Roles

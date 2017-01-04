@@ -4,9 +4,9 @@ using ProiectColectiv.Core.DomainModel.Entities;
 
 namespace ProiectColectiv.Core.Interfaces
 {
-    public interface IUsersService
+    public interface IUserGroups
     {
-        Task<List<User>> GetAll();
-        Task<User> GetUser(string userId);
+        Task<List<UserGroup>> GetAll();
+        void Add(string name);
     }
 }

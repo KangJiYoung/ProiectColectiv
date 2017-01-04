@@ -2,7 +2,7 @@
 {
     public class Notifications
     {
-        public const string ROLE_CHANGED = "RoleChanged";
+        public const string USER_EDITED = "UserEdited";
 
         public const string DOCUMENT_EDIT = "DocumentEdit";
         public const string DOCUMENT_UPLOADED = "DocumentUploaded";

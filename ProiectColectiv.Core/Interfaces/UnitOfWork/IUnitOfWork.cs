@@ -22,6 +22,8 @@ namespace ProiectColectiv.Core.Interfaces.UnitOfWork
 
         IUsersService UsersService { get; }
 
+        IUserGroups UserGroupsService { get; set; }
+
         #endregion
 
         Task<int> Commit();

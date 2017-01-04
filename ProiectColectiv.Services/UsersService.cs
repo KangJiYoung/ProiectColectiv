@@ -23,10 +23,11 @@ namespace ProiectColectiv.Services
                 .FirstAsync(it => it.Id == userId);
         }
 
-        public Task<List<User>> GetUsers()
+        public Task<List<User>> GetAll()
         {
             return dbContext
                 .Users
+                .Include(it => it.UserGroup)
                 .ToListAsync();
         }
     }

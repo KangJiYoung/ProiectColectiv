@@ -16,9 +16,9 @@ namespace ProiectColectiv.Services
             this.dbContext = dbContext;
         }
 
-        public async Task<List<DocumentTaskTemplate>> GetAll()
+        public Task<List<DocumentTaskTemplate>> GetAll()
         {
-            return await dbContext
+            return dbContext
                 .DocumentTaskTemplates
                 .ToListAsync();
         }

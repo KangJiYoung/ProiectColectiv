@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -29,23 +30,28 @@ namespace ProiectColectiv.Web.Controllers
         {
             var users = await unitOfWork
                 .UsersService
-                .GetUsers();
+                .GetAll();
 
             var roles = await unitOfWork
                 .RolesService
-                .GetRoles();
+                .GetAll();
+
+            var groups = await unitOfWork
+                .UserGroupsService
+                .GetAll();
 
             ViewBag.Roles = new SelectList(roles, "Name", "Name");
+            ViewBag.UserGroups = new SelectList(groups, nameof(UserGroup.IdUserGroup), nameof(UserGroup.Name));
 
             return View(ViewModelMapping.ConvertToViewModel(users, userManager));
         }
 
         [HttpPost]
         [Authorize(Roles = Roles.ADMINISTRATOR)]
-        public async Task<IActionResult> ChangeRole(RoleChangeViewModel model)
+        public async Task<IActionResult> UserEdit(UserEditViewModel model)
         {
             if (!ModelState.IsValid)
-                return PartialView("_RoleChange", model);
+                return PartialView("_UserEdit", model);
 
             var user = await unitOfWork
                 .UsersService
@@ -55,7 +61,13 @@ namespace ProiectColectiv.Web.Controllers
             await userManager.RemoveFromRolesAsync(user, userRoles);
             await userManager.AddToRoleAsync(user, model.Role);
 
-            TempData[Notifications.ROLE_CHANGED] = "Rol Utilizator schimbat cu success.";
+            if (user.IdUserGroup != model.IdUserGroup.Value)
+            {
+                user.IdUserGroup = model.IdUserGroup.Value;
+                await userManager.UpdateAsync(user);
+            }
+
+            TempData[Notifications.USER_EDITED] = "Utilizatorul a fost modificat cu success.";
 
             return RedirectToAction(nameof(Index));
         }

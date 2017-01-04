@@ -6,6 +6,6 @@ namespace ProiectColectiv.Core.Interfaces
 {
     public interface IRolesService
     {
-        Task<List<IdentityRole>> GetRoles();
+        Task<List<IdentityRole>> GetAll();
     }
 }

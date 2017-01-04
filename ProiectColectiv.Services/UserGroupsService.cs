@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProiectColectiv.Core.DomainModel.Entities;
@@ -8,22 +7,25 @@ using ProiectColectiv.Services.Data.Context;
 
 namespace ProiectColectiv.Services
 {
-    public class DocumentsTemplateItemService : IDocumentsTemplateItemService
+    public class UserGroupsService : IUserGroups
     {
         private readonly ApplicationDbContext dbContext;
 
-        public DocumentsTemplateItemService(ApplicationDbContext dbContext)
+        public UserGroupsService(ApplicationDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
-        public Task<List<DocumentTemplateItem>> GetItemsFromTemplate(int idTemplate)
+        public Task<List<UserGroup>> GetAll()
         {
             return dbContext
-                .DocumentTemplateItems
-                .Include(it => it.DocumentTemplateItemValues)
-                .Where(it => it.IdDocumentTemplate == idTemplate)
+                .UserGroups
                 .ToListAsync();
+        }
+
+        public void Add(string name)
+        {
+            dbContext.UserGroups.Add(new UserGroup { Name = name });
         }
     }
 }

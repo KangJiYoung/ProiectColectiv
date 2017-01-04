@@ -34,6 +34,8 @@ namespace ProiectColectiv.Services.Data.Context
 
         public DbSet<Tag> Tags { get; set; }
 
+        public DbSet<UserGroup> UserGroups { get; set; }
+
         public ApplicationDbContext(DbContextOptions options)
             : base(options)
         {

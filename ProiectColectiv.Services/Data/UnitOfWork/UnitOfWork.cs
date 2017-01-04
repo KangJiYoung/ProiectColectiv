@@ -21,6 +21,7 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
             RolesService = new RolesService(dbContext);
             TagsService = new TagsService(dbContext);
             UsersService = new UsersService(dbContext);
+            UserGroupsService = new UserGroupsService(dbContext);
         }
 
         #region Services
@@ -40,6 +41,8 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
         public ITagsService TagsService { get; }
 
         public IUsersService UsersService { get; }
+
+        public IUserGroups UserGroupsService { get; set; }
 
         #endregion
 

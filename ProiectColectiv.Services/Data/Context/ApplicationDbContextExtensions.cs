@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using iTextSharp.text.pdf;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using ProiectColectiv.Core.Constants;
@@ -13,10 +12,24 @@ namespace ProiectColectiv.Services.Data.Context
     {
         public static void EnsureSeedData(this ApplicationDbContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
+            SeedUserGroups(context);
             var adminUser = SeedAdminUser(context, userManager);
             SeedRoles(context, roleManager);
             SeedAdministratorRoleToAdminUser(context, userManager, adminUser);
             SeedTemplate(context);
+        }
+
+        private static void SeedUserGroups(ApplicationDbContext context)
+        {
+            var studentGroup = context
+                .UserGroups
+                .FirstOrDefault(it => it.Name == UserGroups.STUDENT);
+
+            if (studentGroup != null)
+                return;
+
+            context.UserGroups.Add(new UserGroup { Name = UserGroups.STUDENT });
+            context.SaveChanges();
         }
 
         private static void SeedTemplate(ApplicationDbContext context)
@@ -69,17 +82,23 @@ namespace ProiectColectiv.Services.Data.Context
                 .Users
                 .FirstOrDefault(it => it.UserName == Administrator.USERNAME);
 
+            var studentGroup = context
+                .UserGroups
+                .First(it => it.Name == UserGroups.STUDENT);
+
             if (adminUser == null)
             {
                 var user = new User
                 {
                     UserName = Administrator.USERNAME,
                     Email = Administrator.EMAIL,
+                    IdUserGroup = studentGroup.IdUserGroup
                 };
                 var result = userManager.CreateAsync(user, Administrator.PASSWORD).Result;
                 if (!result.Succeeded)
                     throw new Exception("Cannot seed Administrator");
             }
+
             return context
                 .Users
                 .FirstOrDefault(it => it.UserName == Administrator.USERNAME);

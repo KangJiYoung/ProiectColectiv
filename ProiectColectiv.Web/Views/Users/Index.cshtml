@@ -10,8 +10,8 @@
             <h2>Users</h2>
 
             <div class="clients-list">
+                <a class="btn btn-primary pull-right" data-toggle="modal" data-target="#modalAddUserGroup">Adauga Grup</a>
                 <ul class="nav nav-tabs">
-                    <span class="pull-right small text-muted">@Model.Count Elements</span>
                     <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Users</a></li>
                 </ul>
                 <div class="tab-content">
@@ -25,6 +25,7 @@
                                                 <th>Username</th>
                                                 <th>Email</th>
                                                 <th>Role</th>
+                                                <th>Group</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
@@ -35,7 +36,8 @@
                                                     <td>@user.Username</td>
                                                     <td>@user.Email</td>
                                                     <td>@user.Role</td>
-                                                    <td><a onclick="changeRole('@user.UserId', '@user.Role')">Schimba Rolul</a></td>
+                                                    <td>@user.Group</td>
+                                                    <td><a onclick="changeRole('@user.UserId', '@user.Role', '@user.GroupId')">Editeaza</a></td>
                                                 </tr>
                                             }
                                         </tbody>
@@ -60,11 +62,28 @@
                 <small class="font-bold">Modifica rolul utilizatorului</small>
             </div>
             <div class="modal-body">
-                @await Html.PartialAsync("_RoleChange", new RoleChangeViewModel())
+                @await Html.PartialAsync("_UserEdit", new UserEditViewModel())
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" onclick="$('#roleChangeForm').submit()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal inmodal" id="modalAddUserGroup" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-laptop modal-icon"></i>
+                <h4 class="modal-title">User Grup</h4>
+                <small class="font-bold">Adauga un nou user grup</small>
+            </div>
+            <div class="modal-body">
+                <div id="containerUserGroupAdd">
+                    @await Html.PartialAsync("_UserGroupAdd", new UserGroupAddViewModel())
+                </div>
             </div>
         </div>
     </div>
@@ -74,19 +93,49 @@
 
         $(function () {
             $('.chosen-select').chosen({ width: "100%" });
-            @if (TempData.ContainsKey(Notifications.ROLE_CHANGED))
+            @if (TempData.ContainsKey(Notifications.USER_EDITED))
             {
-                <text>toastr.success('@TempData[Notifications.ROLE_CHANGED]', 'Success');</text>
+                <text>toastr.success('@TempData[Notifications.USER_EDITED]', 'Success');</text>
             }
         });
 
-        function changeRole(userId, role) {
+        function changeRole(userId, role, group) {
             $('#UserId').val(userId);
-
+            
             $('#Role').val(role);
             $('#Role').trigger("chosen:updated");
 
+            $('#IdUserGroup').val(group);
+            $('#IdUserGroup').trigger("chosen:updated");
+
             $('#changeRoleModal').modal('show');
+        }
+
+        function onUserGroupAdded() {
+            $.post("/UserGroups/UserGroupAdd", $('#formUserGroupAdd').serialize(), function (result) {
+                if (result.success) {
+                    window.toastr.success(result.message, 'Success');
+                    refreshUserGroups();
+                } else
+                    $("#containerUserGroupAdd").html(result);
+            })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    window.toastr.error(xhr.responseText, 'Error!');
+                });
+        }
+
+        function refreshUserGroups() {
+            $.get("/UserGroups/GetAllUserGroups", function (result) {
+                var select = $('#IdUserGroup');
+                select.empty();
+                $.each(result, function () {
+                    select.append($("<option />").val(this.value).text(this.text));
+                });
+                $('#modalAddUserGroup').modal('hide');
+            })
+            .fail(function (xhr, textStatus, errorThrown) {
+                window.toastr.error(xhr.responseText, 'Error!');
+            });
         }
 
     </script>
