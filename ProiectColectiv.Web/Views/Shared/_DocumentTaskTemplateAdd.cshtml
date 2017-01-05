@@ -1,0 +1,70 @@
+﻿@model DocumentTaskTemplateAddViewModel
+
+<form asp-controller="DocumentTaskTemplates" asp-action="DocumentTaskTemplateAdd" id="formAddDocumentTaskTemplate">
+    <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <div>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="IdDocumentTemplate" class="control-label"></label>
+        <div>
+            <select asp-for="IdDocumentTemplate" asp-items="ViewBag.DocumentTemplates" class="form-control">
+                <option>Alege un Template</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Types" class="control-label"></label>
+        <a href="javascript:addTaskTemplateType()"><i class="fa fa-2x fa-plus-circle m-l-10" aria-hidden="true"></i></a>
+        <div id="containerTaskTemplateTypes"></div>
+    </div>
+
+    <input type="button" class="btn btn-primary pull-right" value="Adauga" onclick="onTaskTemplateAdded()">
+</form>
+
+<script>
+    var indexTypes = 0;
+    var userGroups = JSON.parse('@Json.Serialize(ViewBag.UserGroups)'); // Use for typeahead 
+
+    function addTaskTemplateType() {
+        $.get("/DocumentTaskTemplates/GetTaskTemplateType", { index: indexTypes }, function (result) {
+            $('#containerTaskTemplateTypes').append(result);
+            $(document.getElementById('Types[' + indexTypes + '].Paths')).tagsinput('refresh');
+            indexTypes++;
+        })
+            .fail(function (xhr, textStatus, errorThrown) {
+                window.toastr.error(xhr.responseText, 'Error!');
+            });
+    }
+
+    function onTaskTemplateAdded() {
+        $.post("/DocumentTaskTemplates/DocumentTaskTemplateAdd", $('#formAddDocumentTaskTemplate').serialize(), function (result) {
+            if (result.message) {
+                window.toastr.success(result.message, 'Success');
+                refreshTaskTemplates();
+            } else
+                $("#containerDocumentTaskTemplateAdd").html(result);
+        })
+        .fail(function (xhr, textStatus, errorThrown) {
+            window.toastr.error(xhr.responseText, 'Error!');
+        });
+    }
+
+    function refreshTaskTemplates() {
+        $.get("/DocumentTaskTemplates/GetAllDocumentTaskTemplates", function (result) {
+            var select = $('#IdDocumentTaskTemplate');
+            select.empty();
+            $.each(result, function () {
+                select.append($("<option />").val(this.value).text(this.text));
+            });
+            $('#modalAddDocumentTaskTemplate').modal('hide');
+        })
+        .fail(function (xhr, textStatus, errorThrown) {
+            window.toastr.error(xhr.responseText, 'Error!');
+        });
+    }
+
+</script>

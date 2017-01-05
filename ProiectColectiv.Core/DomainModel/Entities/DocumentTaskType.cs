@@ -16,6 +16,6 @@ namespace ProiectColectiv.Core.DomainModel.Entities
 
         public DocumentTaskTemplate DocumentTaskTemplate { get; set; }
 
-        public IList<DocumentTaskTypePath> Paths { get; set; }
+        public IList<DocumentTaskTypePath> Paths { get; set; } = new List<DocumentTaskTypePath>();
     }
 }

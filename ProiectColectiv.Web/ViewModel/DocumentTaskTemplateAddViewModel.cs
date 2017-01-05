@@ -20,5 +20,10 @@ namespace ProiectColectiv.Web.ViewModel
 
     public class DocumentTaskTemplateTypeViewModel
     {
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
+
+        public IList<int> Paths { get; set; }
     }
 }

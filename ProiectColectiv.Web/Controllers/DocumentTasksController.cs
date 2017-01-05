@@ -28,6 +28,7 @@ namespace ProiectColectiv.Web.Controllers
         {
             ViewBag.DocumentTaskTemplates = new SelectList(await unitOfWork.DocumentTaskTemplatesService.GetAll(), nameof(DocumentTaskTemplate.IdDocumentTemplate), nameof(DocumentTaskTemplate.Name));
             ViewBag.DocumentTemplates = new SelectList(await unitOfWork.DocumentsTemplateService.GetAllTemplates(), nameof(DocumentTemplate.IdDocumentTemplate), nameof(DocumentTemplate.Name));
+            ViewBag.UserGroups = new SelectList(await unitOfWork.UserGroupsService.GetAll(), nameof(UserGroup.IdUserGroup), nameof(UserGroup.Name));
 
             return View();
         }
