@@ -12,6 +12,8 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         [Required]
         public string UserId { get; set; }
 
+        public int? IdDocumentTask { get; set; }
+
         public int? IdDocumentTemplate { get; set; }
 
         [StringLength(100)]
@@ -26,6 +28,8 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         public DateTime? LastModified { get; set; }
 
         public User User { get; set; }
+
+        public DocumentTask DocumentTask { get; set; }
 
         public DocumentTemplate DocumentTemplate { get; set; }
 

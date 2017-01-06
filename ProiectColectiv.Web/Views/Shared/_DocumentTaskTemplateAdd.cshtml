@@ -27,7 +27,7 @@
 
 <script>
     var indexTypes = 0;
-    var userGroups = JSON.parse('@Json.Serialize(ViewBag.UserGroups)'); // Use for typeahead 
+    var userGroups = JSON.parse('@Json.Serialize(ViewBag.UserGroups)'); // Use for typeahead
 
     function addTaskTemplateType() {
         $.get("/DocumentTaskTemplates/GetTaskTemplateType", { index: indexTypes }, function (result) {

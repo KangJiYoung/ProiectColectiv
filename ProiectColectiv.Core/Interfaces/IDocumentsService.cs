@@ -7,6 +7,7 @@ namespace ProiectColectiv.Core.Interfaces
 {
     public interface IDocumentsService
     {
+        Task<List<Document>> GetDocumentsByUserAndTemplate(string userId, int? idDocumentTemplate);
         Task<List<Document>> GetDocumentsByUserId(string userId);
         Task<Document> GetDocumentById(int idDocument);
         Task DeleteDocumentById(int idDocument);

@@ -8,9 +8,10 @@ using ProiectColectiv.Services.Data.Context;
 namespace ProiectColectiv.Services.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170105211554_AddDocumentTaskWithState")]
+    partial class AddDocumentTaskWithState
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -264,13 +265,9 @@ namespace ProiectColectiv.Services.Migrations
 
                     b.Property<int>("DocumentTaskStatus");
 
-                    b.Property<int>("IdDocumentTask");
-
                     b.Property<int?>("IdDocumentTaskTypePath");
 
                     b.HasKey("IdDocumentTaskState");
-
-                    b.HasIndex("IdDocumentTask");
 
                     b.HasIndex("IdDocumentTaskTypePath");
 
@@ -594,18 +591,13 @@ namespace ProiectColectiv.Services.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("ProiectColectiv.Core.DomainModel.Entities.User", "User")
-                        .WithMany("DocumentTasks")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("ProiectColectiv.Core.DomainModel.Entities.DocumentTaskState", b =>
                 {
-                    b.HasOne("ProiectColectiv.Core.DomainModel.Entities.DocumentTask", "DocumentTask")
-                        .WithMany("DocumentTaskStates")
-                        .HasForeignKey("IdDocumentTask")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("ProiectColectiv.Core.DomainModel.Entities.DocumentTaskTypePath", "DocumentTaskTypePath")
                         .WithMany()
                         .HasForeignKey("IdDocumentTaskTypePath");

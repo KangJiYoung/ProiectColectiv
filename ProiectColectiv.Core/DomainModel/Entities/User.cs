@@ -10,5 +10,7 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         public UserGroup UserGroup { get; set; }
 
         public IList<Document> Documents { get; set; } = new List<Document>();
+
+        public IList<DocumentTask> DocumentTasks { get; set; } = new List<DocumentTask>();
     }
 }

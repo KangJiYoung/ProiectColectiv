@@ -26,6 +26,49 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
+        public async Task Can_Return_By_Id()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.DocumentTaskTemplates.Add(new DocumentTaskTemplate());
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTaskTemplatesService(context);
+
+                var good = await service.GetById(1);
+                Assert.NotNull(good);
+
+                var bad = await service.GetById(2);
+                Assert.Null(bad);
+            }
+        }
+
+        [Fact]
+        public async Task Can_Return_Task_Types()
+        {
+            var template = new DocumentTaskTemplate { DocumentTaskTypes = new List<DocumentTaskType> { new DocumentTaskType(), new DocumentTaskType() } };
+
+            var dbContextOptions = CreateNewContextOptions();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.DocumentTaskTemplates.Add(template);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTaskTemplatesService(context);
+                var result = await service.GetAllTaskTypes(1);
+
+                Assert.Equal(2, result.Count);
+            }
+        }
+
+        [Fact]
         public async Task Can_Add_New_Template()
         {
             var dbContextOptions = CreateNewContextOptions();

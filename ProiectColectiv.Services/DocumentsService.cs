@@ -123,6 +123,14 @@ namespace ProiectColectiv.Services
             document.DocumentStates.Add(lastState);
         }
 
+        public Task<List<Document>> GetDocumentsByUserAndTemplate(string userId, int? idDocumentTemplate)
+        {
+            return dbContext
+                .Documents
+                .Where(it => it.UserId == userId && it.IdDocumentTemplate == idDocumentTemplate)
+                .ToListAsync();
+        }
+
         public Task<List<Document>> GetDocumentsByUserId(string userId)
         {
             return dbContext

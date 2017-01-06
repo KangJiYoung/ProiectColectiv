@@ -20,6 +20,10 @@ namespace ProiectColectiv.Services.Data.Context
 
         public DbSet<DocumentTag> DocumentTags { get; set; }
 
+        public DbSet<DocumentTask> DocumentTasks { get; set; }
+
+        public DbSet<DocumentTaskState> DocumentTaskStates { get; set; }
+
         public DbSet<DocumentTaskTemplate> DocumentTaskTemplates { get; set; }
 
         public DbSet<DocumentTaskType> DocumentTaskTypes { get; set; }

@@ -8,9 +8,9 @@
                 <form asp-controller="DocumentTasks" asp-action="DocumentTasksAdd" class="m-t-lg col-xs-12 col-md-6 col-lg-4">
                     <div class="form-group">
                         <label asp-for="IdDocumentTaskTemplate" class="control-label"></label>
-                        <div>
+                        <div class="row">
                             <div class="col-xs-10">
-                                <select asp-for="IdDocumentTaskTemplate" asp-items="ViewBag.DocumentTaskTemplates" class="form-control">
+                                <select asp-for="IdDocumentTaskTemplate" asp-items="ViewBag.DocumentTaskTemplates" class="form-control" onchange="onDocumentTaskTemplateChanged()">
                                     <option>Alege un Template Task</option>
                                 </select>
                             </div>
@@ -19,6 +19,33 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label asp-for="IdDocumentTaskType" class="control-label"></label>
+                        <div>
+                            <select asp-for="IdDocumentTaskType" class="form-control">
+                                <option>Alege un Tip Task</option>
+                            </select>
+                            <span asp-validation-for="IdDocumentTaskType" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IdDocumentFromTemplate" class="control-label"></label>
+                        <div>
+                            <select asp-for="IdDocumentFromTemplate" class="form-control">
+                                <option>Alege Documentul Principal</option>
+                            </select>
+                            <span asp-validation-for="IdDocumentFromTemplate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OtherDocuments" class="control-label"></label>
+                        <div>
+                            <select asp-for="OtherDocuments" asp-items="ViewBag.Documents" multiple class="form-control"></select>
+                            <span asp-validation-for="OtherDocuments" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <input type="submit" class="btn btn-primary" value="Adauga">
                 </form>
             </div>
         </div>
@@ -42,3 +69,51 @@
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+
+        $(function () {
+            @if (TempData.ContainsKey(Notifications.TASK_ADDED))
+            {
+                <text>window.toastr.success('@TempData[Notifications.TASK_ADDED]', 'Success');</text>
+            }
+        });
+
+        function onDocumentTaskTemplateChanged() {
+            var idDocumentTask = $('#IdDocumentTaskTemplate').val();
+
+            refreshDocumentTaskTypes(idDocumentTask);
+            refreshDocumentsFromTemplate(idDocumentTask);
+        }
+
+        function refreshDocumentsFromTemplate(id) {
+            $.get("/DocumentTasks/GetAllDocumentsByTemplate", { id: id }, function (result) {
+                    var select = $('#IdDocumentFromTemplate');
+                    select.empty();
+                    select.append($("<option />").text('Alege un Document Principal'));
+                    $.each(result, function () {
+                        select.append($("<option />").val(this.value).text(this.text));
+                    });
+                })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    window.toastr.error(xhr.responseText, 'Error!');
+                });
+        }
+
+        function refreshDocumentTaskTypes(id) {
+            $.get("/DocumentTasks/GetAllDocumentTaskTypes", { id: id }, function (result) {
+                    var select = $('#IdDocumentTaskType');
+                    select.empty();
+                    select.append($("<option />").text('Alege un Tip Task'));
+                    $.each(result, function () {
+                        select.append($("<option />").val(this.value).text(this.text));
+                    });
+                })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    window.toastr.error(xhr.responseText, 'Error!');
+                });
+        }
+
+    </script>
+}

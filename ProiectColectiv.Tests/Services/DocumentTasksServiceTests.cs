@@ -1,0 +1,67 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using ProiectColectiv.Core.DomainModel.Entities;
+using ProiectColectiv.Core.DomainModel.Enums;
+using ProiectColectiv.Services;
+using ProiectColectiv.Services.Data.Context;
+using Xunit;
+
+namespace ProiectColectiv.Tests.Services
+{
+    public class DocumentTasksServiceTests
+    {
+        private static DbContextOptions<ApplicationDbContext> CreateNewContextOptions()
+        {
+            var serviceProvider = new ServiceCollection()
+                .AddEntityFrameworkInMemoryDatabase()
+                .BuildServiceProvider();
+
+            var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            builder.UseInMemoryDatabase()
+                   .UseInternalServiceProvider(serviceProvider);
+
+            return builder.Options;
+        }
+
+        [Fact]
+        public async Task Can_Add_Document_Task()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+
+            var user = new User();
+            var taskType = new DocumentTaskType { Paths = new List<DocumentTaskTypePath> { new DocumentTaskTypePath(), new DocumentTaskTypePath() } };
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Users.Add(user);
+                context.DocumentTaskTypes.Add(taskType);
+                context.Documents.AddRange(new Document(), new Document(), new Document());
+
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTasksService(context);
+
+                await service.Add("UserId", 1, new List<int> { 1, 2, 3 });
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var task = await context.DocumentTasks.Include(it => it.Documents).Include(it => it.DocumentTaskStates).FirstAsync();
+
+                Assert.Equal("UserId", task.UserId);
+                Assert.Equal(1, task.IdDocumentTaskType);
+                Assert.Equal(3, task.Documents.Count);
+
+                var state = task.DocumentTaskStates.Last();
+                Assert.Equal(DocumentTaskStatus.RequireAction, state.DocumentTaskStatus);
+                Assert.Equal(1, state.IdDocumentTaskTypePath.Value);
+            }
+        }
+    }
+}

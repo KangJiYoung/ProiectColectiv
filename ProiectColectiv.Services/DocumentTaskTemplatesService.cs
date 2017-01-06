@@ -45,5 +45,20 @@ namespace ProiectColectiv.Services
 
             dbContext.DocumentTaskTemplates.Add(template);
         }
+
+        public Task<List<DocumentTaskType>> GetAllTaskTypes(int idDocumentTaskTemplate)
+        {
+            return dbContext
+                .DocumentTaskTypes
+                .Where(it => it.IdDocumentTaskTemplate == idDocumentTaskTemplate)
+                .ToListAsync();
+        }
+
+        public Task<DocumentTaskTemplate> GetById(int idDocumentTaskTemplate)
+        {
+            return dbContext
+                .DocumentTaskTemplates
+                .FirstOrDefaultAsync(it => it.IdDocumentTaskTemplate == idDocumentTaskTemplate);
+        }
     }
 }

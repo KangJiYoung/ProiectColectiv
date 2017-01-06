@@ -18,6 +18,7 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
             DocumentsTemplateItemService = new DocumentsTemplateItemService(dbContext);
             DocumentsTemplateService = new DocumentsTemplateService(dbContext);
             DocumentTaskTemplatesService = new DocumentTaskTemplatesService(dbContext);
+            DocumentTasksService = new DocumentTasksService(dbContext);
             RolesService = new RolesService(dbContext);
             TagsService = new TagsService(dbContext);
             UsersService = new UsersService(dbContext);
@@ -35,6 +36,8 @@ namespace ProiectColectiv.Services.Data.UnitOfWork
         public IDocumentsTemplateService DocumentsTemplateService { get; }
 
         public IDocumentTaskTemplatesService DocumentTaskTemplatesService { get; }
+
+        public IDocumentTasksService DocumentTasksService { get; set; }
 
         public IRolesService RolesService { get; }
 

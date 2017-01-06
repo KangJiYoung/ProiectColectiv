@@ -28,6 +28,52 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
+        public async Task Can_Return_Documents_By_User_Who_Are_Not_From_Template()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            var user = await CreateUserWithDocument(dbContextOptions, 1);
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Documents.Add(new Document {UserId =  user.Id});
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                var good = await service.GetDocumentsByUserAndTemplate(user.Id, null);
+                Assert.Equal(1, good.Count);
+            }
+        }
+
+        [Fact]
+        public async Task Can_Return_Documents_By_User_And_Template()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+            var user1 = await CreateUserWithDocument(dbContextOptions, 1);
+            var user2 = await CreateUserWithDocument(dbContextOptions, 2);
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                var good = await service.GetDocumentsByUserAndTemplate(user1.Id, 1);
+                Assert.Equal(1, good.Count);
+
+                var good2 = await service.GetDocumentsByUserAndTemplate(user2.Id, 2);
+                Assert.Equal(1, good2.Count);
+
+                var bad = await service.GetDocumentsByUserAndTemplate(user1.Id, 2);
+                Assert.Equal(0, bad.Count);
+
+                var bad2 = await service.GetDocumentsByUserAndTemplate(user2.Id, 1);
+                Assert.Equal(0, bad2.Count);
+            }
+        }
+
+        [Fact]
         public async Task Can_Edit_Document_From_Template_MetaData()
         {
             var dbContextOptions = CreateNewContextOptions();
@@ -296,7 +342,7 @@ namespace ProiectColectiv.Tests.Services
             return template;
         }
 
-        private static async Task<User> CreateUserWithDocument(DbContextOptions<ApplicationDbContext> dbContextOptions)
+        private static async Task<User> CreateUserWithDocument(DbContextOptions<ApplicationDbContext> dbContextOptions, int? idDocumentTemplate = null)
         {
             var user = await CreateUser(dbContextOptions);
 
@@ -304,7 +350,11 @@ namespace ProiectColectiv.Tests.Services
             {
                 var unitOfWork = new UnitOfWork(context);
 
-                await unitOfWork.DocumentsService.AddDocument(user.Id, "File.doc", "Abstract", new byte[] { 1, 2, 3 }, new List<string> { "tag1", "tag2" });
+                if (idDocumentTemplate.HasValue)
+                    await unitOfWork.DocumentsService.AddDocumentFromTemplate(user.Id, idDocumentTemplate.Value, "File.doc", "Abstract", new List<string> {"tag1", "tag2"}, new Dictionary<int, string>());
+                else
+                    await unitOfWork.DocumentsService.AddDocument(user.Id, "File.doc", "Abstract", new byte[] { 1, 2, 3 }, new List<string> { "tag1", "tag2" });
+
                 await unitOfWork.Commit();
             }
 
