@@ -104,7 +104,7 @@ namespace ProiectColectiv.Services
                 DocumentData = new DocumentDataUpload { Data = data }
             });
         }
-
+        
         public async Task ChangeStatus(int idDocument, DocumentStatus documentStatus)
         {
             var document = await dbContext
@@ -123,12 +123,17 @@ namespace ProiectColectiv.Services
             document.DocumentStates.Add(lastState);
         }
 
-        public Task<List<Document>> GetDocumentsByUserAndTemplate(string userId, int? idDocumentTemplate)
+        public async Task<List<Document>> GetDocumentsForTask(string userId, int? idDocumentTemplate)
         {
-            return dbContext
+            var documents = await dbContext
                 .Documents
+                .Include(it => it.DocumentStates)
                 .Where(it => it.UserId == userId && it.IdDocumentTemplate == idDocumentTemplate)
                 .ToListAsync();
+
+            return documents
+                .Where(it => it.DocumentStates.Last().DocumentStatus == DocumentStatus.Final)
+                .ToList();
         }
 
         public Task<List<Document>> GetDocumentsByUserId(string userId)

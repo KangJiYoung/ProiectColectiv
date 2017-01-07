@@ -33,7 +33,7 @@ namespace ProiectColectiv.Web.Controllers
             var user = await userManager.GetUserAsync(HttpContext.User);
             var documentTask = await unitOfWork.DocumentTaskTemplatesService.GetById(id);
 
-            return Json(new SelectList(await unitOfWork.DocumentsService.GetDocumentsByUserAndTemplate(user.Id, documentTask.IdDocumentTemplate), nameof(Document.IdDocument), nameof(Document.Name)));
+            return Json(new SelectList(await unitOfWork.DocumentsService.GetDocumentsForTask(user.Id, documentTask.IdDocumentTemplate), nameof(Document.IdDocument), nameof(Document.Name)));
         }
 
         public async Task<IActionResult> GetAllDocumentTaskTypes(int id)
@@ -45,7 +45,7 @@ namespace ProiectColectiv.Web.Controllers
 
             ViewBag.DocumentTaskTemplates = new SelectList(await unitOfWork.DocumentTaskTemplatesService.GetAll(), nameof(DocumentTaskTemplate.IdDocumentTaskTemplate), nameof(DocumentTaskTemplate.Name));
             ViewBag.DocumentTemplates = new SelectList(await unitOfWork.DocumentsTemplateService.GetAllTemplates(), nameof(DocumentTemplate.IdDocumentTemplate), nameof(DocumentTemplate.Name));
-            ViewBag.Documents = new SelectList(await unitOfWork.DocumentsService.GetDocumentsByUserAndTemplate(user.Id, null), nameof(Document.IdDocument), nameof(Document.Name));
+            ViewBag.Documents = new SelectList(await unitOfWork.DocumentsService.GetDocumentsForTask(user.Id, null), nameof(Document.IdDocument), nameof(Document.Name));
             ViewBag.UserGroups = new SelectList(await unitOfWork.UserGroupsService.GetAll(), nameof(UserGroup.IdUserGroup), nameof(UserGroup.Name));
 
             return View();

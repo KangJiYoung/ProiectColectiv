@@ -28,14 +28,21 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
-        public async Task Can_Return_Documents_By_User_Who_Are_Not_From_Template()
+        public async Task Can_Return_Documents_For_Task_From_Template()
         {
             var dbContextOptions = CreateNewContextOptions();
             var user = await CreateUserWithDocument(dbContextOptions, 1);
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                context.Documents.Add(new Document {UserId =  user.Id});
+                context.Documents.Add(new Document {UserId =  user.Id, DocumentStates = new List<DocumentState> {new DocumentState()} });
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+                await service.ChangeStatus(2, DocumentStatus.Final);
                 await context.SaveChangesAsync();
             }
 
@@ -43,13 +50,13 @@ namespace ProiectColectiv.Tests.Services
             {
                 var service = new DocumentsService(context);
 
-                var good = await service.GetDocumentsByUserAndTemplate(user.Id, null);
+                var good = await service.GetDocumentsForTask(user.Id, null);
                 Assert.Equal(1, good.Count);
             }
         }
 
         [Fact]
-        public async Task Can_Return_Documents_By_User_And_Template()
+        public async Task Can_Return_Documents_For_Task()
         {
             var dbContextOptions = CreateNewContextOptions();
             var user1 = await CreateUserWithDocument(dbContextOptions, 1);
@@ -58,17 +65,25 @@ namespace ProiectColectiv.Tests.Services
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
                 var service = new DocumentsService(context);
+                await service.ChangeStatus(1, DocumentStatus.Final);
+                await service.ChangeStatus(2, DocumentStatus.Final);
+                await context.SaveChangesAsync();
+            }
 
-                var good = await service.GetDocumentsByUserAndTemplate(user1.Id, 1);
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+
+                var good = await service.GetDocumentsForTask(user1.Id, 1);
                 Assert.Equal(1, good.Count);
 
-                var good2 = await service.GetDocumentsByUserAndTemplate(user2.Id, 2);
+                var good2 = await service.GetDocumentsForTask(user2.Id, 2);
                 Assert.Equal(1, good2.Count);
 
-                var bad = await service.GetDocumentsByUserAndTemplate(user1.Id, 2);
+                var bad = await service.GetDocumentsForTask(user1.Id, 2);
                 Assert.Equal(0, bad.Count);
 
-                var bad2 = await service.GetDocumentsByUserAndTemplate(user2.Id, 1);
+                var bad2 = await service.GetDocumentsForTask(user2.Id, 1);
                 Assert.Equal(0, bad2.Count);
             }
         }
