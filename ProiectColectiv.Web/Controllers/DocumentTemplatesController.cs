@@ -1,7 +1,5 @@
-using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProiectColectiv.Core.Constants;
@@ -16,15 +14,13 @@ namespace ProiectColectiv.Web.Controllers
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly FileProvider fileManager;
-        private readonly UserManager<User> userManager;
 
-        public DocumentTemplatesController(IUnitOfWork unitOfWork,
-            FileProvider fileManager,
-            UserManager<User> userManager)
+        public DocumentTemplatesController(
+            IUnitOfWork unitOfWork,
+            FileProvider fileManager)
         {
             this.unitOfWork = unitOfWork;
             this.fileManager = fileManager;
-            this.userManager = userManager;
         }
 
         [HttpPost]

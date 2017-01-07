@@ -106,6 +106,8 @@ namespace ProiectColectiv.Web.Controllers
 
         #region Document Upload New Version
 
+        [HttpPost]
+        [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
         public async Task<IActionResult> DocumentUploadNewVersion(DocumentUploadNewVersionViewModel model)
         {
             if (!ModelState.IsValid)
@@ -163,6 +165,8 @@ namespace ProiectColectiv.Web.Controllers
 
         #region Document Status Change
 
+        [HttpPost]
+        [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
         public async Task<IActionResult> DocumentStatusChange(DocumentStatusChangeViewModel model)
         {
             await unitOfWork.DocumentsService.ChangeStatus(model.IdDocument.Value, model.DocumentStatus);
@@ -177,6 +181,8 @@ namespace ProiectColectiv.Web.Controllers
 
         #region Document Download
 
+        [HttpPost]
+        [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
         public async Task<IActionResult> DocumentDownload(DocumentDownloadViewModel model)
         {
             if (!ModelState.IsValid)

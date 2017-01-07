@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -15,19 +16,17 @@ namespace ProiectColectiv.Web.Controllers
     public class DocumentTasksController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly FileProvider fileManager;
         private readonly UserManager<User> userManager;
 
         public DocumentTasksController(
             IUnitOfWork unitOfWork,
-            FileProvider fileManager,
             UserManager<User> userManager)
         {
             this.unitOfWork = unitOfWork;
-            this.fileManager = fileManager;
             this.userManager = userManager;
         }
 
+        [Authorize]
         public async Task<IActionResult> GetAllDocumentsByTemplate(int id)
         {
             var user = await userManager.GetUserAsync(HttpContext.User);
@@ -36,9 +35,11 @@ namespace ProiectColectiv.Web.Controllers
             return Json(new SelectList(await unitOfWork.DocumentsService.GetDocumentsForTask(user.Id, documentTask.IdDocumentTemplate), nameof(Document.IdDocument), nameof(Document.Name)));
         }
 
+        [Authorize]
         public async Task<IActionResult> GetAllDocumentTaskTypes(int id)
             => Json(new SelectList(await unitOfWork.DocumentTaskTemplatesService.GetAllTaskTypes(id), nameof(DocumentTaskType.IdDocumentTaskType), nameof(DocumentTaskType.Name)));
 
+        [Authorize]
         public async Task<IActionResult> DocumentTasksAdd()
         {
             var user = await userManager.GetUserAsync(HttpContext.User);
@@ -52,6 +53,7 @@ namespace ProiectColectiv.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> DocumentTasksAdd(DocumentTaskAddViewModel model)
         {
             if (!ModelState.IsValid)
