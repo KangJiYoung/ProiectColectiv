@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -29,7 +30,10 @@ namespace ProiectColectiv.Web.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_DocumentTaskTemplateAdd", model);
 
-            unitOfWork.DocumentTaskTemplatesService.Add(model.Name, model.IdDocumentTemplate.Value, model.Types.ToDictionary(it => it.Name, it => it.Paths));
+            unitOfWork.DocumentTaskTemplatesService.Add(
+                model.Name, 
+                model.IdDocumentTemplate.Value, 
+                model.Types.ToDictionary(it => new Tuple<string, int>(it.Name, it.DaysLimit), it => it.Paths));
             await unitOfWork.Commit();
 
             return Json(new { message = "Task template adaugat cu success" });

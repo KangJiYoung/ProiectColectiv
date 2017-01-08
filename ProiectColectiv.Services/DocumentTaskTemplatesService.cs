@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -24,13 +25,13 @@ namespace ProiectColectiv.Services
                 .ToListAsync();
         }
 
-        public void Add(string name, int idDocumentTemplate, IDictionary<string, IList<int>> paths)
+        public void Add(string name, int idDocumentTemplate, IDictionary<Tuple<string, int>, IList<int>> paths)
         {
             var template = new DocumentTaskTemplate { Name = name, IdDocumentTemplate = idDocumentTemplate };
 
             foreach (var path in paths)
             {
-                var taskType = new DocumentTaskType { Name = path.Key };
+                var taskType = new DocumentTaskType { Name = path.Key.Item1, DaysLimit = path.Key.Item2};
                 for (var i = path.Value.Count - 1; i >= 0; i--)
                 {
                     taskType.Paths.Add(new DocumentTaskTypePath

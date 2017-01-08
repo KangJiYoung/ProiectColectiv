@@ -24,6 +24,9 @@ namespace ProiectColectiv.Web.ViewModel
         [StringLength(100)]
         public string Name { get; set; }
 
+        [Range(0, int.MaxValue)]
+        public int DaysLimit { get; set; }
+
         public IList<int> Paths { get; set; }
     }
 }

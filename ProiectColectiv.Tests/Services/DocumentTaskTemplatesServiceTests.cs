@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -79,10 +80,10 @@ namespace ProiectColectiv.Tests.Services
                 await context.SaveChangesAsync();
             }
 
-            var paths = new Dictionary<string, IList<int>>
+            var paths = new Dictionary<Tuple<string, int>, IList<int>>
             {
-                ["Type 1"] = new List<int> { 1, 2, 3 },
-                ["Type 2"] = new List<int> { 3, 2 }
+                [new Tuple<string, int>("Type 1", 2)] = new List<int> { 1, 2, 3 },
+                [new Tuple<string, int>("Type 4", 4)] = new List<int> { 3, 2 }
             };
 
             using (var context = new ApplicationDbContext(dbContextOptions))
@@ -105,14 +106,15 @@ namespace ProiectColectiv.Tests.Services
 
                 foreach (var taskType in template.DocumentTaskTypes)
                 {
-                    Assert.True(paths.ContainsKey(taskType.Name));
-                    Assert.Equal(paths[taskType.Name].Count, taskType.Paths.Count);
+                    var key = new Tuple<string, int>(taskType.Name, taskType.DaysLimit);
+                    Assert.True(paths.ContainsKey(key));
+                    Assert.Equal(paths[key].Count, taskType.Paths.Count);
 
                     for (var i = 0; i < taskType.Paths.Count; i++)
                     {
                         var path = taskType.Paths[i];
 
-                        Assert.Equal(paths[taskType.Name][taskType.Paths.Count - i - 1], path.IdUserGroup);
+                        Assert.Equal(paths[key][taskType.Paths.Count - i - 1], path.IdUserGroup);
                         Assert.Equal(taskType.Paths.Count - i - 1, path.Index);
                     }
                 }

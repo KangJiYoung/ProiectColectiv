@@ -14,6 +14,9 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         [StringLength(100)]
         public string Name { get; set; }
 
+        [Range(0, int.MaxValue)]
+        public int DaysLimit { get; set; }
+
         public DocumentTaskTemplate DocumentTaskTemplate { get; set; }
 
         public IList<DocumentTaskTypePath> Paths { get; set; } = new List<DocumentTaskTypePath>();
