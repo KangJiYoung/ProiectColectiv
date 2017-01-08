@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProiectColectiv.Core.DomainModel.Entities
@@ -12,6 +13,10 @@ namespace ProiectColectiv.Core.DomainModel.Entities
         public string UserId { get; set; }
 
         public int IdDocumentTaskType { get; set; }
+
+        public DateTime DateAdded { get; set; }
+
+        public DateTime LastModified { get; set; }
 
         public DocumentTaskType DocumentTaskType { get; set; }
 

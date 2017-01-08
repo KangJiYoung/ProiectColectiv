@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -20,9 +21,12 @@ namespace ProiectColectiv.Services
 
         public async Task Add(string userId, int idDocumentTaskType, IEnumerable<int> idDocuments)
         {
+            var now = DateTime.Now;
             var task = new DocumentTask
             {
                 UserId = userId,
+                DateAdded = now,
+                LastModified = now,
                 IdDocumentTaskType = idDocumentTaskType,
                 Documents = await dbContext.Documents.Where(it => idDocuments.Contains(it.IdDocument)).ToListAsync()
             };
@@ -30,6 +34,7 @@ namespace ProiectColectiv.Services
             var taskType = await dbContext.DocumentTaskTypes.Include(it => it.Paths).FirstAsync(it => it.IdDocumentTaskType == idDocumentTaskType);
             var state = new DocumentTaskState
             {
+                StateDate = now,
                 DocumentTaskStatus = DocumentTaskStatus.RequireAction,
                 IdDocumentTaskTypePath = taskType.Paths.First(it => it.Index == 0).IdDocumentTaskTypePath
             };

@@ -75,8 +75,8 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
         public static DocumentTaskViewModel ConvertToViewModel(DocumentTask item)
             => new DocumentTaskViewModel
             {
-                //TODO: Date Added 
-                //TODO: Last Modified 
+                DateAdded = item.DateAdded,
+                LastModified = item.LastModified,
                 IdDocumentTask = item.IdDocumentTask,
                 Name = item.DocumentTaskType.DocumentTaskTemplate.Name,
                 DocumentStatus = item.DocumentTaskStates.Last().DocumentTaskStatus,

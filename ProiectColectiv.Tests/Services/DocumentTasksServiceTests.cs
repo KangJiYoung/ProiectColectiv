@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -110,11 +111,14 @@ namespace ProiectColectiv.Tests.Services
             {
                 var task = await context.DocumentTasks.Include(it => it.Documents).Include(it => it.DocumentTaskStates).FirstAsync();
 
+                Assert.NotEqual(DateTime.MinValue, task.DateAdded);
+                Assert.NotEqual(DateTime.MinValue, task.LastModified);
                 Assert.Equal("UserId", task.UserId);
                 Assert.Equal(1, task.IdDocumentTaskType);
                 Assert.Equal(3, task.Documents.Count);
 
                 var state = task.DocumentTaskStates.Last();
+                Assert.NotEqual(DateTime.MinValue, state.StateDate);
                 Assert.Equal(DocumentTaskStatus.RequireAction, state.DocumentTaskStatus);
                 Assert.Equal(1, state.IdDocumentTaskTypePath.Value);
             }
