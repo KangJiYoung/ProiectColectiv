@@ -27,6 +27,62 @@ namespace ProiectColectiv.Tests.Services
         }
 
         [Fact]
+        public async Task Can_Return_Task_When_User_Is_Next_In_Group()
+        {
+            var user = new User { UserGroup = new UserGroup() };
+            var dbContextOptions = CreateNewContextOptions();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Users.Add(user);
+                context.DocumentTasks.Add(new DocumentTask
+                {
+                    DocumentTaskStates = new List<DocumentTaskState>
+                    {
+                        new DocumentTaskState
+                        {
+                            DocumentTaskTypePath = new DocumentTaskTypePath
+                            {
+                                UserGroup = user.UserGroup
+                            }
+                        }
+                    }
+                });
+
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTasksService(context);
+                var tasks = await service.GetByUserId(user.Id);
+
+                Assert.Equal(1, tasks.Count);
+            }
+        }
+
+        [Fact]
+        public async Task Can_Return_User_Created_Task()
+        {
+            var user = new User();
+            var dbContextOptions = CreateNewContextOptions();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Users.Add(user);
+                context.DocumentTasks.Add(new DocumentTask { User = user });
+
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTasksService(context);
+                var tasks = await service.GetByUserId(user.Id);
+
+                Assert.Equal(1, tasks.Count);
+            }
+        }
+
+        [Fact]
         public async Task Can_Add_Document_Task()
         {
             var dbContextOptions = CreateNewContextOptions();

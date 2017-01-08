@@ -37,5 +37,24 @@ namespace ProiectColectiv.Services
             task.DocumentTaskStates.Add(state);
             dbContext.DocumentTasks.Add(task);
         }
+
+        public async Task<List<DocumentTask>> GetByUserId(string userId)
+        {
+            var idUserGroup = await dbContext
+                .Users
+                .Where(it => it.Id == userId)
+                .Select(it => it.IdUserGroup)
+                .FirstAsync();
+
+            return await dbContext
+                .DocumentTasks
+                .Include(it => it.User)
+                .Include(it => it.DocumentTaskStates)
+                .Include(it => it.DocumentTaskType).ThenInclude(it => it.DocumentTaskTemplate)
+                .Where(it => it.UserId == userId ||
+                             it.DocumentTaskStates.Last().IdDocumentTaskTypePath.HasValue &&
+                             it.DocumentTaskStates.Last().DocumentTaskTypePath.IdUserGroup == idUserGroup)
+                .ToListAsync();
+        }
     }
 }

@@ -10,6 +10,7 @@ using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Core.Interfaces.UnitOfWork;
 using ProiectColectiv.Web.Application.Providers;
 using ProiectColectiv.Web.ViewModel;
+using ProiectColectiv.Web.ViewModel.Mapping;
 
 namespace ProiectColectiv.Web.Controllers
 {
@@ -24,6 +25,15 @@ namespace ProiectColectiv.Web.Controllers
         {
             this.unitOfWork = unitOfWork;
             this.userManager = userManager;
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Index()
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            var tasks = await unitOfWork.DocumentTasksService.GetByUserId(user.Id);
+
+            return View(ViewModelMapping.ConvertToViewModel(tasks));
         }
 
         [Authorize]

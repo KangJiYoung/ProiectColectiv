@@ -71,5 +71,19 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
 
         public static IList<DocumentTemplateItemViewModel> ConvertToViewModel(IList<DocumentDataTemplateItem> items)
             => items.Select(ConvertToViewModel).ToList();
+
+        public static DocumentTaskViewModel ConvertToViewModel(DocumentTask item)
+            => new DocumentTaskViewModel
+            {
+                //TODO: Date Added 
+                //TODO: Last Modified 
+                IdDocumentTask = item.IdDocumentTask,
+                Name = item.DocumentTaskType.DocumentTaskTemplate.Name,
+                DocumentStatus = item.DocumentTaskStates.Last().DocumentTaskStatus,
+                CreatedBy = item.User.UserName
+            };
+
+        public static IList<DocumentTaskViewModel> ConvertToViewModel(List<DocumentTask> items)
+            => items.Select(ConvertToViewModel).ToList();
     }
 }
