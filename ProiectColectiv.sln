@@ -11,6 +11,15 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProiectColectiv.Services", 
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ProiectColectiv.Tests", "ProiectColectiv.Tests\ProiectColectiv.Tests.xproj", "{A7994FDC-46AE-444A-8B30-9E9C5C7D905C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configs", "Configs", "{6581B104-A190-4799-A3E1-EC62E55E2BEF}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3013A871-A600-44D8-A223-27AD2E28707F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AEF130EF-75B6-4711-87F8-322BD6C90B40}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +45,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{82AEAE62-84AA-4AA3-80CC-DB84230661B9} = {3013A871-A600-44D8-A223-27AD2E28707F}
+		{7FF11D65-7A55-4DB3-BF52-1779228570AF} = {3013A871-A600-44D8-A223-27AD2E28707F}
+		{A6162736-EF58-4FD3-AF40-C959CABD345C} = {3013A871-A600-44D8-A223-27AD2E28707F}
+		{A7994FDC-46AE-444A-8B30-9E9C5C7D905C} = {AEF130EF-75B6-4711-87F8-322BD6C90B40}
 	EndGlobalSection
 EndGlobal
