@@ -27,15 +27,18 @@
                                 <dt>Status:</dt>
                                 <dd>
                                     <span class="label label-primary">@Model.DocumentStatus</span>
-
-                                    @switch (Model.DocumentStatus)
+                                    
+                                    @if (!Model.IdDocumentTask.HasValue)
                                     {
-                                        case DocumentStatus.Draft:
-                                            <a class="btn btn-primary btn-xs pull-right" onclick="onDocumentStatusChange(@((int) DocumentStatus.Final))">Seteaza ca FINAL</a>
-                                            break;
-                                        case DocumentStatus.Final:
-                                            <a class="btn btn-primary btn-xs pull-right" onclick="onDocumentStatusChange(@((int) DocumentStatus.Draft))">Seteaza ca DRAFT</a>
-                                            break;
+                                        switch (Model.DocumentStatus)
+                                        {
+                                            case DocumentStatus.Draft:
+                                                <a class="btn btn-primary btn-xs pull-right" onclick="onDocumentStatusChange(@((int) DocumentStatus.Final))">Seteaza ca FINAL</a>
+                                                break;
+                                            case DocumentStatus.Final:
+                                                <a class="btn btn-primary btn-xs pull-right" onclick="onDocumentStatusChange(@((int) DocumentStatus.Draft))">Seteaza ca DRAFT</a>
+                                                break;
+                                        }
                                     }
 
                                     @await Html.PartialAsync("_DocumentStatusChange", new DocumentStatusChangeViewModel { IdDocument = Model.IdDocument })

@@ -8,6 +8,8 @@ namespace ProiectColectiv.Web.ViewModel
     {
         public int IdDocument { get; set; }
 
+        public int? IdDocumentTask { get; set; }
+
         public bool IsFromTemplate { get; set; }
 
         public string Name { get; set; }
@@ -25,6 +27,5 @@ namespace ProiectColectiv.Web.ViewModel
         public string Abstract { get; set; }
 
         public IEnumerable<string> Tags { get; set; }
-
     }
 }

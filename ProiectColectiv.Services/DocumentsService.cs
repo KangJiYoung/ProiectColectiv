@@ -128,7 +128,10 @@ namespace ProiectColectiv.Services
             var documents = await dbContext
                 .Documents
                 .Include(it => it.DocumentStates)
-                .Where(it => it.UserId == userId && it.IdDocumentTemplate == idDocumentTemplate)
+                .Where(it => 
+                    it.UserId == userId && 
+                    it.IdDocumentTemplate == idDocumentTemplate &&
+                    !it.IdDocumentTask.HasValue)
                 .ToListAsync();
 
             return documents

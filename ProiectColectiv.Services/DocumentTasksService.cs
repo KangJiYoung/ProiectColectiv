@@ -57,9 +57,55 @@ namespace ProiectColectiv.Services
                 .Include(it => it.DocumentTaskStates)
                 .Include(it => it.DocumentTaskType).ThenInclude(it => it.DocumentTaskTemplate)
                 .Where(it => it.UserId == userId ||
+                             it.DocumentTaskStates.Last().DocumentTaskStatus != DocumentTaskStatus.RequireModifications &&
                              it.DocumentTaskStates.Last().IdDocumentTaskTypePath.HasValue &&
                              it.DocumentTaskStates.Last().DocumentTaskTypePath.IdUserGroup == idUserGroup)
                 .ToListAsync();
+        }
+
+        public Task<DocumentTask> GetById(int id)
+        {
+            return dbContext
+                .DocumentTasks
+                .Include(it => it.User)
+                .Include(it => it.Documents).ThenInclude(it => it.DocumentStates)
+                .Include(it => it.DocumentTaskStates).ThenInclude(it => it.DocumentTaskTypePath)
+                .Include(it => it.DocumentTaskType).ThenInclude(it => it.DocumentTaskTemplate)
+                .FirstOrDefaultAsync(it => it.IdDocumentTask == id);
+        }
+
+        public async Task ChangeStatus(int idDocumentTask, DocumentTaskStatus documentStatus)
+        {
+            var now = DateTime.Now;
+            var task = await dbContext
+                .DocumentTasks
+                .Include(it => it.DocumentTaskStates).ThenInclude(it => it.DocumentTaskTypePath)
+                .FirstAsync(it => it.IdDocumentTask == idDocumentTask);
+            task.LastModified = now;
+
+            var lastState = task.DocumentTaskStates.Last();
+            var idNextPath = lastState.DocumentTaskTypePath?.IdNextPath;
+
+            var state = new DocumentTaskState
+            {
+                IdDocumentTask = idDocumentTask,
+                StateDate = now,
+                DocumentTaskStatus = documentStatus,
+                IdDocumentTaskTypePath = idNextPath == null ? null : lastState.IdDocumentTaskTypePath
+            };
+
+            dbContext.DocumentTaskStates.Add(state);
+
+            if (documentStatus == DocumentTaskStatus.Accepted && idNextPath.HasValue)
+            {
+                dbContext.DocumentTaskStates.Add(new DocumentTaskState
+                {
+                    IdDocumentTask = idDocumentTask,
+                    StateDate = now,
+                    DocumentTaskStatus = DocumentTaskStatus.RequireAction,
+                    IdDocumentTaskTypePath = idNextPath
+                });
+            }
         }
     }
 }

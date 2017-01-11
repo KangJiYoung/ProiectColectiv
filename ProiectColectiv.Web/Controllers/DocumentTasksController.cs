@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
+using ProiectColectiv.Core.DomainModel.Enums;
 using ProiectColectiv.Core.Interfaces.UnitOfWork;
-using ProiectColectiv.Web.Application.Providers;
 using ProiectColectiv.Web.ViewModel;
 using ProiectColectiv.Web.ViewModel.Mapping;
 
@@ -37,12 +37,33 @@ namespace ProiectColectiv.Web.Controllers
         }
 
         [Authorize]
+        public async Task<IActionResult> TaskDetails(int id)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            var task = await unitOfWork.DocumentTasksService.GetById(id);
+
+            return View(ViewModelMapping.ConvertToDetailViewModel(task, user.IdUserGroup));
+        }
+
+        [Authorize]
         public async Task<IActionResult> GetAllDocumentsByTemplate(int id)
         {
             var user = await userManager.GetUserAsync(HttpContext.User);
             var documentTask = await unitOfWork.DocumentTaskTemplatesService.GetById(id);
 
             return Json(new SelectList(await unitOfWork.DocumentsService.GetDocumentsForTask(user.Id, documentTask.IdDocumentTemplate), nameof(Document.IdDocument), nameof(Document.Name)));
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> DocumentTaskStatusChange(DocumentTaskStatusChangeViewModel model)
+        {
+            await unitOfWork.DocumentTasksService.ChangeStatus(model.IdDocumentTask, model.DocumentStatus);
+            await unitOfWork.Commit();
+
+            TempData[Notifications.DOCUMENT_TASK_STATUS_CHANGE] = "Document Status a fost schimbat cu succes.";
+
+            return RedirectToAction(nameof(TaskDetails), new { id = model.IdDocumentTask });
         }
 
         [Authorize]

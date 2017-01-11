@@ -1,0 +1,26 @@
+﻿@using ProiectColectiv.Core.Utils
+@model DocumentTaskStatusChangeViewModel
+@{
+    var selectList = Enum.GetValues(typeof(DocumentTaskStatus))
+                         .Cast<DocumentTaskStatus>()
+                         .Where(it => it != DocumentTaskStatus.RequireAction)
+                         .Select(it => new SelectListItem
+                         {
+                             Value = ((int)it).ToString(),
+                             Text = StringUtils.GetCamelCase(it.ToString())
+                         });
+}
+
+<form asp-controller="DocumentTasks" asp-action="DocumentTaskStatusChange">
+    <input type="hidden" asp-for="IdDocumentTask" />
+
+    <div class="form-group">
+        <label asp-for="DocumentStatus" class="control-label"></label>
+        <div>
+            @Html.DropDownListFor(m => m.DocumentStatus, selectList, new { @class = "form-control" })
+            <span asp-validation-for="DocumentStatus" class="text-danger"></span>
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-primary pull-right" value="Executa">
+</form>

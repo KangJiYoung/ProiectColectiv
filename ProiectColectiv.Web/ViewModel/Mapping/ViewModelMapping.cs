@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using ProiectColectiv.Core.DomainModel.Entities;
@@ -29,6 +28,7 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
             => new DocumentDetailViewModel
             {
                 IdDocument = document.IdDocument,
+                IdDocumentTask = document.IdDocumentTask,
                 IsFromTemplate = document.IdDocumentTemplate != null,
                 Name = document.Name,
                 DateAdded = document.DateAdded,
@@ -85,5 +85,25 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
 
         public static IList<DocumentTaskViewModel> ConvertToViewModel(List<DocumentTask> items)
             => items.Select(ConvertToViewModel).ToList();
+
+        public static DocumentTaskDetailViewModel ConvertToDetailViewModel(DocumentTask item, int userGroupId)
+        {
+            var lastState = item.DocumentTaskStates.Last();
+
+            return new DocumentTaskDetailViewModel
+            {
+                IdDocumentTask = item.IdDocumentTask,
+                CurrentUserGroupId = userGroupId,
+                Name = item.DocumentTaskType.DocumentTaskTemplate.Name,
+                CreatedBy = item.User.UserName,
+                DateAdded = item.DateAdded,
+                LastModified = item.LastModified,
+                Type = item.DocumentTaskType.Name,
+                Status = lastState.DocumentTaskStatus,
+                Documents = ConvertToViewModel(item.Documents),
+                RequireActionUserGroupId = lastState.DocumentTaskTypePath?.IdUserGroup ?? default(int),
+                Progress = lastState.DocumentTaskTypePath == null ? "Terminat" : $"{lastState.DocumentTaskTypePath.Index} / {item.DocumentTaskType.Paths.Count}"
+            };
+        }
     }
 }

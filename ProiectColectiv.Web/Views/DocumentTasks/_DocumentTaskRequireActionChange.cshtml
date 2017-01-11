@@ -1,0 +1,8 @@
+﻿@model DocumentTaskStatusChangeViewModel
+
+<form asp-controller="DocumentTasks" asp-action="DocumentTaskStatusChange">
+    <input type="hidden" asp-for="IdDocumentTask" />
+    <input type="hidden" asp-for="DocumentStatus" value="@DocumentTaskStatus.RequireAction" />
+
+    <input type="submit" class="btn btn-primary btn-xs pull-right" value="Finalizeaza">
+</form>

@@ -27,6 +27,68 @@ namespace ProiectColectiv.Tests.Services
             return builder.Options;
         }
 
+        [Theory]
+        [InlineData(DocumentTaskStatus.RequireAction, DocumentTaskStatus.RequireAction, 2)]
+        [InlineData(DocumentTaskStatus.RequireModifications, DocumentTaskStatus.RequireModifications, 2)]
+        [InlineData(DocumentTaskStatus.Denied, DocumentTaskStatus.Denied, 2)]
+        [InlineData(DocumentTaskStatus.Accepted, DocumentTaskStatus.RequireAction, 3)]
+        public async Task Can_Change_Status(DocumentTaskStatus taskStatus, DocumentTaskStatus expectedStatus, int count)
+        {
+            var now = DateTime.Now;
+            var dbContextOptions = CreateNewContextOptions();
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.DocumentTasks.Add(new DocumentTask
+                {
+                    LastModified = now,
+                    DocumentTaskStates = new List<DocumentTaskState> { new DocumentTaskState
+                    {
+                        DocumentTaskStatus = DocumentTaskStatus.RequireAction,
+                        DocumentTaskTypePath = new DocumentTaskTypePath { NextPath = new DocumentTaskTypePath() }
+                    } }
+                });
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTasksService(context);
+                await service.ChangeStatus(1, taskStatus);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var task = await context.DocumentTasks.Include(it => it.DocumentTaskStates).FirstAsync();
+                var newState = task.DocumentTaskStates.Last();
+
+                Assert.NotEqual(now, task.LastModified);
+                Assert.Equal(count, task.DocumentTaskStates.Count);
+                Assert.Equal(expectedStatus, newState.DocumentTaskStatus);
+            }
+        }
+
+        [Fact]
+        public async Task Can_Return_By_Id()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.DocumentTasks.Add(new DocumentTask());
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTasksService(context);
+                var task = service.GetById(1);
+
+                Assert.NotNull(task);
+            }
+        }
+
         [Fact]
         public async Task Can_Return_Task_When_User_Is_Next_In_Group()
         {
@@ -80,6 +142,37 @@ namespace ProiectColectiv.Tests.Services
                 var tasks = await service.GetByUserId(user.Id);
 
                 Assert.Equal(1, tasks.Count);
+            }
+        }
+
+        [Fact]
+        public async Task Can_Not_Return_Task_When_Status_Is_Require_Modifications()
+        {
+            var userGroup = new UserGroup();
+            var user = new User { UserGroup = userGroup };
+            var dbContextOptions = CreateNewContextOptions();
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Users.Add(user);
+                context.DocumentTasks.Add(new DocumentTask
+                {
+                    DocumentTaskStates = new List<DocumentTaskState> { new DocumentTaskState
+                        {
+                            DocumentTaskStatus = DocumentTaskStatus.RequireModifications,
+                            DocumentTaskTypePath = new DocumentTaskTypePath {UserGroup = userGroup}
+                        }
+                    }
+                });
+
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTasksService(context);
+                var tasks = await service.GetByUserId(user.Id);
+
+                Assert.Equal(0, tasks.Count);
             }
         }
 

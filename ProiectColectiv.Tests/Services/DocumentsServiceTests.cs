@@ -35,14 +35,17 @@ namespace ProiectColectiv.Tests.Services
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
-                context.Documents.Add(new Document {UserId =  user.Id, DocumentStates = new List<DocumentState> {new DocumentState()} });
+                context.Documents.AddRange(
+                    new Document { UserId = user.Id, DocumentStates = new List<DocumentState> { new DocumentState() } },
+                    new Document { UserId = user.Id, IdDocumentTask = 1, DocumentStates = new List<DocumentState> { new DocumentState() } });
                 await context.SaveChangesAsync();
-            }
+            };
 
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
                 var service = new DocumentsService(context);
                 await service.ChangeStatus(2, DocumentStatus.Final);
+                await service.ChangeStatus(3, DocumentStatus.Final);
                 await context.SaveChangesAsync();
             }
 
@@ -366,7 +369,7 @@ namespace ProiectColectiv.Tests.Services
                 var unitOfWork = new UnitOfWork(context);
 
                 if (idDocumentTemplate.HasValue)
-                    await unitOfWork.DocumentsService.AddDocumentFromTemplate(user.Id, idDocumentTemplate.Value, "File.doc", "Abstract", new List<string> {"tag1", "tag2"}, new Dictionary<int, string>());
+                    await unitOfWork.DocumentsService.AddDocumentFromTemplate(user.Id, idDocumentTemplate.Value, "File.doc", "Abstract", new List<string> { "tag1", "tag2" }, new Dictionary<int, string>());
                 else
                     await unitOfWork.DocumentsService.AddDocument(user.Id, "File.doc", "Abstract", new byte[] { 1, 2, 3 }, new List<string> { "tag1", "tag2" });
 

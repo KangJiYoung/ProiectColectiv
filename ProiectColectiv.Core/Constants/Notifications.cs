@@ -2,6 +2,8 @@
 {
     public class Notifications
     {
+        public const string DOCUMENT_TASK_STATUS_CHANGE = "DocumentTaskStatusChange";
+
         public const string TASK_ADDED = "TaskAdded";
 
         public const string USER_EDITED = "UserEdited";
