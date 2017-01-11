@@ -86,7 +86,7 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
         public static IList<DocumentTaskViewModel> ConvertToViewModel(List<DocumentTask> items)
             => items.Select(ConvertToViewModel).ToList();
 
-        public static DocumentTaskDetailViewModel ConvertToDetailViewModel(DocumentTask item, int userGroupId)
+        public static DocumentTaskDetailViewModel ConvertToDetailViewModel(DocumentTask item, int? userGroupId)
         {
             var lastState = item.DocumentTaskStates.Last();
 

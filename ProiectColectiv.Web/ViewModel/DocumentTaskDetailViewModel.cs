@@ -8,7 +8,7 @@ namespace ProiectColectiv.Web.ViewModel
     {
         public int IdDocumentTask { get; set; }
 
-        public int CurrentUserGroupId { get; set; }
+        public int? CurrentUserGroupId { get; set; }
 
         public int RequireActionUserGroupId { get; set; }
 

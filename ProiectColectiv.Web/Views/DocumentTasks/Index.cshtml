@@ -19,13 +19,20 @@
                         <a class="btn btn-primary btn-block" asp-controller="Documents" asp-action="DocumentUpload">Adauga Document</a>
                         <a class="btn btn-primary btn-block" asp-controller="DocumentTasks" asp-action="DocumentTasksAdd">Adauga Task</a>
                         <div class="hr-line-dashed"></div>
+                        <label class="control-label">Tip Task</label>
+                        <div>
+                            <select class="form-control" id="selectTipTask" onchange="selectTipTaskOnChange()">
+                                <option value="Initiate" selected>Initiate</option>
+                                <option value="Finalizate">Finalizate</option>
+                            </select>
+                        </div>
                         @*<h5 class="tag-title">Tags</h5>
-                        @foreach (var tag in ViewBag.Tags)
-                        {
-                            <ul class="tag-list" style="padding: 0">
-                                <li><a>@tag</a></li>
-                            </ul>
-                        }*@
+                            @foreach (var tag in ViewBag.Tags)
+                            {
+                                <ul class="tag-list" style="padding: 0">
+                                    <li><a>@tag</a></li>
+                                </ul>
+                            }*@
                         <div class="clearfix"></div>
                     </div>
                 </div>
@@ -33,33 +40,27 @@
         </div>
         <div class="col-lg-9 animated fadeInRight">
             <div class="row">
-                <div class="col-lg-12 docs-list">
-
-                    @foreach (var task in Model)
-                    {
-                        <div class="file-box doc">
-                            <div class="file">
-                                <a asp-controller="DocumentTasks" asp-action="TaskDetails" asp-route-id="@task.IdDocumentTask">
-                                    <span class="corner"></span>
-
-                                    <div class="icon">
-                                        <i class="img-responsive fa fa-file-text"></i>
-                                    </div>
-                                    <div class="file-name">
-                                        @task.Name
-                                        <br />
-                                        <small>Added: @task.DateAdded.ToString("MMMM dd, yyyy")</small>
-                                        <br />
-                                        <small>Status: <span class="label label-primary">@task.DocumentStatus</span></small>
-                                        <br />
-                                        <small>Created By: @task.CreatedBy</small>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    }
+                <div class="col-lg-12 docs-list" id="containerTasks">
+                    @await Html.PartialAsync("_Tasks", Model)
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts{
+    <script>
+
+        function selectTipTaskOnChange() {
+            var isFinalizate = $('#selectTipTask').val() === "Finalizate";
+
+            $.get("/DocumentTasks/GetTasksInitiate", { final: isFinalizate }, function (result) {
+                    $('#containerTasks').html(result);
+                })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    window.toastr.error(xhr.responseText, 'Error!');
+                });
+        }
+
+    </script>
+}

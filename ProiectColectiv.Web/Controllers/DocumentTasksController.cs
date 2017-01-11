@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
-using ProiectColectiv.Core.DomainModel.Enums;
 using ProiectColectiv.Core.Interfaces.UnitOfWork;
 using ProiectColectiv.Web.ViewModel;
 using ProiectColectiv.Web.ViewModel.Mapping;
@@ -26,6 +25,17 @@ namespace ProiectColectiv.Web.Controllers
             this.unitOfWork = unitOfWork;
             this.userManager = userManager;
         }
+        
+        #region Index
+
+        [Authorize]
+        public async Task<IActionResult> GetTasksInitiate(bool final)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            var tasks = await unitOfWork.DocumentTasksService.GetByUserId(user.Id, final);
+
+            return PartialView("_Tasks", ViewModelMapping.ConvertToViewModel(tasks));
+        }
 
         [Authorize]
         public async Task<IActionResult> Index()
@@ -35,6 +45,10 @@ namespace ProiectColectiv.Web.Controllers
 
             return View(ViewModelMapping.ConvertToViewModel(tasks));
         }
+
+        #endregion
+
+        #region Task Details
 
         [Authorize]
         public async Task<IActionResult> TaskDetails(int id)
@@ -65,6 +79,10 @@ namespace ProiectColectiv.Web.Controllers
 
             return RedirectToAction(nameof(TaskDetails), new { id = model.IdDocumentTask });
         }
+
+        #endregion
+
+        #region Document Tasks Add
 
         [Authorize]
         public async Task<IActionResult> GetAllDocumentTaskTypes(int id)
@@ -99,5 +117,7 @@ namespace ProiectColectiv.Web.Controllers
 
             return RedirectToAction(nameof(DocumentTasksAdd));
         }
+
+        #endregion
     }
 }

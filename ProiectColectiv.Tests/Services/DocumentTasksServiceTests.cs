@@ -27,6 +27,32 @@ namespace ProiectColectiv.Tests.Services
             return builder.Options;
         }
 
+        [Fact]
+        public async Task Can_Return_Finalized_Tasks()
+        {
+            var user = new User { UserGroup = new UserGroup() };
+            var dbContextOptions = CreateNewContextOptions();
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Users.Add(user);
+                context.DocumentTasks.Add(new DocumentTask
+                {
+                    DocumentTaskStates = new List<DocumentTaskState> { new DocumentTaskState { DocumentTaskStatus = DocumentTaskStatus.Accepted } }
+                });
+
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTasksService(context);
+                var tasks = await service.GetByUserId(user.Id, true);
+
+                Assert.Equal(1, tasks.Count);
+            }
+        }
+
         [Theory]
         [InlineData(DocumentTaskStatus.RequireAction, DocumentTaskStatus.RequireAction, 2)]
         [InlineData(DocumentTaskStatus.RequireModifications, DocumentTaskStatus.RequireModifications, 2)]

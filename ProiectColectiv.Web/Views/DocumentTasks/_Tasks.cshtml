@@ -1,0 +1,25 @@
+﻿@model IList< DocumentTaskViewModel>
+
+@foreach (var task in Model)
+{
+    <div class="file-box doc">
+        <div class="file">
+            <a asp-controller="DocumentTasks" asp-action="TaskDetails" asp-route-id="@task.IdDocumentTask">
+                <span class="corner"></span>
+
+                <div class="icon">
+                    <i class="img-responsive fa fa-file-text"></i>
+                </div>
+                <div class="file-name">
+                    @task.Name
+                    <br />
+                    <small>Added: @task.DateAdded.ToString("MMMM dd, yyyy")</small>
+                    <br />
+                    <small>Status: <span class="label label-primary">@task.DocumentStatus</span></small>
+                    <br />
+                    <small>Created By: @task.CreatedBy</small>
+                </div>
+            </a>
+        </div>
+    </div>
+}

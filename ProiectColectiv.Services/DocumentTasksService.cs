@@ -43,7 +43,7 @@ namespace ProiectColectiv.Services
             dbContext.DocumentTasks.Add(task);
         }
 
-        public async Task<List<DocumentTask>> GetByUserId(string userId)
+        public async Task<List<DocumentTask>> GetByUserId(string userId, bool final = false)
         {
             var idUserGroup = await dbContext
                 .Users
@@ -54,13 +54,23 @@ namespace ProiectColectiv.Services
             return await dbContext
                 .DocumentTasks
                 .Include(it => it.User)
-                .Include(it => it.DocumentTaskStates)
+                .Include(it => it.DocumentTaskStates).ThenInclude(it => it.DocumentTaskTypePath)
                 .Include(it => it.DocumentTaskType).ThenInclude(it => it.DocumentTaskTemplate)
-                .Where(it => it.UserId == userId ||
-                             it.DocumentTaskStates.Last().DocumentTaskStatus != DocumentTaskStatus.RequireModifications &&
-                             it.DocumentTaskStates.Last().IdDocumentTaskTypePath.HasValue &&
-                             it.DocumentTaskStates.Last().DocumentTaskTypePath.IdUserGroup == idUserGroup)
+                .Where(it => it.UserId == userId || (final ? IsFinalized(it) : IsInitiated(it, idUserGroup)))
                 .ToListAsync();
+        }
+
+        private static bool IsFinalized(DocumentTask task)
+        {
+            return task.DocumentTaskStates.Last().DocumentTaskStatus == DocumentTaskStatus.Accepted ||
+                   task.DocumentTaskStates.Last().DocumentTaskStatus == DocumentTaskStatus.Denied;
+        }
+
+        private static bool IsInitiated(DocumentTask task, int? idUserGroup)
+        {
+            return task.DocumentTaskStates.Last().DocumentTaskStatus != DocumentTaskStatus.RequireModifications &&
+                   task.DocumentTaskStates.Last().IdDocumentTaskTypePath.HasValue &&
+                   task.DocumentTaskStates.Last().DocumentTaskTypePath.IdUserGroup == idUserGroup;
         }
 
         public Task<DocumentTask> GetById(int id)
