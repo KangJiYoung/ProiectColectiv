@@ -177,6 +177,8 @@ namespace ProiectColectiv.Services
                     return current + DocumentVersions.DRAFT_VERSION_INCREMENT;
                 case DocumentStatus.Final:
                     return Math.Round(current + DocumentVersions.FINAL_VERSION_INCREMENT, 0);
+                case DocumentStatus.Blocat:
+                    return current;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(status), status, null);
             }

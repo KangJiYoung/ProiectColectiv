@@ -116,6 +116,19 @@ namespace ProiectColectiv.Services
                     IdDocumentTaskTypePath = idNextPath
                 });
             }
+
+            if (!idNextPath.HasValue && documentStatus == DocumentTaskStatus.Accepted || documentStatus == DocumentTaskStatus.Denied)
+            {
+                var documents = await dbContext
+                    .Documents
+                    .Where(it => it.IdDocumentTask == idDocumentTask)
+                    .Select(it => it.IdDocument)
+                    .ToListAsync();
+
+                var service = new DocumentsService(dbContext);
+                foreach (var idDocument in documents)
+                    await service.ChangeStatus(idDocument, DocumentStatus.Blocat);
+            }
         }
     }
 }

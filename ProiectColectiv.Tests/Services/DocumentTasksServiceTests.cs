@@ -27,6 +27,54 @@ namespace ProiectColectiv.Tests.Services
             return builder.Options;
         }
 
+        [Theory]
+        [InlineData(DocumentTaskStatus.Denied, true)]
+        [InlineData(DocumentTaskStatus.Accepted, true)]
+        [InlineData(DocumentTaskStatus.RequireAction, false)]
+        [InlineData(DocumentTaskStatus.RequireModifications, false)]
+        public async Task On_Task_Finish_All_Documents_Are_In_Status_Of_BLOCAT(DocumentTaskStatus status, bool isBlocked)
+        {
+            var user = new User { UserGroup = new UserGroup() };
+            var dbContextOptions = CreateNewContextOptions();
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                context.Users.Add(user);
+                context.DocumentTasks.Add(new DocumentTask
+                {
+                    DocumentTaskStates = new List<DocumentTaskState> {
+                        new DocumentTaskState
+                        {
+                            DocumentTaskStatus = DocumentTaskStatus.Accepted,
+                            DocumentTaskTypePath = new DocumentTaskTypePath()
+                        }
+                    },
+                    Documents = new List<Document> {
+                        new Document { DocumentStates = new List<DocumentState> { new DocumentState() } },
+                        new Document { DocumentStates = new List<DocumentState> { new DocumentState() } } }
+                });
+
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentTasksService(context);
+                await service.ChangeStatus(1, status);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var documents = await context.Documents.Include(it => it.DocumentStates).ToListAsync();
+
+                if (isBlocked)
+                    Assert.True(documents.All(it => it.DocumentStates.Last().DocumentStatus == DocumentStatus.Blocat));
+                else
+                    Assert.False(documents.All(it => it.DocumentStates.Last().DocumentStatus == DocumentStatus.Blocat));
+            }
+        }
+
         [Fact]
         public async Task Can_Return_Finalized_Tasks()
         {
