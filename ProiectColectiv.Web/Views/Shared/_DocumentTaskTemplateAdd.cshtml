@@ -57,6 +57,7 @@
         $.get("/DocumentTaskTemplates/GetAllDocumentTaskTemplates", function (result) {
             var select = $('#IdDocumentTaskTemplate');
             select.empty();
+            select.append($("<option />").text('Alege un Template Task'));
             $.each(result, function () {
                 select.append($("<option />").val(this.value).text(this.text));
             });
