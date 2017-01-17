@@ -81,6 +81,7 @@ namespace ProiectColectiv.Services
                 .Include(it => it.Documents).ThenInclude(it => it.DocumentStates)
                 .Include(it => it.DocumentTaskStates).ThenInclude(it => it.DocumentTaskTypePath)
                 .Include(it => it.DocumentTaskType).ThenInclude(it => it.DocumentTaskTemplate)
+                .Include(it => it.DocumentTaskType).ThenInclude(it => it.Paths)
                 .FirstOrDefaultAsync(it => it.IdDocumentTask == id);
         }
 
