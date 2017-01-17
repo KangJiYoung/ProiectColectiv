@@ -177,6 +177,8 @@ namespace ProiectColectiv.Services
                     return current + DocumentVersions.DRAFT_VERSION_INCREMENT;
                 case DocumentStatus.Final:
                     return Math.Round(current + DocumentVersions.FINAL_VERSION_INCREMENT, 0);
+                case DocumentStatus.FinalRevizuit:
+                    return current + DocumentVersions.FINAL_REVIZUIT_VERSION_INCREMENT;
                 case DocumentStatus.Blocat:
                     return current;
                 default:
@@ -184,10 +186,11 @@ namespace ProiectColectiv.Services
             }
         }
 
-        public async Task EditDocument(int idDocument, IDictionary<int, string> items)
+        public async Task EditDocument(int idDocument, string userId, IDictionary<int, string> items)
         {
             var document = await dbContext
                 .Documents
+                .Include(it => it.DocumentTask)
                 .FirstAsync(it => it.IdDocument == idDocument);
             var lastState = await dbContext.DocumentStates.Where(it => it.IdDocument == idDocument).LastAsync();
             var now = DateTime.Now;
@@ -195,6 +198,8 @@ namespace ProiectColectiv.Services
             dbContext.Entry(lastState).State = EntityState.Detached;
             lastState.IdDocumentState = 0;
             lastState.StatusDate = now;
+            if ((document.DocumentTask?.UserId ?? userId) != userId)
+                lastState.DocumentStatus = DocumentStatus.FinalRevizuit;
             lastState.Version = GetNextVersion(lastState.Version, lastState.DocumentStatus);
 
             var documentData = new DocumentDataTemplate();

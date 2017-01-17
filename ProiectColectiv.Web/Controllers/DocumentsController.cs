@@ -216,7 +216,8 @@ namespace ProiectColectiv.Web.Controllers
         {
             var items = model.Items.ToDictionary(it => it.IdDocumentTemplateItem, it => it.Value);
 
-            await unitOfWork.DocumentsService.EditDocument(model.IdDocument, items);
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            await unitOfWork.DocumentsService.EditDocument(model.IdDocument, user.Id, items);
             await unitOfWork.Commit();
 
             TempData[Notifications.DOCUMENT_EDIT] = "Documentul a fost editat cu success.";

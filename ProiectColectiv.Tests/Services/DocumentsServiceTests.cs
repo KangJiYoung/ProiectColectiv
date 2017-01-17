@@ -104,7 +104,7 @@ namespace ProiectColectiv.Tests.Services
                 var service = new DocumentsService(context);
                 var items = new Dictionary<int, string> { [0] = "Item 3", [1] = "Item 4" };
 
-                await service.EditDocument(1, items);
+                await service.EditDocument(1, user.Id, items);
                 await context.SaveChangesAsync();
             }
 
@@ -121,6 +121,39 @@ namespace ProiectColectiv.Tests.Services
             }
         }
 
+        [Fact]
+        public async Task Can_Edit_Document_Change_Status_To_Final_Revizuit()
+        {
+            var dbContextOptions = CreateNewContextOptions();
+
+            var user = await CreateUser(dbContextOptions);
+            var user2 = await CreateUser(dbContextOptions);
+            await CreateTemplate(dbContextOptions, user.Id);
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var document = await context.Documents.FirstAsync();
+                document.DocumentTask = new DocumentTask { UserId = user.Id };
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var service = new DocumentsService(context);
+                var items = new Dictionary<int, string> { [0] = "Item 3", [1] = "Item 4" };
+
+                await service.EditDocument(1, user2.Id, items);
+                await context.SaveChangesAsync();
+            }
+
+            using (var context = new ApplicationDbContext(dbContextOptions))
+            {
+                var lastState = await context.DocumentStates.LastAsync();
+
+                Assert.Equal(DocumentStatus.FinalRevizuit, lastState.DocumentStatus);
+            }
+        }
+
         [Theory]
         [InlineData(0.01, DocumentStatus.Draft, 0.02)]
         [InlineData(0.02, DocumentStatus.Draft, 0.03)]
@@ -128,6 +161,7 @@ namespace ProiectColectiv.Tests.Services
         [InlineData(1.00, DocumentStatus.Draft, 1.01)]
         [InlineData(1.01, DocumentStatus.Draft, 1.02)]
         [InlineData(1.02, DocumentStatus.Final, 2.00)]
+        [InlineData(1.00, DocumentStatus.FinalRevizuit, 1.10)]
         public void Can_Get_New_Version(double initial, DocumentStatus status, double expected)
         {
             var dbContextOptions = CreateNewContextOptions();

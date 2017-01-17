@@ -15,6 +15,6 @@ namespace ProiectColectiv.Core.Interfaces
         Task AddDocumentFromTemplate(string userId, int idTemplate, string name, string @abstract, IList<string> tags, IDictionary<int, string> items);
         Task AddDocumentNewVersion(string userId, int idDocument, byte[] data);
         Task ChangeStatus(int idDocument, DocumentStatus documentStatus);
-        Task EditDocument(int idDocument, IDictionary<int, string> items);
+        Task EditDocument(int idDocument, string userId, IDictionary<int, string> items);
     }
 }
