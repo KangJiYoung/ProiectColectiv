@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ProiectColectiv.Core.Constants;
@@ -14,13 +15,16 @@ namespace ProiectColectiv.Web.Controllers
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly FileProvider fileManager;
+        private readonly UserManager<User> userManager;
 
         public DocumentTemplatesController(
             IUnitOfWork unitOfWork,
-            FileProvider fileManager)
+            FileProvider fileManager,
+            UserManager<User> userManager)
         {
             this.unitOfWork = unitOfWork;
             this.fileManager = fileManager;
+            this.userManager = userManager;
         }
 
         [HttpPost]
@@ -30,6 +34,9 @@ namespace ProiectColectiv.Web.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_DocumentTemplateUpload", model);
 
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            unitOfWork.LogsService.Add(user.Id, $"Adaugare template document: {model.Name}");
             unitOfWork.DocumentsTemplateService.AddTemplate(model.Name, await fileManager.GetFileBytes(model.File));
             await unitOfWork.Commit();
 

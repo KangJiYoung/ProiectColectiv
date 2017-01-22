@@ -4,19 +4,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
+using ProiectColectiv.Core.Interfaces.UnitOfWork;
 using ProiectColectiv.Web.ViewModel;
 
 namespace ProiectColectiv.Web.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IUnitOfWork unitOfWork;
         private readonly SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
 
         public AccountController(
+            IUnitOfWork unitOfWork,
             SignInManager<User> signInManager,
             UserManager<User> userManager)
         {
+            this.unitOfWork = unitOfWork;
             this.signInManager = signInManager;
             this.userManager = userManager;
         }
@@ -43,7 +47,13 @@ namespace ProiectColectiv.Web.Controllers
 
             var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, true, false);
             if (result.Succeeded)
+            {
+                var user = await userManager.GetUserAsync(User);
+                unitOfWork.LogsService.Add(user.Id, "Logged in");
+                await unitOfWork.Commit();
+
                 return RedirectToLocal(returnUrl);
+            }
 
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
 
@@ -88,7 +98,11 @@ namespace ProiectColectiv.Web.Controllers
         [Authorize]
         public async Task<IActionResult> LogOff()
         {
+            var user = await userManager.GetUserAsync(User);
             await signInManager.SignOutAsync();
+
+            unitOfWork.LogsService.Add(user.Id, "Logged off");
+            await unitOfWork.Commit();
 
             return RedirectToAction(nameof(AccountController.Login), "Account");
         }

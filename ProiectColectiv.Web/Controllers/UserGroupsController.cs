@@ -30,7 +30,10 @@ namespace ProiectColectiv.Web.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_UserGroupAdd", model);
 
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            unitOfWork.LogsService.Add(user.Id, $"Adaugare grup: {model.Name}");
             unitOfWork.UserGroupsService.Add(model.Name);
+
             await unitOfWork.Commit();
 
             return Json(new {success = true, message = "User Grup a fost adaugat cu success."});

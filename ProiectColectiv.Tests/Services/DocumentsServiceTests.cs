@@ -354,6 +354,7 @@ namespace ProiectColectiv.Tests.Services
             using (var context = new ApplicationDbContext(dbContextOptions))
             {
                 await new UnitOfWork(context).DocumentsService.DeleteDocumentById(document.IdDocument);
+                await context.SaveChangesAsync();
             }
 
             using (var context = new ApplicationDbContext(dbContextOptions))

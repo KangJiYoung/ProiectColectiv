@@ -73,19 +73,23 @@ namespace ProiectColectiv.Web.Controllers
 
             var user = await userManager.GetUserAsync(HttpContext.User);
 
+            string fileName;
             if (model.IsTemplate)
             {
                 var itemsDict = model.Items.ToDictionary(it => it.IdDocumentTemplateItem, it => it.Value);
+                fileName = model.DocumentName;
 
-                await unitOfWork.DocumentsService.AddDocumentFromTemplate(user.Id, model.IdTemplate.Value, model.DocumentName, model.Abstract, model.Tags, itemsDict);
+                await unitOfWork.DocumentsService.AddDocumentFromTemplate(user.Id, model.IdTemplate.Value, fileName, model.Abstract, model.Tags, itemsDict);
             }
             else
             {
                 var fileData = await fileManager.GetFileBytes(model.File);
+                fileName = model.File.FileName;
 
-                await unitOfWork.DocumentsService.AddDocument(user.Id, model.File.FileName, model.Abstract, fileData, model.Tags);
+                await unitOfWork.DocumentsService.AddDocument(user.Id, fileName, model.Abstract, fileData, model.Tags);
             }
 
+            unitOfWork.LogsService.Add(user.Id, $"Incarcat document: {fileName}");
             await unitOfWork.Commit();
 
             TempData[Notifications.DOCUMENT_UPLOADED] = "Document adaugat cu success.";
@@ -115,6 +119,8 @@ namespace ProiectColectiv.Web.Controllers
 
             var user = await userManager.GetUserAsync(HttpContext.User);
             var fileData = await fileManager.GetFileBytes(model.File);
+
+            unitOfWork.LogsService.Add(user.Id, $"Adaugare versiune noua la document: {model.IdDocument.Value}");
 
             await unitOfWork.DocumentsService.AddDocumentNewVersion(user.Id, model.IdDocument.Value, fileData);
             await unitOfWork.Commit();
@@ -156,7 +162,10 @@ namespace ProiectColectiv.Web.Controllers
             if (document.Result.UserId != user.Result.Id && !await userManager.IsInRoleAsync(user.Result, Roles.ADMINISTRATOR))
                 return Json(new { success = false, message = "Nu aveti destule drepturi!" });
 
+            unitOfWork.LogsService.Add(user.Result.Id, $"Stergere document: {id}");
+
             await unitOfWork.DocumentsService.DeleteDocumentById(id);
+            await unitOfWork.Commit();
 
             return Json(new { success = true, message = "Documentul a fost sters cu success!" });
         }
@@ -169,8 +178,12 @@ namespace ProiectColectiv.Web.Controllers
         [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
         public async Task<IActionResult> DocumentStatusChange(DocumentStatusChangeViewModel model)
         {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            unitOfWork.LogsService.Add(user.Id, $"Schimbare status document: {model.IdDocument.Value} in {model.DocumentStatus}");
+
             await unitOfWork.DocumentsService.ChangeStatus(model.IdDocument.Value, model.DocumentStatus);
-            await unitOfWork.Commit();
+            await unitOfWork.Commit(); 
 
             TempData[Notifications.DOCUMENT_VERSION_CHANGED] = "Versiunea documentului a fost schimbata cu success.";
 
@@ -215,8 +228,10 @@ namespace ProiectColectiv.Web.Controllers
         public async Task<IActionResult> DocumentEdit(DocumentEditViewModel model)
         {
             var items = model.Items.ToDictionary(it => it.IdDocumentTemplateItem, it => it.Value);
-
             var user = await userManager.GetUserAsync(HttpContext.User);
+
+            unitOfWork.LogsService.Add(user.Id, $"Editare document: {model.IdDocument}");
+
             await unitOfWork.DocumentsService.EditDocument(model.IdDocument, user.Id, items);
             await unitOfWork.Commit();
 

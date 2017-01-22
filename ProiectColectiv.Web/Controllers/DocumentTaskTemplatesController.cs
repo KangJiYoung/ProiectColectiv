@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using ProiectColectiv.Core.Constants;
 using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Core.Interfaces.UnitOfWork;
-using ProiectColectiv.Web.Application.Providers;
 using ProiectColectiv.Web.ViewModel;
 
 namespace ProiectColectiv.Web.Controllers
@@ -16,11 +15,14 @@ namespace ProiectColectiv.Web.Controllers
     public class DocumentTaskTemplatesController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
+        private readonly UserManager<User> userManager;
 
         public DocumentTaskTemplatesController(
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            UserManager<User> userManager)
         {
             this.unitOfWork = unitOfWork;
+            this.userManager = userManager;
         }
 
         [HttpPost]
@@ -30,6 +32,9 @@ namespace ProiectColectiv.Web.Controllers
             if (!ModelState.IsValid)
                 return PartialView("_DocumentTaskTemplateAdd", model);
 
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            unitOfWork.LogsService.Add(user.Id, $"Adaugare template flux: {model.Name}");
             unitOfWork.DocumentTaskTemplatesService.Add(
                 model.Name, 
                 model.IdDocumentTemplate.Value, 

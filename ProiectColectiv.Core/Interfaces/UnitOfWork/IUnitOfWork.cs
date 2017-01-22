@@ -18,6 +18,8 @@ namespace ProiectColectiv.Core.Interfaces.UnitOfWork
 
         IDocumentTasksService DocumentTasksService { get; set; }
 
+        ILogsService LogsService { get; set; }
+
         IRolesService RolesService { get; }
 
         ITagsService TagsService { get; }

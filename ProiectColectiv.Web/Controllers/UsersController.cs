@@ -66,6 +66,10 @@ namespace ProiectColectiv.Web.Controllers
                 await userManager.UpdateAsync(user);
             }
 
+            var currentUser = await userManager.GetUserAsync(HttpContext.User);
+            unitOfWork.LogsService.Add(currentUser.Id, $"Modificare utilizator: {user.UserName}");
+            await unitOfWork.Commit();
+
             TempData[Notifications.USER_EDITED] = "Utilizatorul a fost modificat cu success.";
 
             return RedirectToAction(nameof(Index));

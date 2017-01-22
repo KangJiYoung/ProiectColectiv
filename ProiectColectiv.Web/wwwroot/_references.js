@@ -1,4 +1,5 @@
 ﻿/// <autosync enabled="true" />
+/// <reference path="../content/js/bootstrap-datepicker.js" />
 /// <reference path="../content/js/bootstrap-tagsinput.js" />
 /// <reference path="../content/js/chosen.jquery.js" />
 /// <reference path="../content/js/confirm-dialog.js" />

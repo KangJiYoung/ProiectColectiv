@@ -72,6 +72,10 @@ namespace ProiectColectiv.Web.Controllers
         [Authorize]
         public async Task<IActionResult> DocumentTaskStatusChange(DocumentTaskStatusChangeViewModel model)
         {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            unitOfWork.LogsService.Add(user.Id, $"Schimbare status flux: {model.IdDocumentTask} in {model.DocumentStatus}");
+
             await unitOfWork.DocumentTasksService.ChangeStatus(model.IdDocumentTask, model.DocumentStatus);
             await unitOfWork.Commit();
 
@@ -109,6 +113,8 @@ namespace ProiectColectiv.Web.Controllers
                 return View(model);
 
             var user = await userManager.GetUserAsync(HttpContext.User);
+
+            unitOfWork.LogsService.Add(user.Id, $"Adaugare flux: {model.IdDocumentTaskType.Value}");
 
             await unitOfWork.DocumentTasksService.Add(user.Id, model.IdDocumentTaskType.Value, model.OtherDocuments.Concat(new List<int> { model.IdDocumentFromTemplate.Value }));
             await unitOfWork.Commit();

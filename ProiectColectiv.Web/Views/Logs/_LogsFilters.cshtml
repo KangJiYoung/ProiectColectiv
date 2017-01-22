@@ -1,0 +1,15 @@
+﻿@model LogFilterViewModel
+
+<form asp-controller="Logs" asp-action="LogFilter" class="form-inline" id="formLogFilters">
+    <div class="input-group">
+        <input asp-for="Date" data-provide="datepicker" placeholder="Data" class="input form-control">
+    </div>
+    <div class="input-group">
+        <select asp-for="UserId" asp-items="ViewBag.Users" class="form-control">
+            <option value="">Alege un User</option>
+        </select>
+        <span class="input-group-btn">
+            <button type="button" class="btn btn btn-primary" onclick="onFiltersAdded()"><i class="fa fa-search"></i> Filtreaza</button>
+        </span>
+    </div>
+</form>

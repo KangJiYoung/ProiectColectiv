@@ -1,0 +1,33 @@
+﻿@model IList<LogViewModel>
+
+@{
+    ViewBag.Title = "Loguri";
+}
+
+<div class="col-sm-12">
+    <div class="ibox">
+        <div class="ibox-content">
+            <h2>Loguri</h2>
+
+            @await Html.PartialAsync("_LogsFilters", new LogFilterViewModel())
+            
+            <div id="containerLogs">
+                @await Html.PartialAsync("_Logs")
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function onFiltersAdded() {
+            $.get("/Logs/LogFilter", $('#formLogFilters').serialize(), function (result) {
+                    $('#containerLogs').html(result);
+                })
+            .fail(function (xhr, textStatus, errorThrown) {
+                window.toastr.error(xhr.responseText, 'Error!');
+            });
+        }
+    </script>
+}

@@ -36,6 +36,8 @@ namespace ProiectColectiv.Services.Data.Context
 
         public DbSet<DocumentTemplateItemValue> DocumentTemplateItemValues { get; set; }
 
+        public DbSet<Logs> Logs { get; set; }
+
         public DbSet<Tag> Tags { get; set; }
 
         public DbSet<UserGroup> UserGroups { get; set; }

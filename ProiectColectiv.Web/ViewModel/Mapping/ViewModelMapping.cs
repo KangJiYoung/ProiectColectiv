@@ -105,5 +105,15 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
                 Progress = lastState.DocumentTaskTypePath == null ? "Terminat" : $"{lastState.DocumentTaskTypePath.Index} / {item.DocumentTaskType.Paths.Count}"
             };
         }
+        public static IList<LogViewModel> ConvertToViewModel(IList<Logs> items)
+            => items.Select(ConvertToViewModel).ToList();
+
+        public static LogViewModel ConvertToViewModel(Logs item)
+            => new LogViewModel
+            {
+                User = item.User.UserName,
+                Date = item.Date,
+                Message = item.Message
+            };
     }
 }

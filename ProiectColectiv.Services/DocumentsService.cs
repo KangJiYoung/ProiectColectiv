@@ -166,7 +166,6 @@ namespace ProiectColectiv.Services
                 .FirstOrDefaultAsync(it => it.IdDocument == idDocument);
 
             dbContext.Remove(document);
-            await dbContext.SaveChangesAsync();
         }
 
         public double GetNextVersion(double current, DocumentStatus status)

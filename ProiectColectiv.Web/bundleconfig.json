@@ -9,7 +9,8 @@
       "content/css/toastr.min.css",
       "content/css/custom.css",
       "content/css/bootstrap-tagsinput.css",
-      "content/css/style.css"
+      "content/css/style.css",
+      "content/css/datepicker3.css"
     ],
     "minify": {
       "enabled": true,
@@ -25,7 +26,8 @@
       "content/js/toastr.min.js",
       "content/js/bootstrap-tagsinput.js",
       "content/js/confirm-dialog.js",
-      "content/js/main.js"
+      "content/js/main.js",
+      "content/js/bootstrap-datepicker.js"
     ],
     "minify": {
       "enabled": true,
