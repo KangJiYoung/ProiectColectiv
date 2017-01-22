@@ -47,13 +47,7 @@ namespace ProiectColectiv.Web.Controllers
 
             var result = await signInManager.PasswordSignInAsync(model.Username, model.Password, true, false);
             if (result.Succeeded)
-            {
-                var user = await userManager.GetUserAsync(User);
-                unitOfWork.LogsService.Add(user.Id, "Logged in");
-                await unitOfWork.Commit();
-
                 return RedirectToLocal(returnUrl);
-            }
 
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
 
