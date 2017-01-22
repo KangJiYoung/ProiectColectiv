@@ -22,7 +22,14 @@
     <div class="form-group">
         <label asp-for="File" class="control-label"></label>
         <div>
-            <input asp-for="File" />
+            <div class="fileinput fileinput-new" data-provides="fileinput">
+                <span class="btn btn-default btn-file">
+                    <span class="fileinput-new">Select file</span>
+                    <span class="fileinput-exists">Change</span><input asp-for="File" />
+                </span>
+                <span class="fileinput-filename"></span>
+                <a href="#" class="close fileinput-exists" data-dismiss="fileinput" style="float: none">×</a>
+            </div> 
             <span asp-validation-for="File" class="text-danger"></span>
         </div>
     </div>

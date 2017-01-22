@@ -39,13 +39,20 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="OtherDocuments" class="control-label"></label>
-                        <div>
+                        <a data-toggle="modal" data-target="#modalAdditionalFiles">Cauta</a>
+                        <div class="selected-items"></div>
+                        <ul id="myTags">
+                            <!-- Existing list items will be pre-added to the tags -->
+                            <li>Tag1</li>
+                            <li>Tag2</li>
+                        </ul>
+                        <div class="hide">
                             <select asp-for="OtherDocuments" asp-items="ViewBag.Documents" multiple class="form-control"></select>
                             <span asp-validation-for="OtherDocuments" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <input type="submit" class="btn btn-primary" value="Adauga">
+                    <button type="submit" class="btn btn-primary">Adauga</button>
                 </form>
             </div>
         </div>
@@ -70,6 +77,24 @@
     </div>
 </div>
 
+@*<div class="modal inmodal" id="modalAdditionalFiles" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-laptop modal-icon"></i>
+                <h4 class="modal-title">Lista documente</h4>
+                <small class="font-bold">Alege fisierele aditionale</small>
+            </div>
+            <div class="modal-body">
+                <div id="doc-list">*@
+@await Html.PartialAsync("_Documents", (List<DocumentDetailViewModel>)ViewBag.DocumentsDetails)
+@*</div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
 @section Scripts{
     <script>
 
@@ -78,6 +103,10 @@
             {
                 <text>window.toastr.success('@TempData[Notifications.TASK_ADDED]', 'Success');</text>
             }
+
+            $("#myTags").tagit({
+                availableTags: ["c++", "java", "php", "javascript", "ruby", "python", "c"]
+            });
         });
 
         function onDocumentTaskTemplateChanged() {
@@ -89,13 +118,13 @@
 
         function refreshDocumentsFromTemplate(id) {
             $.get("/DocumentTasks/GetAllDocumentsByTemplate", { id: id }, function (result) {
-                    var select = $('#IdDocumentFromTemplate');
-                    select.empty();
-                    select.append($("<option />").text('Alege un Document Principal'));
-                    $.each(result, function () {
-                        select.append($("<option />").val(this.value).text(this.text));
-                    });
-                })
+                var select = $('#IdDocumentFromTemplate');
+                select.empty();
+                select.append($("<option />").text('Alege un Document Principal'));
+                $.each(result, function () {
+                    select.append($("<option />").val(this.value).text(this.text));
+                });
+            })
                 .fail(function (xhr, textStatus, errorThrown) {
                     window.toastr.error(xhr.responseText, 'Error!');
                 });
@@ -103,17 +132,35 @@
 
         function refreshDocumentTaskTypes(id) {
             $.get("/DocumentTasks/GetAllDocumentTaskTypes", { id: id }, function (result) {
-                    var select = $('#IdDocumentTaskType');
-                    select.empty();
-                    select.append($("<option />").text('Alege un Tip Task'));
-                    $.each(result, function () {
-                        select.append($("<option />").val(this.value).text(this.text));
-                    });
-                })
+                var select = $('#IdDocumentTaskType');
+                select.empty();
+                select.append($("<option />").text('Alege un Tip Task'));
+                $.each(result, function () {
+                    select.append($("<option />").val(this.value).text(this.text));
+                });
+            })
                 .fail(function (xhr, textStatus, errorThrown) {
                     window.toastr.error(xhr.responseText, 'Error!');
                 });
         }
+
+        $(document).on('change', '.docSelect', function () {
+            var docID = $(this).attr("data-id");
+            var docName = $(this).attr("data-name");
+            if ($(this).prop("checked")) {
+                $("#OtherDocuments option[value='" + docID + "']").prop("selected", true);
+                var selctedItems = $(".selected-items");
+                var item = $("<div>").text(docName);
+                $(selctedItems).append(item);
+            }
+            else {
+
+                $("#OtherDocuments option[value='" + docID + "']").prop("selected", false);
+                $(".selected-items div").filter(function () {
+                    return $(this).text() == docName;
+                }).remove();
+            }
+        })
 
     </script>
 }

@@ -101,7 +101,8 @@ namespace ProiectColectiv.Web.Controllers
             ViewBag.DocumentTemplates = new SelectList(await unitOfWork.DocumentsTemplateService.GetAllTemplates(), nameof(DocumentTemplate.IdDocumentTemplate), nameof(DocumentTemplate.Name));
             ViewBag.Documents = new SelectList(await unitOfWork.DocumentsService.GetDocumentsForTask(user.Id, null), nameof(Document.IdDocument), nameof(Document.Name));
             ViewBag.UserGroups = new SelectList(await unitOfWork.UserGroupsService.GetAll(), nameof(UserGroup.IdUserGroup), nameof(UserGroup.Name));
-
+            var listaDoc = await unitOfWork.DocumentsService.GetDocumentsForTask(user.Id, null);
+            ViewBag.DocumentsDetails = listaDoc.Select(ViewModelMapping.ConvertToDetailViewModel).ToList();
             return View();
         }
 
