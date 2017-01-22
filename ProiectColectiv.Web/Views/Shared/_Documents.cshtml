@@ -1,0 +1,28 @@
+﻿@model IList<DocumentDetailViewModel>
+
+@foreach (var document in Model)
+{
+    <div class="file-box doc" data-tags="@string.Join(",", document.Tags)" id="document-@document.IdDocument">
+        <div class="file">
+            <div class="del-icon">
+                <a onclick="deleteDocument(@document.IdDocument)" data-confirm="Esti sigur ca vrei sa stergi documentul @(document.Name)?" data-confirm-title="Stergere document" data-confirm-descripiton="Documentul va fi sters din sistem"><i class="img-responsive fa fa-times"></i></a>
+            </div>
+            <a asp-controller="Documents" asp-action="DocumentDetails" asp-route-id="@document.IdDocument">
+                <span class="corner"></span>
+
+                <div class="icon">
+                    <i class="img-responsive fa fa-file-text"></i>
+                </div>
+                <div class="file-name">
+                    @document.Name
+                    <br />
+                    <small>Added: @document.DateAdded.ToString("MMMM dd, yyyy")</small>
+                    <br />
+                    <small>Status: <span class="label label-primary">@document.DocumentStatus @document.CurrentVersion</span></small>
+                    <br />
+                    <small>Tags: @string.Join(", ", document.Tags)</small>
+                </div>
+            </a>
+        </div>
+    </div>
+}

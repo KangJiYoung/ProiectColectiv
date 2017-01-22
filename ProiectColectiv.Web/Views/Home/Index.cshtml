@@ -1,83 +1,154 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model DocumentAndTasksViewModel
+
+@{
+    ViewBag.Title = "Tasks";
 }
 
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-9">
+        <h2>Tasks</h2>
+    </div>
+</div>
 
-@*<div class="ibox">
-    <div class="ibox-content">
-        <div class="text-center">
-            <h3>Bine ai venit, @User.Identity.Name, la CWND</h3>
-            <span>(Content Workflow Management Document)</span>
-            <div style="margin-top:20px;">
-                <a class="btn btn-default">Creare document</a>
-                <a class="btn btn-info">Vizualizare documente</a>
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="file-manager">
+                        <a class="btn btn-primary btn-block" asp-controller="Documents" asp-action="DocumentUpload">Adauga Document</a>
+                        <a class="btn btn-primary btn-block" asp-controller="DocumentTasks" asp-action="DocumentTasksAdd">Adauga Task</a>
+                        <input type="text" placeholder="Cauta document/task" class="form-control" id="searchItem"/>
+                        <a href="#" onclick="showHideDocuments()" id="documentsToggle">Ascunde documente</a>
+                        <div class="hr-line-dashed"></div>
+                        <label class="control-label">Tip Task</label>
+                        <div>
+                            <select class="form-control" id="selectTipTask" onchange="selectTipTaskOnChange()">
+                                <option value="Initiate" selected>Initiate</option>
+                                <option value="Finalizate">Finalizate</option>
+                            </select>
+                        </div>
+                        @*<h5 class="tag-title">Tags</h5>
+                            @foreach (var tag in ViewBag.Tags)
+                            {
+                                <ul class="tag-list" style="padding: 0">
+                                    <li><a>@tag</a></li>
+                                </ul>
+                            }*@
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 animated fadeInRight">
+            <div class="row" id="documentsList">
+                <div><span class="font-bold" style="font-size:18px">Documente</span></div>
+                <div class="col-lg-12 docs-list" id="containerDocuments">
+                    @foreach (var document in Model.Documents)
+                    {
+                        <div class="file-box doc" data-tags="@string.Join(",", document.Tags)" data-name="@document.Name" id="document-@document.IdDocument">
+                            <div class="file">
+                                <div class="del-icon">
+                                    <a onclick="deleteDocument(@document.IdDocument)" data-confirm="Esti sigur ca vrei sa stergi documentul @(document.Name)?" data-confirm-title="Stergere document" data-confirm-descripiton="Documentul va fi sters din sistem"><i class="img-responsive fa fa-times"></i></a>
+                                </div>
+                                <a asp-controller="Documents" asp-action="DocumentDetails" asp-route-id="@document.IdDocument">
+                                    <span class="corner"></span>
+
+                                    <div class="icon">
+                                        @switch (System.IO.Path.GetExtension(document.Name))
+                                        {
+                                            case ".docx":
+                                            case ".doc":
+                                                <img src="~/img/word-icon.ico" height="70"/>
+                                                break;
+                                            case ".pdf":
+                                                <img src="~/img/pdf-icon.ico" height="70" />
+                                                break;
+                                            case ".xls":
+                                            case ".xlsx":
+                                                <img src="~/img/excel-icon.ico" height="70" />
+                                                break;
+                                            default:
+                                                <i class="~/img-responsive fa fa-file-text"></i>
+                                                break;
+                                        }
+                                    </div>
+                                    <div class="file-name">
+                                        <div class="name">@document.Name</div>
+                                        <br />
+                                        <small>Added: @document.DateAdded.ToString("MMMM dd, yyyy")</small>
+                                        <br />
+                                        <small>Status: <span class="label label-primary">@document.DocumentStatus @document.CurrentVersion</span></small>
+                                        <br />
+                                        <small>Tags: @string.Join(", ", document.Tags)</small>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="row">
+                <div><span class="font-bold" style="font-size:18px">Taskuri</span></div>
+                <div class="col-lg-12 docs-list" id="containerTasks">
+                    @await Html.PartialAsync("_Tasks", Model.Tasks)
+                </div>
             </div>
         </div>
     </div>
-</div>*@
-
-<div class="page-header">
-    <h3>LISTA DOCUMENTE</h3>
 </div>
 
-<div class="doc-list text-center">
-    <div class="doc-box inline">
-        <div class="doc-title"><span>DOCUMENT 1</span></div>
-        <div class="doc-desc">Procedura dispozitia rectorului</div>
-        <div class="doc-type"><img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Microsoft_Word_logo.png" /></div>
-        <div class="doc-actions text-center">
-            <a>EDIT</a>
-            <a>DELETE</a>
-        </div>
-    </div>
+@section Scripts{
+    <script>
+        $(function () {
+            ConfirmDialog.init();
+        })
+        function selectTipTaskOnChange() {
+            var isFinalizate = $('#selectTipTask').val() === "Finalizate";
 
-    <div class="doc-box inline">
-        <div class="doc-title"><span>DOCUMENT 2</span></div>
-        <div class="doc-desc">Procedura desfasurarea achizitiilor</div>
-        <div class="doc-type"><img src="http://norm4building.org/wp-content/uploads/2015/07/template-icon-prod-400x400-300x300.png" /></div>
-        <div class="doc-actions text-center">
-            <a>EDIT</a>
-            <a>DELETE</a>
-        </div>
-    </div>
+            $.get("/DocumentTasks/GetTasksInitiate", { final: isFinalizate }, function (result) {
+                    $('#containerTasks').html(result);
+                })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    window.toastr.error(xhr.responseText, 'Error!');
+                });
+        }
 
-    <div class="doc-box inline">
-        <div class="doc-title"><span>DOCUMENT 2</span></div>
-        <div class="doc-desc">Procedura desfasurarea achizitiilor</div>
-        <div class="doc-type"><img src="http://norm4building.org/wp-content/uploads/2015/07/template-icon-prod-400x400-300x300.png" /></div>
-        <div class="doc-actions text-center">
-            <a>EDIT</a>
-            <a>DELETE</a>
-        </div>
-    </div>
+        function showHideDocuments() {
+            $("#documentsList").toggleClass("hide");
+            if ($("#documentsList").hasClass("hide"))
+                $("#documentsToggle").text("Arata documente");
+            else
+                $("#documentsToggle").text("Ascunde documente");
+        }
 
-    <div class="doc-box inline">
-        <div class="doc-title"><span>DOCUMENT 2</span></div>
-        <div class="doc-desc">Procedura desfasurarea achizitiilor</div>
-        <div class="doc-type"><img src="http://norm4building.org/wp-content/uploads/2015/07/template-icon-prod-400x400-300x300.png" /></div>
-        <div class="doc-actions text-center">
-            <a>EDIT</a>
-            <a>DELETE</a>
-        </div>
-    </div>
+        $("#searchItem").keyup(function () {
+            var searchText = $(this).val();
+            $(".doc").each(function () {
+                if ($(this).attr("data-name") == null)
+                    return;
+                if ($(this).attr("data-name").indexOf(searchText) > -1)
+                    $(this).removeClass("hide");
+                else
+                    $(this).addClass("hide");
+            })
 
-    <div class="doc-box inline">
-        <div class="doc-title"><span>DOCUMENT 1</span></div>
-        <div class="doc-desc">Procedura dispozitia rectorului</div>
-        <div class="doc-type"><img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Microsoft_Word_logo.png" /></div>
-        <div class="doc-actions text-center">
-            <a>EDIT</a>
-            <a>DELETE</a>
-        </div>
-    </div>
+        });
 
-    <div class="doc-box inline">
-        <div class="doc-title"><span>DOCUMENT 2</span></div>
-        <div class="doc-desc">Procedura desfasurarea achizitiilor</div>
-        <div class="doc-type"><img src="http://norm4building.org/wp-content/uploads/2015/07/template-icon-prod-400x400-300x300.png" /></div>
-        <div class="doc-actions text-center">
-            <a>EDIT</a>
-            <a>DELETE</a>
-        </div>
-    </div>
-</div>
+        function deleteDocument(id) {
+            $.post("/Documents/DocumentDelete",
+                    { id: id },
+                    function (result) {
+                        if (result.success) {
+                            window.toastr.success(result.message, 'Success');
+                            $("#document-" + id).remove();
+                        } else
+                            window.toastr.warning(result.message, 'Warning');
+                    })
+                .fail(function (xhr, textStatus, errorThrown) {
+                    window.toastr.error(xhr.responseText, 'Error!');
+                });
+        }
+
+    </script>
+}

@@ -2,7 +2,7 @@
 
 @foreach (var task in Model)
 {
-    <div class="file-box doc">
+    <div class="file-box doc" data-name="@task.Name">
         <div class="file">
             <a asp-controller="DocumentTasks" asp-action="TaskDetails" asp-route-id="@task.IdDocumentTask">
                 <span class="corner"></span>
@@ -11,7 +11,7 @@
                     <i class="img-responsive fa fa-file-text"></i>
                 </div>
                 <div class="file-name">
-                    @task.Name
+                    <div class="name">@task.Name</div>
                     <br />
                     <small>Added: @task.DateAdded.ToString("MMMM dd, yyyy")</small>
                     <br />
