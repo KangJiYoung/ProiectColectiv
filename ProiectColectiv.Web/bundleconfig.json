@@ -9,7 +9,14 @@
       "content/css/toastr.min.css",
       "content/css/custom.css",
       "content/css/bootstrap-tagsinput.css",
-      "content/css/style.css"
+      "content/css/style.css",
+      "content/css/jasny-bootstrap.min.css",
+      "content/css/ladda.min.css",
+      "content/css/ladda-themeless.min.css",
+      "content/css/basic.css",
+      "content/css/dropzone.css",
+      "content/css/jquery-ui.min.css",
+      "content/css/jquery.tagit.css"
     ],
     "minify": {
       "enabled": true,
@@ -25,7 +32,14 @@
       "content/js/toastr.min.js",
       "content/js/bootstrap-tagsinput.js",
       "content/js/confirm-dialog.js",
-      "content/js/main.js"
+      "content/js/main.js",
+      "content/js/jasny-bootstrap.min.js",
+      "content/js/ladda.min.js",
+      "content/js/ladda.jquery.min.js",
+      "content/js/spin.min.js",
+      "content/js/dropzone.js",
+      "content/js/jquery-ui.min.js",
+      "content/js/tag-it.min.js"
     ],
     "minify": {
       "enabled": true,

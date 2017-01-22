@@ -111,3 +111,7 @@
     border-color: #1ab394;
     color: #FFFFFF
 }
+
+.modal-body{
+    overflow:hidden;
+}

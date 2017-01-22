@@ -1,28 +1,61 @@
 ﻿@model IList<DocumentDetailViewModel>
 
-@foreach (var document in Model)
-{
-    <div class="file-box doc" data-tags="@string.Join(",", document.Tags)" id="document-@document.IdDocument">
-        <div class="file">
-            <div class="del-icon">
-                <a onclick="deleteDocument(@document.IdDocument)" data-confirm="Esti sigur ca vrei sa stergi documentul @(document.Name)?" data-confirm-title="Stergere document" data-confirm-descripiton="Documentul va fi sters din sistem"><i class="img-responsive fa fa-times"></i></a>
-            </div>
-            <a asp-controller="Documents" asp-action="DocumentDetails" asp-route-id="@document.IdDocument">
-                <span class="corner"></span>
 
-                <div class="icon">
-                    <i class="img-responsive fa fa-file-text"></i>
-                </div>
-                <div class="file-name">
-                    @document.Name
-                    <br />
-                    <small>Added: @document.DateAdded.ToString("MMMM dd, yyyy")</small>
-                    <br />
-                    <small>Status: <span class="label label-primary">@document.DocumentStatus @document.CurrentVersion</span></small>
-                    <br />
-                    <small>Tags: @string.Join(", ", document.Tags)</small>
-                </div>
-            </a>
+<div class="modal inmodal" id="modalAdditionalFiles" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-laptop modal-icon"></i>
+                <h4 class="modal-title">Lista documente</h4>
+                <small class="font-bold">Alege fisierele aditionale</small>
+            </div>
+            <div class="modal-body" style="overflow:hidden">
+                @foreach (var document in Model)
+                {
+                    <div class="file-box doc" data-tags="@string.Join(",", document.Tags)" data-name="@document.Name" id="document-@document.IdDocument">
+                        <div class="file">
+                            <div class="del-icon">
+                                <label><input type="checkbox" data-id="@document.IdDocument" data-name="@document.Name" class="docSelect"/></label>
+                            </div>
+                            <a asp-controller="Documents" asp-action="DocumentDetails" asp-route-id="@document.IdDocument">
+                                <span class="corner"></span>
+
+                                <div class="icon">
+                                    @switch (System.IO.Path.GetExtension(document.Name))
+                                    {
+                                        case ".docx":
+                                        case ".doc":
+                                            <img src="~/img/word-icon.ico" height="70" />
+                                            break;
+                                        case ".pdf":
+                                            <img src="~/img/pdf-icon.ico" height="70" />
+                                            break;
+                                        case ".xls":
+                                        case ".xlsx":
+                                            <img src="~/img/excel-icon.ico" height="70" />
+                                            break;
+                                        default:
+                                            <i class="~/img-responsive fa fa-file-text"></i>
+                                            break;
+                                    }
+                                </div>
+                                <div class="file-name">
+                                    @document.Name
+                                    <br />
+                                    <small>Added: @document.DateAdded.ToString("MMMM dd, yyyy")</small>
+                                    <br />
+                                    <small>Status: <span class="label label-primary">@document.DocumentStatus @document.CurrentVersion</span></small>
+                                    <br />
+                                    <small>Tags: @string.Join(", ", document.Tags)</small>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
     </div>
-}
+</div>
+
+
