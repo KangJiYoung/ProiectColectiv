@@ -112,6 +112,7 @@
     color: #FFFFFF
 }
 
-.modal-body{
-    overflow:hidden;
+.ui-autocomplete.ui-front
+{
+    z-index: 3000 !important;
 }

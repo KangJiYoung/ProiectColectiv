@@ -70,7 +70,23 @@
                                                     <span class="corner"></span>
 
                                                     <div class="icon">
-                                                        <i class="img-responsive fa fa-file-text"></i>
+                                                        @switch (System.IO.Path.GetExtension(document.Name))
+                                                        {
+                                                            case ".docx":
+                                                            case ".doc":
+                                                                <img src="~/img/word-icon.ico" height="70" />
+                                                                break;
+                                                            case ".pdf":
+                                                                <img src="~/img/pdf-icon.ico" height="70" />
+                                                                break;
+                                                            case ".xls":
+                                                            case ".xlsx":
+                                                                <img src="~/img/excel-icon.ico" height="70" />
+                                                                break;
+                                                            default:
+                                                                <i class="~/img-responsive fa fa-file-text"></i>
+                                                                break;
+                                                        }
                                                     </div>
                                                     <div class="file-name">
                                                         @document.Name

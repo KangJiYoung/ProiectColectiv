@@ -28,11 +28,47 @@
 <script>
     var indexTypes = 0;
     var userGroups = JSON.parse('@Json.Serialize(ViewBag.UserGroups)'); // Use for typeahead
+    var usergroupsNames = [];
+    (function () {
+        userGroups.forEach(function (element) {
+            usergroupsNames.push(element.text);
+        });
+    })();
 
     function addTaskTemplateType() {
         $.get("/DocumentTaskTemplates/GetTaskTemplateType", { index: indexTypes }, function (result) {
             $('#containerTaskTemplateTypes').append(result);
-            $(document.getElementById('Types[' + indexTypes + '].Paths')).tagsinput('refresh');
+            //$(document.getElementById('Types[' + indexTypes + '].Paths')).tagsinput('refresh');
+            $(document.getElementById('Types[' + indexTypes + '].Tagit')).tagit({
+                availableTags: usergroupsNames,
+                beforeTagAdded: function (event, ui) {
+                    var parnet = $(this);
+                    var indexTagit = $(this).attr("data-index");
+                    var tagText = $(ui.tag).text().substring(0, $(ui.tag).text().length - 1);
+                    var selectItem = $(userGroups).filter(function (index) {
+                        return this.text == tagText;
+                    });
+                    if (selectItem.length > 0) {
+                        var option = $("<option>");
+                        $(option).val(selectItem[0].value);
+                        $(option).text(selectItem[0].text);
+                        $(option).prop("selected", true);
+                        $(document.getElementById('Types[' + indexTagit + '].Paths')).append($(option));
+                    }
+                    else
+                        return false;
+                },
+                beforeTagRemoved: function (event, ui) {
+                    var parnet = $(this);
+                    var indexTagit = $(this).attr("data-index");
+                    var tagText = $(ui.tag).text().substring(0, $(ui.tag).text().length - 1);
+                    var selectItem = $(userGroups).filter(function (index) {
+                        return this.text == tagText;
+                    });
+                    $(document.getElementById('Types[' + indexTagit + '].Paths')).find('option[value="' + selectItem[0].value + '"]').remove();
+                }
+
+            });
             indexTypes++;
         })
             .fail(function (xhr, textStatus, errorThrown) {

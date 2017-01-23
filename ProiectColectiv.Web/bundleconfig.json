@@ -7,7 +7,6 @@
       "content/css/font-awesome.css",
       "content/css/bootstrap-chosen.css",
       "content/css/toastr.min.css",
-      "content/css/custom.css",
       "content/css/bootstrap-tagsinput.css",
       "content/css/style.css",
       "content/css/jasny-bootstrap.min.css",
@@ -18,7 +17,8 @@
       "content/css/jquery-ui.min.css",
       "content/css/jquery.tagit.css",
       "content/css/style.css",
-      "content/css/datepicker3.css"
+      "content/css/datepicker3.css",
+      "content/css/custom.css"
     ],
     "minify": {
       "enabled": true,

@@ -41,11 +41,6 @@
                         <label asp-for="OtherDocuments" class="control-label"></label>
                         <a data-toggle="modal" data-target="#modalAdditionalFiles">Cauta</a>
                         <div class="selected-items"></div>
-                        <ul id="myTags">
-                            <!-- Existing list items will be pre-added to the tags -->
-                            <li>Tag1</li>
-                            <li>Tag2</li>
-                        </ul>
                         <div class="hide">
                             <select asp-for="OtherDocuments" asp-items="ViewBag.Documents" multiple class="form-control"></select>
                             <span asp-validation-for="OtherDocuments" class="text-danger"></span>
@@ -68,7 +63,7 @@
                 <h4 class="modal-title">Adauga Task Template</h4>
                 <small class="font-bold">Introduceti configuratia pentru un task template.</small>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="overflow:hidden">
                 <div id="containerDocumentTaskTemplateAdd">
                     @await Html.PartialAsync("_DocumentTaskTemplateAdd", new DocumentTaskTemplateAddViewModel())
                 </div>
@@ -103,10 +98,6 @@
             {
                 <text>window.toastr.success('@TempData[Notifications.TASK_ADDED]', 'Success');</text>
             }
-
-            $("#myTags").tagit({
-                availableTags: ["c++", "java", "php", "javascript", "ruby", "python", "c"]
-            });
         });
 
         function onDocumentTaskTemplateChanged() {
