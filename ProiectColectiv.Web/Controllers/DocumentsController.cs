@@ -94,7 +94,7 @@ namespace ProiectColectiv.Web.Controllers
 
             TempData[Notifications.DOCUMENT_UPLOADED] = "Document adaugat cu success.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]

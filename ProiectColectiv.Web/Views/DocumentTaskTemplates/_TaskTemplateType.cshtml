@@ -11,7 +11,9 @@
                 <input type="number" name="Types[@Model].DaysLimit" placeholder="Limita de timp(zile)" class="form-control">
             </div>
             <div class="form-group">
-                <select name="Types[@Model].Paths" id="Types[@Model].Paths" multiple></select>
+                <ul class="groups-path" id="Types[@Model].Tagit" data-index="@Model">
+                </ul>
+                <select class="hide" name="Types[@Model].Paths" id="Types[@Model].Paths" multiple></select>
             </div>
         </div>
     </div>

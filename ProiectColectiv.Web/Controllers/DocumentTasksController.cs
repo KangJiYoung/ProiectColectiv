@@ -122,7 +122,7 @@ namespace ProiectColectiv.Web.Controllers
 
             TempData[Notifications.TASK_ADDED] = "Task adaugat cu success";
 
-            return RedirectToAction(nameof(DocumentTasksAdd));
+            return RedirectToAction("Index", "Home");
         }
 
         #endregion
