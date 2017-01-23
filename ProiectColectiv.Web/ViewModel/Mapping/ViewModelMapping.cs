@@ -35,6 +35,7 @@ namespace ProiectColectiv.Web.ViewModel.Mapping
                 LastModified = document.LastModified,
                 DocumentStatus = document.DocumentStates.Last().DocumentStatus,
                 CurrentVersion = document.DocumentStates.Last().Version,
+                IsDigitallySigned = document.DocumentStates.Last().IsDigitallySigned,
                 Abstract = document.Abstract,
                 CreatedBy = document.User?.UserName,
                 Tags = document.DocumentTags.Select(it => it.Tag.Name)

@@ -13,6 +13,8 @@ namespace ProiectColectiv.Core.DomainModel.Entities
 
         public int IdDocumentData { get; set; }
 
+        public bool IsDigitallySigned { get; set; }
+
         public DateTime StatusDate { get; set; }
 
         public DocumentStatus DocumentStatus { get; set; }

@@ -16,5 +16,6 @@ namespace ProiectColectiv.Core.Interfaces
         Task AddDocumentNewVersion(string userId, int idDocument, byte[] data);
         Task ChangeStatus(int idDocument, DocumentStatus documentStatus);
         Task EditDocument(int idDocument, string userId, IDictionary<int, string> items);
+        Task DigitallySign(int idDocument, string userId, string password, byte[] certificateData, string reason, string location);
     }
 }

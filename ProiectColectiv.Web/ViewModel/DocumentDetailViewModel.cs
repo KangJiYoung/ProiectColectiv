@@ -16,6 +16,8 @@ namespace ProiectColectiv.Web.ViewModel
 
         public double CurrentVersion { get; set; }
 
+        public bool IsDigitallySigned { get; set; }
+
         public DocumentStatus DocumentStatus { get; set; }
 
         public DateTime DateAdded { get; set; }

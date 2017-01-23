@@ -249,5 +249,26 @@ namespace ProiectColectiv.Web.Controllers
         }
 
         #endregion
+
+        #region Document Digitally Sign
+
+        [Authorize(Roles = Roles.ADMINISTRATOR + "," + Roles.CONTRIBUTOR + "," + Roles.MANAGER)]
+        public async Task<IActionResult> DocumentDigitallySign(DigitallySignViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return PartialView("_DigitallySign", model);
+
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            var certificateData = await fileManager.GetFileBytes(model.Certificate);
+
+            await unitOfWork.DocumentsService.DigitallySign(model.IdDocument, user.Id, model.Password, certificateData, model.Reason, model.Location);
+            await unitOfWork.Commit();
+
+            TempData[Notifications.DOCUMENT_DIGITALLY_SIGNED] = "Documentul a fost semnat cu success.";
+
+            return RedirectToAction(nameof(DocumentDetails), new { id = model.IdDocument });
+        }
+
+        #endregion
     }
 }

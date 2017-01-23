@@ -8,6 +8,14 @@ using ProiectColectiv.Core.DomainModel.Entities;
 using ProiectColectiv.Core.DomainModel.Enums;
 using ProiectColectiv.Core.Interfaces;
 using ProiectColectiv.Services.Data.Context;
+using iTextSharp.text.pdf;
+using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf.security;
+using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.X509;
+using Org.BouncyCastle.Crypto.Parameters;
+using Document = ProiectColectiv.Core.DomainModel.Entities.Document;
 
 namespace ProiectColectiv.Services
 {
@@ -104,7 +112,7 @@ namespace ProiectColectiv.Services
                 DocumentData = new DocumentDataUpload { Data = data }
             });
         }
-        
+
         public async Task ChangeStatus(int idDocument, DocumentStatus documentStatus)
         {
             var document = await dbContext
@@ -128,8 +136,8 @@ namespace ProiectColectiv.Services
             var documents = await dbContext
                 .Documents
                 .Include(it => it.DocumentStates)
-                .Where(it => 
-                    it.UserId == userId && 
+                .Where(it =>
+                    it.UserId == userId &&
                     it.IdDocumentTemplate == idDocumentTemplate &&
                     !it.IdDocumentTask.HasValue)
                 .ToListAsync();
@@ -208,6 +216,54 @@ namespace ProiectColectiv.Services
 
             document.LastModified = now;
             document.DocumentStates.Add(lastState);
+        }
+
+        public async Task DigitallySign(int idDocument, string userId, string password, byte[] certificateData, string reason, string location)
+        {
+            var document = await dbContext
+                .Documents
+                .FirstAsync(it => it.IdDocument == idDocument);
+            var lastState = await dbContext.DocumentStates.Include(it => it.DocumentData).Where(it => it.IdDocument == idDocument).LastAsync();
+            var unsignedData = ((DocumentDataUpload)lastState.DocumentData).Data;
+
+            var store = new Pkcs12Store(new MemoryStream(certificateData), password.ToCharArray());
+            var alias = string.Empty;
+            foreach (string al in store.Aliases)
+                if (store.IsKeyEntry(al) && store.GetKey(al).Key.IsPrivate)
+                {
+                    alias = al;
+                    break;
+                }
+
+            var pk = store.GetKey(alias);
+            var chain = new List<X509Certificate>();
+            foreach (X509CertificateEntry c in store.GetCertificateChain(alias))
+                chain.Add(c.Certificate);
+
+            var certificate = new System.Security.Cryptography.X509Certificates.X509Certificate(certificateData, password);
+
+            var signedPdfData = new MemoryStream();
+            using (var reader = new PdfReader(unsignedData))
+            {
+                var stp = PdfStamper.CreateSignature(reader, signedPdfData, '\0');
+                stp.SignatureAppearance.Reason = reason;
+                stp.SignatureAppearance.Location = location;
+                stp.SignatureAppearance.SetVisibleSignature(new Rectangle(36, 748, 144, 780), 1, null);
+                var es = new PrivateKeySignature(pk.Key as RsaPrivateCrtKeyParameters, DigestAlgorithms.SHA256);
+                MakeSignature.SignDetached(stp.SignatureAppearance, es, chain, null, null, null, 0, CryptoStandard.CMS);
+
+                stp.Close();
+            }
+
+            dbContext.Entry(lastState).State = EntityState.Detached;
+            lastState.IdDocumentState = 0;
+            lastState.IdDocumentData = 0;
+            lastState.StatusDate = DateTime.Now;
+            lastState.IsDigitallySigned = true;
+            lastState.Version = GetNextVersion(lastState.Version, lastState.DocumentStatus);
+            lastState.DocumentData = new DocumentDataUpload { Data = signedPdfData.ToArray() };
+
+            dbContext.DocumentStates.Add(lastState);
         }
     }
 }
